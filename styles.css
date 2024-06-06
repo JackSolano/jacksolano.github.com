@@ -64,17 +64,46 @@ body {
     background-color: #c0c0c0;
     padding: 10px;
     box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
-    margin: 10px 0;
+    margin: 0px 0;
+    justify-content: space-between; /* Alinear al extremo derecho */
+
 }
 
 .aplastador {
-    align-items: center; /* Centrado horizontal */
-    justify-content: center; /* Centrado vertical */
-    margin: 10px; /* Centra horizontalmente */
-    border: dashed;
-    border-color: black;
+    align-items: center; /* Centrado vertical */
+    margin: 20px; /* Margen exterior */
+    margin-bottom: 20px;
+    border: dashed; /* Borde punteado */
+    border-color: black; /* Color del borde */
+    position: relative; /* Para posicionar correctamente los números */
 }
 
+ol {
+    counter-reset: item; /* Restablecer el contador */
+    list-style: none; /* Eliminar la numeración predeterminada */
+    padding: 0%;
+}
+
+ol li {
+    position: relative; /* Posición relativa para alinear correctamente el contenido */
+}
+
+li {
+    justify-content: space-between;
+}
+
+ol li::before {
+    counter-increment: item; /* Incrementar el contador */
+    position: absolute; /* Posicionar absolutamente el número */
+    right: 0; /* Alinear el número a la derecha */
+    color: #000; /* Color del número */
+    font-weight: bold; /* Negrita para el número */
+}
+
+.open-window {
+    color:black;
+    margin-right: 10px;
+}
 .center-content {
     width: 100%;
     text-align: center;
@@ -151,28 +180,6 @@ body {
     }
 }
 
-/* Estilos para la lista ordenada con números a la derecha */
-ol {
-    list-style: none; /* Eliminar la numeración predeterminada */
-    counter-reset: item; /* Reiniciar el contador */
-    padding-left: 0;
-}
-
-ol li {
-    position: relative; /* Posicionar los números y el contenido relativamente */
-    padding-left: 10px; /* Espacio a la izquierda para el contenido */
-    margin-bottom: 1px; /* Espacio entre los elementos */
-    left: -180px
-}
-
-ol li::before {
-    counter-increment: item; /* Incrementar el contador */
-    content: "................................................. "counter(item) ; /* Mostrar el contador */
-    position: absolute; /* Posicionar absolutamente el número */
-    right: -100px; /* Posición a la derecha */
-    color: #000; /* Color del número */
-    font-weight: bold; /* Negrita para el número */
-}
 
 /* Estilos para el botón en la esquina superior derecha */
 .top-right-button {
@@ -196,4 +203,8 @@ ol li::before {
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-bottom: 16px solid white; /* Color del borde del triángulo */
+}
+
+a {
+    white-space: pre-wrap; /* Conserva los espacios y permite saltos de línea */
 }
