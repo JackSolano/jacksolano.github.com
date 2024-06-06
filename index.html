@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Sitio Web 90s</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main_container">
+        <img src="landscape.jpg" alt="Paisaje" class="landscape">
+    </div> 
+    <div class="window main-window">
+        <div class="title-bar">
+            <span class="title">Ventana Principal</span>
+        </div>
+        <div class="content">
+            <div class="decorative-container left-container"> <!-- Contenedor decorativo izquierdo -->
+                <p>Decoración Izquierda</p>
+            </div>
+            <div class="center-content"> <!-- Contenido central -->
+                <h1>Bienvenido a Mi Sitio Web</h1>
+                <div class = "aplastador">
+                    <div class="decorative-container x"> <!-- Decoración central -->
+                        <h2>Tabla de Contenidos</h2>
+                        <ul>
+                            <li><a href="#" class="open-window" data-section="seccion1">Sección 1</a></li>
+                            <li><a href="#" class="open-window" data-section="seccion2">Sección 2</a></li>
+                            <li><a href="#" class="open-window" data-section="seccion3">Sección 3</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="decorative-container right-container"> <!-- Contenedor decorativo derecho -->
+                <p>Decoración Derecha</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="window" style="top: 150px; left: 50px;">
+        <div class="title-bar">
+            <span class="title">Ventana 1</span>
+            <button class="close-button">X</button>
+        </div>
+        <div class="content">
+            <p>Bienvenido a mi sitio web estilo años 90.</p>
+        </div>
+    </div>
+
+    <div class="window" style="top: 200px; left: 400px;">
+        <div class="title-bar">
+            <span class="title">Ventana 2</span>
+            <button class="close-button">X</button>
+        </div>
+        <div class="content">
+            <p>Esta es otra ventana emergente.</p>
+        </div>
+    </div>
+
+    <div class="taskbar">
+        <button class="taskbar-button" onclick="openWindow()">Abrir Ventana</button>
+        <div id="hora-actual" class="hora"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
