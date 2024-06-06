@@ -71,6 +71,8 @@ body {
     align-items: center; /* Centrado horizontal */
     justify-content: center; /* Centrado vertical */
     margin: 10px; /* Centra horizontalmente */
+    border: dashed;
+    border-color: black;
 }
 
 .center-content {
@@ -107,7 +109,8 @@ body {
 .taskbar-button {
     background-color: #04981cba; /* Azul */
     color: #fff;
-    border: none;
+    border: solid;
+    border-color: #000;
     padding: 5px 10px;
     cursor: pointer;
     margin-right: 5px;
@@ -148,3 +151,49 @@ body {
     }
 }
 
+/* Estilos para la lista ordenada con números a la derecha */
+ol {
+    list-style: none; /* Eliminar la numeración predeterminada */
+    counter-reset: item; /* Reiniciar el contador */
+    padding-left: 0;
+}
+
+ol li {
+    position: relative; /* Posicionar los números y el contenido relativamente */
+    padding-left: 10px; /* Espacio a la izquierda para el contenido */
+    margin-bottom: 1px; /* Espacio entre los elementos */
+    left: -180px
+}
+
+ol li::before {
+    counter-increment: item; /* Incrementar el contador */
+    content: "................................................. "counter(item) ; /* Mostrar el contador */
+    position: absolute; /* Posicionar absolutamente el número */
+    right: -100px; /* Posición a la derecha */
+    color: #000; /* Color del número */
+    font-weight: bold; /* Negrita para el número */
+}
+
+/* Estilos para el botón en la esquina superior derecha */
+.top-right-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 37px;
+    height: 37px;
+    background-color:#0dff00a4; /* Color de fondo del botón */
+    border: solid; /* Elimina el borde del botón */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-right-button::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 16px solid white; /* Color del borde del triángulo */
+}
