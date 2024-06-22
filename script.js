@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('.open-window');
     const closeButton = document.querySelectorAll('.close-button');
+    const windows = document.querySelectorAll('.window');
 
     links.forEach(link => {
         link.addEventListener('click', (event) => {
@@ -18,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Añadir funcionalidad de arrastrar a todas las ventanas actuales
-    const windows = document.querySelectorAll('.window');
     windows.forEach(window => {
         makeWindowDraggable(window);
     });
@@ -91,6 +91,7 @@ function openMainWindow() {
 
     // Cerrar las ventanas pequeñas
     smallWindows.forEach(window => window.remove());
+    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
