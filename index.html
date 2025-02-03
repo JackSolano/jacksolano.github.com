@@ -60,7 +60,19 @@
         <button class="taskbar-button" onclick="openWindow()">Mensaje sistema</button>
         <div id="hora-actual" class="hora"></div>
     </div>
-    <p><a href="/subpagina">Ir a Otra Página</a></p>
+    <p><a href="/subpagina" onclick="pedirContrasena()">Ir a Horarios</a></p>
+    <script>
+        function pedirContrasena() {
+            let contrasena = prompt("Ingrese la contraseña:");
+            let claveCorrecta = "057721"; // Cambiar esto por la contraseña
+        
+            if (contrasena === claveCorrecta) {
+                window.location.href = "/subpagina";
+            } else {
+                alert("Contraseña incorrecta. Intente de nuevo.");
+            }
+        }
+        </script>
     <p><a href="/mi-comic">Ir a Scribart</a></p>
     <script src="frases.js"></script>
     <script src="script.js"></script>
