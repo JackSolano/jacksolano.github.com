@@ -249,5 +249,5 @@ const Familia_de_Horarios = {
 
 // Mostrar el horario de Anderson
 document.getElementById('mostrarHorarioButton').addEventListener('click', () => {
-    crearHorario(Familia_de_Horarios.Anderson);
+    crearHorario(Familia_de_Horarios.Farid);
 });
