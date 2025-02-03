@@ -247,7 +247,8 @@ const Familia_de_Horarios = {
 
 };
 
-// Mostrar el horario de Anderson
-document.getElementById('mostrarHorarioButton').addEventListener('click', () => {
-    crearHorario(Familia_de_Horarios.Farid);
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('mostrarHorarioButton').addEventListener('click', () => {
+        crearHorario(Familia_de_Horarios.Farid);
+    });
 });
