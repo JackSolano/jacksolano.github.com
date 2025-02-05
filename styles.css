@@ -208,3 +208,24 @@ ol li::before {
 a {
     white-space: pre-wrap; /* Conserva los espacios y permite saltos de línea */
 }
+
+/* Estilos para botones de horario */
+
+.dia-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.dia-button:hover {
+    background-color: #0056b3;
+}
+.dias-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}

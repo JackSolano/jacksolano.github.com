@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="top-right-button" onclick="openMainWindow()">v</button>
+    <button class="top-right-button" onclick="openMainWindow()"></button>
     <!-- Este es el contenedor que se usará para insertar el horario -->
     <div id="horario"></div>
 
@@ -78,13 +78,175 @@
 
     <div class="taskbar">
         <button class="taskbar-button" onclick="openWindow()">Mensaje sistema</button>
-        <button class="taskbar-button">Horario</button>
+        <button class="taskbar-button" onclick="openHorario()">Horario</button>
         <div id="hora-actual" class="hora"></div>
     </div>
 
+   
+    <script>
+        const horarioData = [
+    {
+        "Actividad": "ANALISIS MATEMATICO I",
+        "Día": ["LUNES", "MARTES", "JUEVES"],
+        "Hora": ["16:00 - 18:00", "10:00 - 12:00", "10:00 - 12:00"],
+        "Ubicacion": ["CAMILO TORRES --", "CAMILO TORRES 306", "CAMILO TORRES 306"]
+    },
+    {
+        "Actividad": "ANALISIS NUMERICO",
+        "Día": ["MIERCOLES", "VIERNES"],
+        "Hora": ["08:00 - 10:00", "08:00 - 10:00"],
+        "Ubicacion": ["CAMILO TORRES 505", "CAMILO TORRES 505"]
+    },
+    {
+        "Actividad": "OPTIMIZACION",
+        "Día": ["MARTES", "JUEVES"],
+        "Hora": ["08:00 - 10:00", "08:00 - 10:00"],
+        "Ubicacion": ["CAMILO TORRES 307", "CAMILO TORRES 307"]
+    },
+    {
+        "Actividad": "TOPICOS EN ESTADISTICA",
+        "Día": ["LUNES", "MIERCOLES"],
+        "Hora": ["10:00 - 12:00", "10:00 - 12:00"],
+        "Ubicacion": ["CAMILO TORRES 507", "CAMILO TORRES 507"]
+    },
+    {
+        "Actividad": "INGLES III",
+        "Día": ["LUNES", "MIERCOLES", "VIERNES"],
+        "Hora": ["7:00 - 8:00", "6:00 - 8:00", "6:00 - 8:00"],
+        "Ubicacion": ["VIRGINIA GUTIERREZ DE PINEDA 302", "VIRGINIA GUTIERREZ DE PINEDA 302", "VIRGINIA GUTIERREZ DE PINEDA 302"]
+    }
+];
 
-    
+        function openHorario() {
 
+            const windowsContainer = document.body;
+            const newWindow = document.createElement('div');
+            newWindow.classList.add('window');
+            newWindow.style.top = `${Math.random() * (window.innerHeight - 300)}px`;
+            newWindow.style.left = `${Math.random() * (window.innerWidth - 300)}px`;
+            
+            // Estilos CSS para los botones
+            const styles = `
+                <style>
+                    .dia-button {
+                        background-color: #007bff;
+                        color: white;
+                        border: none;
+                        padding: 8px 12px;
+                        margin: 5px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                    }
+                    .dia-button:hover {
+                        background-color: #0056b3;
+                    }
+                    .dias-container {
+                        display: flex;
+                        justify-content: center;
+                        gap: 8px;
+                        margin-top: 10px;
+                    }
+                    .title-bar {
+                        font-weight: bold;
+                        margin-bottom: 10px;
+                        text-align: center;
+                    }
+                </style>
+            `;
+
+
+            // Definir el contenido inicial con los botones de los días
+            const content = `
+                <p>Seleccione un día:</p>
+                <div id="botones-dias">
+                    ${["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"].map(dia => 
+                        `<button class="dia-button" onclick="mostrarHorario('${dia}')">${dia}</button>`
+                    ).join('')}
+                </div>
+            `;
+
+            newWindow.innerHTML = `
+                <div class="title-bar">
+                    <span class="title">Horario</span>
+                    <button class="close-button">X</button>
+                </div>
+                <div class="content" id="contenido-ventana">
+                    ${content}
+                </div>
+            `;
+
+            windowsContainer.appendChild(newWindow);
+
+            // Añadir funcionalidad de cierre a la nueva ventana
+            newWindow.querySelector('.close-button').addEventListener('click', () => {
+                newWindow.remove();
+            });
+
+            // Hacer que la nueva ventana sea arrastrable
+            makeWindowDraggable(newWindow);
+
+        }
+
+        function mostrarHorario(dia) {
+            // Buscar actividades del día seleccionado
+            const actividades = horarioData
+                .filter(item => item.Día.includes(dia))
+                .map(item => {
+                    const index = item.Día.indexOf(dia);
+                    return `<li><strong>${item.Actividad}</strong><br>Hora: ${item.Hora[index]}<br>Ubicación: ${item.Ubicacion[index]}</li>`;
+                })
+                .reverse() // Orden descendente
+                .join("");
+
+            // Crear una nueva ventana
+            const windowsContainer = document.body;
+            const newWindow = document.createElement('div');
+            newWindow.classList.add('window');
+            newWindow.style.top = `${Math.random() * (window.innerHeight - 300)}px`;
+            newWindow.style.left = `${Math.random() * (window.innerWidth - 300)}px`;
+
+            // Estilos CSS adicionales para la lista
+            const styles = `
+                <style>
+                    .schedule-list {
+                        list-style-type: decimal;
+                        padding: 10px;
+                        margin: 10px 0;
+                    }
+                    .schedule-list li {
+                        margin-bottom: 10px;
+                    }
+                </style>
+            `;
+
+            // Contenido de la ventana con las actividades en lista ordenada
+            const content = actividades 
+                ? `<ol class="schedule-list">${actividades}</ol>` 
+                : "<p>No hay actividades programadas.</p>";
+
+            newWindow.innerHTML = `
+                ${styles}
+                <div class="title-bar">
+                    <span class="title">Horario de ${dia}</span>
+                    <button class="close-button">X</button>
+                </div>
+                <div class="content">
+                    ${content}
+                </div>
+            `;
+
+            windowsContainer.appendChild(newWindow);
+
+            // Añadir funcionalidad de cierre
+            newWindow.querySelector('.close-button').addEventListener('click', () => {
+                newWindow.remove();
+            });
+
+            // Hacer la ventana arrastrable
+            makeWindowDraggable(newWindow);
+        }
+
+    </script>
 
 
 </body>
