@@ -13,8 +13,13 @@
     }
 </script>
 <body>
+
     <div class="container">
-        <a href="/..">Pagina principal</a>
+        <a href="/..">Página principal</a>
+        <div class="image_container">
+            <img id="imagen" src="imagen1.jpg" alt="Imagen dinámica">
+        </div>
+
         <h1>Scribart</h1>
         <p>Selecciona un capítulo para empezar a leer:</p>
         <ul>
@@ -25,8 +30,18 @@
             <li><a href="chapter5/index.html">Capítulo 5</a></li>
             <li><a href="chapter6/index.html">Capítulo 6</a></li>
             <li><a onclick="mostrarMensaje()">ESTAMOS TRABAJANDO</a></li>
-            <!-- Puedes añadir más capítulos aquí -->
         </ul>
     </div>
-</body>
+
+    <script>
+        const imagenes = ["imagen1.jpg", "imagen2.jpg", "imagen3.jpg", "imagen4.jpg"];
+        let indice = 0;
+
+        function cambiarImagen() {
+            indice = (indice + 1) % imagenes.length;
+            document.getElementById("imagen").src = imagenes[indice];
+        }
+
+        setInterval(cambiarImagen, 3000); // Cambia cada 3 segundos
+    </script>
 </html>

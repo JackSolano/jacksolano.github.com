@@ -22,9 +22,10 @@ body {
 h1 {
     color: #e0e0e0; /* Blanco para el título */
     text-align: center;
-    font-size: 2.5rem; /* Mayor tamaño */
-    margin-bottom: 20px;
+    font-size: 3.5rem; /* Mayor tamaño */
     font-weight: bold;
+    padding-top: 0%;
+    margin-top: 0%;
 }
 
 /* Estilos para párrafos y textos */
@@ -112,25 +113,27 @@ button:hover {
 }
 
 
-/* Estilo para la imagen sobre el título */
-.container h1 {
-    position: relative;
-    text-align: center;
-    padding-top: 850px; /* Ajusta el espacio según lo necesites */
+img {
+    width: 1000px; /* Ajusta el tamaño según necesites */
+    height: auto;
+    border-radius: 10px;
 }
 
-/* Imagen sobre el título */
-.container h1::before {
-    content: "";
-    position: absolute;
-    top: 0; /* La imagen comenzará desde la parte superior del contenedor */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%; /* La imagen ocupará todo el ancho del contenedor */
-    height: 90%; /* La imagen ocupará toda la altura del contenedor */
-    background-image: url('./imagen.jpg'); /* Ruta de la imagen */
-    background-size: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
-    background-position: top  qcenter; /* Alinea la imagen a la parte superior */
-    background-repeat: no-repeat; /* Evita que la imagen se repita */
-    
-}
+        /* Hacer que el contenedor de la imagen ocupe toda la pantalla */
+        .image_container {
+            margin: auto;
+            padding: 4%;
+            padding-bottom: 0%;
+            width: auto; /* 100% del ancho de la ventana */
+            height: 777px; /* 50% de la altura de la ventana */
+            overflow: hidden; /* Evitar que la imagen se desborde */
+            position: relative; /* Para colocar la imagen dentro de este contenedor */
+        }
+
+        /* Ajustar la imagen para que se vea bien en la portada */
+        #imagen {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Hace que la imagen cubra el contenedor sin deformarse */
+            object-position: top; /* La imagen empieza desde la parte superior */
+        }
