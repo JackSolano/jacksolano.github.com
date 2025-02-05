@@ -8,38 +8,37 @@
 </head>
 <body>
     <button class="top-right-button" onclick="openMainWindow()">v</button>
-    <button id="mostrarHorarioButton">H</button>
     <!-- Este es el contenedor que se usará para insertar el horario -->
     <div id="horario"></div>
 
     <div class="window main-window" style="display:none;">
         <div class="title-bar">
             <span class="title">Ventana Principal</span>
+            <button class="close-button">X</button> <!-- Botón de cerrar -->
         </div>
         <div class="content">
-            <div class="decorative-container left-container"> <!-- Contenedor decorativo izquierdo -->
+            <div class="decorative-container left-container">
                 <p>Decoración Izquierda</p>
             </div>
-            <div class="center-content"> <!-- Contenido central -->
+            <div class="center-content">
                 <h1>Bienvenido a Mi Sitio Web</h1>
-                <div class = "aplastador">
-                    <div class="decorative-container x"> <!-- Decoración central -->
+                <div class="aplastador">
+                    <div class="decorative-container x">
                         <h2>Tabla de Contenidos</h2>
                         <ol>
-                            <li><a href="#" class="open-window" data-section="seccion1">Sección                                 1</a></li>
-                            <li><a href="#" class="open-window" data-section="seccion2">Sección                                 2</a></li>
-                            <li><a href="#" class="open-window" data-section="seccion3">Sección                                 3</a></li>
+                            <li><a href="#" class="open-window" data-section="seccion1">Sección 1</a></li>
+                            <li><a href="#" class="open-window" data-section="seccion2">Sección 2</a></li>
+                            <li><a href="#" class="open-window" data-section="seccion3">Sección 3</a></li>
                         </ol>
                     </div>
                 </div>
-
             </div>
-            <div class="decorative-container right-container"> <!-- Contenedor decorativo derecho -->
+            <div class="decorative-container right-container">
                 <p>Decoración Derecha</p>
             </div>
         </div>
     </div>
-
+    
     <div class="window" style="top: 150px; left: 50px;">
         <div class="title-bar">
             <span class="title">Ventana Apertura</span>
@@ -60,11 +59,7 @@
         </div>
     </div>
 
-    <div class="taskbar">
-        <button class="taskbar-button" onclick="openWindow()">Mensaje sistema</button>
-        <div id="hora-actual" class="hora"></div>
-    </div>
-    <p><a href="/subpagina" onclick="pedirContrasena()">Ir a Horarios</a></p>
+    <p><a onclick="pedirContrasena()">Ir a Horarios</a></p>
     <script>
         function pedirContrasena() {
             let contrasena = prompt("Ingrese la contraseña:");
@@ -76,9 +71,21 @@
                 alert("Contraseña incorrecta. Intente de nuevo.");
             }
         }
-        </script>
+    </script>
     <p><a href="/mi-comic">Ir a Scribart</a></p>
     <script src="frases.js"></script>
     <script src="script.js"></script>
+
+    <div class="taskbar">
+        <button class="taskbar-button" onclick="openWindow()">Mensaje sistema</button>
+        <button class="taskbar-button">Horario</button>
+        <div id="hora-actual" class="hora"></div>
+    </div>
+
+
+    
+
+
+
 </body>
 </html>
