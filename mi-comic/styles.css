@@ -135,5 +135,5 @@ img {
             width: 100%;
             height: 100%;
             object-fit: cover; /* Hace que la imagen cubra el contenedor sin deformarse */
-            object-position: 50% 50%; /* La imagen empieza desde la parte superior */
+            object-position: center; /* La imagen empieza desde la parte superior */
         }
