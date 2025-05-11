@@ -229,3 +229,17 @@ a {
     gap: 8px;
     margin-top: 10px;
 }
+
+.math-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+.math-content a {
+    color: #0066cc;
+    text-decoration: none;
+}
+.math-content a:hover {
+    text-decoration: underline;
+}
