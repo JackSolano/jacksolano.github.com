@@ -1,14 +1,20 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #ffdbac; /* Amarillo durazno */
-    margin: 0;
-    overflow: hidden; /* Evita el desplazamiento */
+            font-family: 'Arial', sans-serif;
+            background-color: #ffdbac; /* Amarillo durazno */
+            margin: 0;
+            overflow: hidden; /* Evita el desplazamiento */
+            background-image: url('./img_decoracion/wallpaper2.png');
+            background-size: cover;      /* que cubra todo el fondo */
+            background-position: center 10%; /* centrar la imagen */
+            background-repeat: no-repeat;/* no repetir la imagen */
+            background-attachment: fixed; /* para que la imagen no se mueva al hacer scroll */
 }
+
 
 .window {
     position: absolute;
     width: 90%;
-    max-width: 300px;
+    max-width: 200px;
     border: 2px solid #000;
     background-color: #fff;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
@@ -17,7 +23,7 @@ body {
 
 .main-window {
     width: 90%;
-    max-width: 800px;
+    max-width: 900px;
     height: auto;
     max-height: 70%;
     top: 50px;
@@ -126,7 +132,7 @@ ol li::before {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #c0c0c0;
+    background-color: #0bcc12;
     padding: 5px;
     display: flex;
     justify-content: flex-start;
@@ -136,8 +142,8 @@ ol li::before {
 }
 
 .taskbar-button {
-    background-color: #04981cba; /* Azul */
-    color: #fff;
+    background-color: #05fd2ef0; /* Azul */
+    color: #000000;
     border: solid;
     border-color: #000;
     padding: 5px 10px;
@@ -156,7 +162,6 @@ ol li::before {
 }
 /* Nuevos estilos para el div hora */
 .taskbar .hora {
-    background-color:  #c0c0c0;
     margin-right: 15px;
 }
 
@@ -229,17 +234,116 @@ a {
     gap: 8px;
     margin-top: 10px;
 }
+/* ===== VENTANA DE PDF MEJORADA (ESTILO RETRO) ===== */
+.pdf-window {
+    position: absolute;
+    width: 800px; /* Un poco más ancho para mejor visualización */
+    height: 600px; /* Más alto para el PDF */
+    border: 3px solid #000;
+    background-color: #c0c0c0;
+    z-index: 1000;
+    font-family: 'MS Sans Serif', 'Arial', sans-serif;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%); /* Centrado horizontal */
+    display: flex;
+    flex-direction: column;
+}
 
-.math-content {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
+/* Barra de título mejorada */
+.pdf-window .title-bar {
+    background-color: #000080;
+    color: #fff;
+    padding: 5px 8px;
+    font-size: 14px;
+    border-bottom: 2px solid #000;
+    display: flex;
+    align-items: center;
 }
-.math-content a {
-    color: #0066cc;
+
+.pdf-window .title {
+    flex-grow: 1;
+    text-shadow: 1px 1px 1px #000;
+}
+
+/* Botón cerrar más visible */
+.pdf-window .close-button {
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Área de contenido mejor organizada */
+.pdf-window .content {
+    flex: 1;
+    padding: 4px;
+    background: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Contenedor PDF optimizado */
+.pdf-container {
+    flex: 1;
+    background: #fff;
+    border: 2px solid;
+    border-color: #808080 #fff #fff #808080;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Botón descarga más retro */
+.pdf-download {
+    margin-top: 8px;
+    align-self: flex-end;
+}
+
+.pdf-download a {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #c0c0c0;
+    border: 2px solid;
+    border-color: #fff #808080 #808080 #fff;
+    color: #000;
     text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
 }
-.math-content a:hover {
-    text-decoration: underline;
+
+/* Efectos hover/active mejorados */
+.pdf-download a:hover {
+    background: #d0d0d0;
+}
+
+.pdf-download a:active {
+    border-color: #808080 #fff #fff #808080;
+    background: #b0b0b0;
+}
+
+/* Responsive mejorado */
+@media (max-width: 850px) {
+    .pdf-window {
+        width: 95vw;
+        height: 80vh;
+        top: 15px;
+        left: 15px;
+        transform: none;
+    }
+}
+
+@media (max-height: 700px) {
+    .pdf-window {
+        height: 90vh;
+    }
 }

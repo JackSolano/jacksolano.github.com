@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Configuración inicial de tus ventanas (tu código original)
     const links = document.querySelectorAll('.open-window');
     const closeButton = document.querySelectorAll('.close-button');
     const windows = document.querySelectorAll('.window');
@@ -7,9 +8,62 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const section = event.target.getAttribute('data-section');
-            openSectionWindow(section, 'Contenido para ' + section); // añadir contenido para cada sección.
+            openSectionWindow(section, 'Contenido para ' + section);
         });
     });
+    // CODIGO PARA VENTANAS PDF LATEX
+    /* (Para crear mas poner un  
+    <a href="#" class="open-window-math" data-pdf="matematicas/Otro_Tema_Matematicas.pdf" data-title="Otro Tema de Matemáticas">Otro Tema de Matemáticas</a>)
+    */
+    document.querySelectorAll('.open-window-math').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault();
+            const pdfURL = link.getAttribute('data-pdf');
+            const title = link.getAttribute('data-title');
+            openMathPDFWindow(pdfURL, title);
+        });
+    });
+
+    function openMathPDFWindow(pdfURL, title) {
+        const windowsContainer = document.body;
+        const newWindow = document.createElement('div');
+        newWindow.classList.add('window', 'pdf-window');
+        newWindow.style.top = '50px';
+        newWindow.style.left = '50%';
+        newWindow.style.transform = 'translateX(-50%)';
+        newWindow.style.width = '95vw';
+        newWindow.style.maxWidth = '1500px';
+        newWindow.style.height = '90vh';
+
+        newWindow.innerHTML = `
+            <div class="title-bar">
+                <span class="title">${title}</span>
+                <button class="close-button">X</button>
+            </div>
+            <div class="content" style="height: calc(100% - 40px); padding: 0;">
+                <div class="pdf-container" style="height: 110%;">
+                    <iframe 
+                        src="${pdfURL}#view=FitH" 
+                        width="100%" 
+                        height="100%"
+                        style="border: none;"
+                        title="${title}"
+                    ></iframe>
+                </div>
+            </div>
+        `;
+
+        windowsContainer.appendChild(newWindow);
+
+        newWindow.querySelector('.close-button').addEventListener('click', () => {
+            newWindow.remove();
+            document.body.style.overflow = '';
+        });
+
+        makeWindowDraggable(newWindow);
+        document.body.style.overflow = 'hidden';
+    }
+
 
     closeButton.forEach(button => {
         button.addEventListener('click', () => {
@@ -18,11 +72,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Añadir funcionalidad de arrastrar a todas las ventanas actuales
     windows.forEach(window => {
         makeWindowDraggable(window);
     });
 });
+
 
 // abrir ventanas de secciones
 function openSectionWindow(section, content) {
