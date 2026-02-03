@@ -3,7 +3,7 @@ body {
             background-color: #ffdbac; /* Amarillo durazno */
             margin: 0;
             overflow: hidden; /* Evita el desplazamiento */
-            background-image: url('./img_decoracion/wallpaper2.png');
+            background-image: url('./img_decoracion/wallpaper_3.png');
             background-size: cover;      /* que cubra todo el fondo */
             background-position: center 10%; /* centrar la imagen */
             background-repeat: no-repeat;/* no repetir la imagen */
@@ -347,3 +347,4 @@ a {
         height: 90vh;
     }
 }
+
