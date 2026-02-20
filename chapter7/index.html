@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scribart — Capítulo 1</title>
+  <title>Scribart — Capítulo 7</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
   <style>
@@ -315,24 +315,75 @@
       .comic-container { padding: 24px 0; gap: 4px; }
       .btn-next { font-size: 18px; padding: 14px 32px; }
     }
-
+.custom-alert {
+  position: fixed; inset: 0;
+  background: rgba(8,7,13,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.3s ease;
+}
+.alert-box {
+  background: var(--surface);
+  border: 2px solid var(--blood);
+  padding: 48px 52px;
+  text-align: center;
+  box-shadow: 8px 8px 0 var(--blood-dim), 0 0 80px var(--glow-red);
+  max-width: 400px; width: 90%;
+}
+.alert-kanji {
+  font-family: var(--font-jp);
+  font-size: 72px; font-weight: 700;
+  color: var(--blood);
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px var(--glow-red);
+}
+.alert-text {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 0.1em;
+  color: var(--white); line-height: 1.6;
+  margin-bottom: 28px;
+}
+.alert-box button {
+  background: transparent; color: var(--blood);
+  border: 2px solid var(--blood);
+  font-family: var(--font-display);
+  font-size: 15px; letter-spacing: 0.25em;
+  padding: 10px 32px; cursor: crosshair;
+  transition: background 0.2s, color 0.2s;
+}
+.alert-box button:hover { background: var(--blood); color: var(--white); }
   </style>
 </head>
+<script>
+  function mostrarMensaje() {
+    const overlay = document.createElement('div');
+    overlay.className = 'custom-alert';
+    overlay.innerHTML = `
+      <div class="alert-box">
+        <div class="alert-kanji">休</div>
+        <p class="alert-text">TÓMATE UN ESPRESSO,<br>ESTAMOS TRABAJANDO EN LO DEMÁS</p>
+        <button onclick="this.closest('.custom-alert').remove()">ENTENDIDO</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+</script>
 <body>
 
   <!-- ── NAV STICKY ── -->
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← Índice</a>
-    <div class="nav-chapter-id">CAPÍTULO 03</div>
-    <a href="../chapter4/index.html" class="nav-next">Cap. 04 →</a>
+    <div class="nav-chapter-id">CAPÍTULO 07</div>
+    -<a href="../chapter8/index.html" class="nav-next">Cap. 08 →</a> 
   </nav>
 
   <!-- ── HERO ── -->
   <div class="chapter-hero">
     <p class="chapter-eyebrow">スクリバート — Scribart</p>
-    <h1 class="chapter-title">CAP. 03</h1>
+    <h1 class="chapter-title">CAP. 07</h1>
     <div class="chapter-line"></div>
-    <p class="chapter-subtitle">Rencores</p>
+    <p class="chapter-subtitle">El filo</p>
   </div>
 
   <!-- ── PÁGINAS DEL CÓMIC ── -->
@@ -358,13 +409,15 @@
     <div class="page-wrapper" data-page="19"><img src="./Page_19.jpg" alt="Página 19"></div>
     <div class="page-wrapper" data-page="20"><img src="./Page_20.jpg" alt="Página 20"></div>
     <div class="page-wrapper" data-page="21"><img src="./Page_21.jpg" alt="Página 21"></div>
+    <div class="page-wrapper" data-page="22"><img src="./Page_22.jpg" alt="Página 22"></div>
+    <div class="page-wrapper" data-page="23"><img src="./Page_23.jpg" alt="Página 23"></div>
   </div>
 
   <!-- ── SIGUIENTE CAPÍTULO ── -->
   <div class="next-chapter-section">
     <p class="next-label">続く — CONTINÚA</p>
-    <a href="../chapter4/index.html" class="btn-next">
-      <span>CAPÍTULO 04</span>
+    <a href="../chapter8/index.html" class="btn-next">
+      <span>CAPÍTULO 08</span>
       <span class="arrow">→</span>
     </a>
     <br>
@@ -374,6 +427,7 @@
   <footer>
     SCRIBART &nbsp;／&nbsp; スクリバート &nbsp;／&nbsp; Todos los derechos reservados
   </footer>
+
 
   <!-- ── SCROLL REVEAL ── -->
   <script>
