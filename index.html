@@ -1,304 +1,337 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAT - Jack Solano</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="styles.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAT — Jack Solano</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="top-right-button" onclick="openMainWindow()"></button>
-    <!-- Este es el contenedor que se usará para insertar el horario FfF-->
-    <div id="horario"></div>
 
-    <div class="window main-window" style="display:none;">
-        <div class="title-bar">
-            <span class="title">Ventana Principal</span>
-            <button class="close-button">X</button> <!-- Botón de cerrar -->
-        </div>
-        <div class="content">
-            <div class="decorative-container left-container">
-                Decoracion
-            </div>
-            <div class="center-content">
-                <h1>Bienvenido a Mi Sitio Math</h1>
-                <div class="aplastador">
-                    <div class="decorative-container x">
-                        <h2>Tabla de Contenidos</h2>
-                        <ol>
-                            <li>
-                               <a href="#" class="open-window-math" data-pdf="matematicas/Sobre_la_Topologia_de_Zarisky.pdf" data-title="Sobre la Topología de Zariski">Sobre la Topología de Zariski</a>
-                            </li> 
-                            <li>
-                                <a href="#" class="open-window-math" data-pdf="matematicas/Axioma_de_Eleccion_implica_Postulado_Kuratowski.pdf" data-title="Axioma_de_Eleccion_implica_Postulado_Kuratowski">Otro Tema de Matemáticas</a>
-                            </li>    
-                            <li>
-                                <a href="#" class="open-window-math" data-pdf="matematicas/Presentacion.pdf" data-title="Presentacion">Presentacion</a>
-                            </li>    
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            <div class="decorative-container right-container">
-                Decoracion
-            </div>
+  <!-- WALLPAPER / DESKTOP -->
+  <div class="desktop">
 
-        </div>
-    </div>
-    
-    <div class="window" style="top: 150px; left: 50px;">
-        <div class="title-bar">
-            <span class="title">Ventana Apertura</span>
-            <button class="close-button">X</button>
-        </div>
-        <div class="content">
-            <p>Bienvenido a mi sitio web reto.</p>
-        </div>
+    <!-- ICONOS DEL ESCRITORIO -->
+    <div class="desktop-icons">
+      <div class="desktop-icon" ondblclick="openMainWindow()">
+        <div class="icon-img">📐</div>
+        <span>Artículos</span>
+      </div>
+      <div class="desktop-icon" ondblclick="openHorario()">
+        <div class="icon-img">📅</div>
+        <span>Horario</span>
+      </div>
+      <div class="desktop-icon" ondblclick="confirmarSalida('/mi-comic')">
+        <div class="icon-img">📖</div>
+        <span>Scribart</span>
+      </div>
+      <div class="desktop-icon" ondblclick="pedirContrasena()">
+        <div class="icon-img">🔒</div>
+        <span>Área Privada</span>
+      </div>
     </div>
 
-    <div class="window" style="top: 300px; left: 70px;">
-        <div class="title-bar">
-            <span class="title">Ventana F   </span>
-            <button class="close-button">X</button>
+    <!-- VENTANA BIENVENIDA (abierta por defecto) -->
+    <div class="win98-window" id="win-bienvenida" style="top:80px; left:60px; width:280px;">
+      <div class="win98-titlebar">
+        <span class="win98-title"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" width="14" height="14" style="margin-right:4px"> Bienvenido</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn close" onclick="closeWin(this)">✕</button>
         </div>
-        <div class="content">
-            <p>No hay prueba para demostrar la veracidad de la Ventana F.</p>
-        </div>
+      </div>
+      <div class="win98-body">
+        <p style="margin-bottom:8px;">👋 Bienvenido a <strong>MAT</strong>.</p>
+        <p style="color:#444; font-size:11px;">Sitio personal de Jack Solano.<br>Doble clic en los iconos para navegar.</p>
+      </div>
     </div>
 
-    <p><a onclick="pedirContrasena()">Ir a Horarios</a></p>
-    <script>
-        function pedirContrasena() {
-            let contrasena = prompt("Ingrese la contraseña:");
-            let claveCorrecta = "057721"; // Cambiar esto por la contraseña
-        
-            if (contrasena === claveCorrecta) {
-                window.location.href = "/subpagina";
-            } else {
-                alert("Contraseña incorrecta. Intente de nuevo.");
-            }
-        }
+    <!-- VENTANA "VENTANA F" -->
+    <div class="win98-window" id="win-f" style="top:220px; left:80px; width:260px;">
+      <div class="win98-titlebar">
+        <span class="win98-title">Ventana F</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn close" onclick="closeWin(this)">✕</button>
+        </div>
+      </div>
+      <div class="win98-body">
+        <p style="font-size:11px; color:#333;">No hay prueba para demostrar la veracidad de la Ventana F.</p>
+      </div>
+    </div>
+
+    <!-- VENTANA PRINCIPAL MATEMÁTICAS -->
+    <div class="win98-window main-window" id="win-main" style="display:none; top:40px; left:50%; transform:translateX(-50%); width:min(900px,95vw);">
+      <div class="win98-titlebar">
+        <span class="win98-title">📄 Artículos — Jack Solano</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn maximize" onclick="toggleMaximize('win-main')">□</button>
+          <button class="win98-btn close" onclick="document.getElementById('win-main').style.display='none'">✕</button>
+        </div>
+      </div>
+      <div class="win98-menubar">
+        <span class="menu-item">Archivo</span>
+        <span class="menu-item">Editar</span>
+        <span class="menu-item">Ver</span>
+        <span class="menu-item">Ayuda</span>
+      </div>
+      <div class="win98-body main-body">
+        <div class="sidebar">
+          <div class="sidebar-section">NAVEGACIÓN</div>
+          <div class="sidebar-item active">📁 Artículos</div>
+        </div>
+        <div class="main-content-area">
+          <div class="win98-toolbar">
+            <span class="toolbar-label">Documentos de matemáticas:</span>
+          </div>
+          <div class="file-list">
+            <div class="file-item" ondblclick="openMathPDFWindow('matematicas/Sobre_la_Topologia_de_Zarisky.pdf','Sobre la Topología de Zariski')">
+              <span class="file-icon">📄</span>
+              <div class="file-info">
+                <span class="file-name">Sobre la Topología de Zariski</span>
+                <span class="file-meta">PDF · Topología</span>
+              </div>
+            </div>
+            <div class="file-item" ondblclick="openMathPDFWindow('matematicas/Axioma_de_Eleccion_implica_Postulado_Kuratowski.pdf','Axioma de Elección → Postulado Kuratowski')">
+              <span class="file-icon">📄</span>
+              <div class="file-info">
+                <span class="file-name">Axioma de Elección → Postulado Kuratowski</span>
+                <span class="file-meta">PDF · Teoría de Conjuntos</span>
+              </div>
+            </div>
+          </div>
+          <div class="statusbar-inner">2 objeto(s)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENTANA HORARIO (se genera dinámicamente) -->
+
+  </div><!-- /desktop -->
+
+  <!-- TASKBAR -->
+  <div class="win98-taskbar">
+    <button class="start-button" onclick="toggleStartMenu()">
+      <span class="start-logo">⊞</span> Inicio
+    </button>
+    <div class="taskbar-divider"></div>
+    <div class="taskbar-tasks" id="taskbar-tasks"></div>
+    <div class="taskbar-tray">
+      <span id="hora-actual" class="tray-clock">00:00</span>
+    </div>
+  </div>
+
+  <!-- MENÚ INICIO -->
+  <div class="start-menu" id="start-menu" style="display:none;">
+    <div class="start-menu-sidebar">
+      <span>Jack Solano</span>
+    </div>
+    <div class="start-menu-items">
+      <div class="start-item" onclick="openMainWindow(); toggleStartMenu()">📄 Artículos</div>
+      <div class="start-item" onclick="openHorario(); toggleStartMenu()">📅 Horario</div>
+      <div class="start-item" onclick="confirmarSalida('/mi-comic'); toggleStartMenu()">📖 Scribart</div>
+      <div class="start-item" onclick="pedirContrasena(); toggleStartMenu()">🔒 Área Privada</div>
+      <div class="start-sep"></div>
+      <div class="start-item" onclick="openWindow(); toggleStartMenu()">💬 Mensaje sistema</div>
+      <div class="start-sep"></div>
+      <div class="start-item shutdown">⏻ Apagar</div>
+    </div>
+  </div>
+
+  <script src="frases.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // ── HORARIO DATA ──────────────────────────────
+    const horarioData = [
+      { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"], "Hora": ["10:00 - 12:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "ALGEBRA MODERNA I", "Día": ["LUNES"], "Hora": ["14:00 - 16:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "SEMINARIO TOPOLOGIA", "Día": ["LUNES"], "Hora": ["16:00 - 18:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["MARTES", "JUEVES"], "Hora": ["6:30 - 12:30", "14:30 - 16:30"], "Ubicacion": ["CONCORDIA", "CONCORDIA"] },
+      { "Actividad": "TRABAJO DE GRADO", "Día": ["MIERCOLES"], "Hora": ["8:00 - 12:00", "14:00 - 17:00"], "Ubicacion": ["DEPENDE DEL DIA", "DEPENDE DEL DIA"] },
+      { "Actividad": "TEORIA DE CONJUNTOS", "Día": ["VIERNES"], "Hora": ["6:00 - 8:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "GEOMETRIA EUCLIDIANA", "Día": ["VIERNES"], "Hora": ["8:00 - 10:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["SABADO"], "Hora": ["DEPENDE DEL DIA"], "Ubicacion": ["DEPENDE DEL DIA"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["DOMINGO"], "Hora": ["7:00 - 13:00"], "Ubicacion": ["GIRON"] },
+      { "Actividad": "WORLD OF WARCRAFT", "Día": ["DOMINGO"], "Hora": ["16:00 - 21:00"], "Ubicacion": ["CUEVA GAMER"] }
+    ];
+
+    // ── RELOJ ─────────────────────────────────────
+    function mostrarHora() {
+      const now = new Date();
+      document.getElementById('hora-actual').textContent =
+        now.getHours().toString().padStart(2,'0') + ':' +
+        now.getMinutes().toString().padStart(2,'0');
+    }
+    mostrarHora();
+    setInterval(mostrarHora, 1000);
+
+    // ── MENÚ INICIO ───────────────────────────────
+    function toggleStartMenu() {
+      const m = document.getElementById('start-menu');
+      m.style.display = m.style.display === 'none' ? 'flex' : 'none';
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.start-button') && !e.target.closest('.start-menu'))
+        document.getElementById('start-menu').style.display = 'none';
+    });
+
+    // ── CERRAR / MINIMIZAR ────────────────────────
+    function closeWin(btn) { btn.closest('.win98-window').style.display = 'none'; }
+    function toggleMinimize(btn) {
+      const body = btn.closest('.win98-window').querySelector('.win98-body, .main-body');
+      if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
+    }
+    function toggleMaximize(id) {
+      const w = document.getElementById(id);
+      if (w.dataset.maximized === '1') {
+        w.style.cssText = w.dataset.prevStyle;
+        w.dataset.maximized = '0';
+      } else {
+        w.dataset.prevStyle = w.style.cssText;
+        w.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:calc(100vh - 40px);z-index:500;display:block;';
+        w.dataset.maximized = '1';
+      }
+    }
+
+    // ── VENTANA PRINCIPAL ─────────────────────────
+    function openMainWindow() {
+      const w = document.getElementById('win-main');
+      w.style.display = 'block';
+      w.style.zIndex = getTopZ();
+      makeWinDraggable(w);
+    }
+
+    // ── HORARIO ───────────────────────────────────
+    function openHorario() {
+      const w = createWindow('📅 Horario', 380, `
+        <p style="margin-bottom:10px;font-weight:bold;">Selecciona un día:</p>
+        <div class="dia-grid">
+          ${["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO","DOMINGO"].map(d =>
+            `<button class="win98-day-btn" onclick="mostrarHorarioDia('${d}')">${d}</button>`
+          ).join('')}
+        </div>
+      `);
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+
+    function mostrarHorarioDia(dia) {
+      const items = horarioData.filter(i => i.Día.includes(dia));
+      const rows = items.length
+        ? items.map(i => {
+            const idx = i.Día.indexOf(dia);
+            return `<tr><td>${i.Actividad}</td><td>${i.Hora[idx]}</td><td>${i.Ubicacion[idx]}</td></tr>`;
+          }).join('')
+        : '<tr><td colspan="3">Sin actividades.</td></tr>';
+
+      const w = createWindow(`📅 ${dia}`, 420, `
+        <table class="schedule-table">
+          <thead><tr><th>Actividad</th><th>Hora</th><th>Lugar</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `);
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+
+    // ── PDF ───────────────────────────────────────
+    function openMathPDFWindow(url, title) {
+      const w = createWindow('📄 ' + title, 860, `
+        <iframe src="${url}#view=FitH" style="width:100%;height:70vh;border:none;display:block;"></iframe>
+      `);
+      w.style.width = 'min(900px, 95vw)';
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+
+    // ── UTILIDADES ────────────────────────────────
+    let zCounter = 100;
+    function getTopZ() { return ++zCounter; }
+
+    function createWindow(title, width, bodyHTML) {
+      const w = document.createElement('div');
+      w.className = 'win98-window';
+      w.style.cssText = `top:${60+Math.random()*80}px;left:${80+Math.random()*120}px;width:${width}px;z-index:${getTopZ()};`;
+      w.innerHTML = `
+        <div class="win98-titlebar">
+          <span class="win98-title">${title}</span>
+          <div class="win98-controls">
+            <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+            <button class="win98-btn close" onclick="this.closest('.win98-window').remove()">✕</button>
+          </div>
+        </div>
+        <div class="win98-body">${bodyHTML}</div>
+      `;
+      w.addEventListener('mousedown', () => w.style.zIndex = getTopZ());
+      return w;
+    }
+
+    function makeWinDraggable(win) {
+      const bar = win.querySelector('.win98-titlebar');
+      let ox, oy;
+      bar.addEventListener('mousedown', e => {
+        ox = e.clientX - win.offsetLeft;
+        oy = e.clientY - win.offsetTop;
+        const mm = e2 => { win.style.left = (e2.clientX-ox)+'px'; win.style.top = (e2.clientY-oy)+'px'; };
+        const mu = () => { document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+        document.addEventListener('mousemove', mm);
+        document.addEventListener('mouseup', mu);
+      });
+    }
+
+    // Hacer arrastrables las ventanas iniciales
+    document.querySelectorAll('.win98-window').forEach(makeWinDraggable);
+    document.querySelectorAll('.win98-window').forEach(w =>
+      w.addEventListener('mousedown', () => w.style.zIndex = getTopZ())
+    );
+
+    // ── CONTRASEÑA ────────────────────────────────
+    function pedirContrasena() {
+      const w = createWindow('🔒 Área Privada', 300, `
+        <p style="margin-bottom:10px;">Ingresa la contraseña:</p>
+        <input type="password" id="pw-input" class="win98-input" placeholder="••••••" style="width:100%;margin-bottom:10px;">
+        <button class="win98-ok-btn" onclick="checkPw()">Aceptar</button>
+        <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
+      `);
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+    function checkPw() {
+      const val = document.getElementById('pw-input').value;
+      if (val === '057721') { window.location.href = '/horarios'; }
+      else {
+        const w = createWindow('⚠ Error', 240, '<p>Contraseña incorrecta.</p><button class="win98-ok-btn" onclick="this.closest(\'.win98-window\').remove()">OK</button>');
+        document.querySelector('.desktop').appendChild(w);
+        makeWinDraggable(w);
+      }
+    }
+
+    // ── MENSAJE SISTEMA ───────────────────────────
+    function openWindow() {
+      if (typeof frasesCulturaPop !== 'undefined') {
+        const msg = frasesCulturaPop[Math.floor(Math.random() * frasesCulturaPop.length)];
+        const w = createWindow('💬 Mensaje del sistema', 300, `<p>${msg}</p><button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">OK</button>`);
+        document.querySelector('.desktop').appendChild(w);
+        makeWinDraggable(w);
+      }
+    }
+    // ── CONFIRMACIÓN SALIDA ───────────────────────
+    function confirmarSalida(destino) {
+      const w = createWindow('⚠ Salir del sistema', 300, `
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;">
+          <span style="font-size:32px;line-height:1;">🖥️</span>
+          <p style="font-size:11px;line-height:1.6;">¿Deseas salir del sistema operativo actual?<br><span style="color:#555;">Se abrirá una aplicación externa.</span></p>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          <button class="win98-ok-btn" onclick="window.location.href='${destino}'">Sí</button>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">No</button>
+        </div>
+      `);
+      w.style.zIndex = 99998;
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
     </script>
-    <p><a href="/mi-comic">Ir a Scribart</a></p>
-    <script src="frases.js"></script>
-    <script src="script.js"></script>
-
-    <div class="taskbar">
-        <button class="taskbar-button" onclick="openWindow()">Mensaje sistema</button>
-        <button class="taskbar-button" onclick="openHorario()">Horario</button>
-        <div id="hora-actual" class="hora"></div>
-    </div>
-
-   
-    <script>
-        const horarioData = [
-  {
-    "Actividad": "FUNDAMENTOS DE MATEMATICAS",
-    "Día": ["LUNES"],
-    "Hora": ["10:00 - 12:00"],
-    "Ubicacion": ["CAMILO TORRES"]
-  },
-  {
-    "Actividad": "ALGEBRA MODERNA I",
-    "Día": ["LUNES"],
-    "Hora": ["14:00 - 16:00"],
-    "Ubicacion": ["CAMILO TORRES"]
-  },
-  {
-    "Actividad": "SEMINARIO TOPOLOGIA",
-    "Día": ["LUNES"],
-    "Hora": ["16:00 - 18:00"],
-    "Ubicacion": ["CAMILO TORRES"]
-  },
-  {
-    "Actividad": "TRABAJO CAMPOLLO",
-    "Día": ["MARTES", "JUEVES"],
-    "Hora": ["6:30 - 12:30", "14:30 - 16:30"],
-    "Ubicacion": ["CONCORDIA", "CONCORDIA"]
-  },
-  {
-    "Actividad": "TRABAJO DE GRADO",
-    "Día": ["MIERCOLES"],
-    "Hora": ["8:00 - 12:00", "14:00 - 17:00"],
-    "Ubicacion": ["DEPENDE DEL DIA", "DEPENDE DEL DIA"]
-  },
-  {
-    "Actividad": "TEORIA DE CONJUNTOS",
-    "Día": ["VIERNES"],
-    "Hora": ["6:00 - 8:00"],
-    "Ubicacion": ["CAMILO TORRES"]
-  },
-  {
-    "Actividad": "GEOMETRIA EUCLIDIANA",
-    "Día": ["VIERNES"],
-    "Hora": ["8:00 - 10:00"],
-    "Ubicacion": ["CAMILO TORRES"]
-  },
-  {
-    "Actividad": "TRABAJO CAMPOLLO",
-    "Día": ["SABADO"],
-    "Hora": ["DEPENDE DEL DIA"],
-    "Ubicacion": ["DEPENDE DEL DIA"]
-  },
-  {
-    "Actividad": "TRABAJO CAMPOLLO",
-    "Día": ["DOMINGO"],
-    "Hora": ["7:00 - 13:00"],
-    "Ubicacion": ["GIRON"]
-  },
-  {
-    "Actividad": "WORLD OF WARCRAFT",
-    "Día": ["DOMINGO"],
-    "Hora": ["16:00 - 21:00"],
-    "Ubicacion": ["CUEVA GAMER"]
-  }
-];
-
-        function openHorario() {
-
-            const windowsContainer = document.body;
-            const newWindow = document.createElement('div');
-            newWindow.classList.add('window');
-            newWindow.style.top = `${Math.random() * (window.innerHeight - 300)}px`;
-            newWindow.style.left = `${Math.random() * (window.innerWidth - 300)}px`;
-            
-            // Estilos CSS para los botones
-            const styles = `
-                <style>
-                    .dia-button {
-                        background-color: #007bff;
-                        color: white;
-                        border: none;
-                        padding: 8px 12px;
-                        margin: 5px;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    }
-                    .dia-button:hover {
-                        background-color: #0056b3;
-                    }
-                    .dias-container {
-                        display: flex;
-                        justify-content: center;
-                        gap: 8px;
-                        margin-top: 10px;
-                    }
-                    .title-bar {
-                        font-weight: bold;
-                        margin-bottom: 10px;
-                        text-align: center;
-                    }
-                </style>
-            `;
-
-
-            // Definir el contenido inicial con los botones de los días
-            const content = `
-                <p>Seleccione un día:</p>
-                <div id="botones-dias">
-                    ${["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SÁBADO", "DOMINGO"].map(dia => 
-                        `<button class="dia-button" onclick="mostrarHorario('${dia}')">${dia}</button>`
-                    ).join('')}
-                </div>
-            `;
-
-            newWindow.innerHTML = `
-                <div class="title-bar">
-                    <span class="title">Horario</span>
-                    <button class="close-button">X</button>
-                </div>
-                <div class="content" id="contenido-ventana">
-                    ${content}
-                </div>
-            `;
-
-            windowsContainer.appendChild(newWindow);
-
-            // Añadir funcionalidad de cierre a la nueva ventana
-            newWindow.querySelector('.close-button').addEventListener('click', () => {
-                newWindow.remove();
-            });
-
-            // Hacer que la nueva ventana sea arrastrable
-            makeWindowDraggable(newWindow);
-
-        }
-
-        function mostrarHorario(dia) {
-            // Buscar actividades del día seleccionado
-            const actividades = horarioData
-                .filter(item => item.Día.includes(dia))
-                .map(item => {
-                    const index = item.Día.indexOf(dia);
-                    return `<li><strong>${item.Actividad}</strong><br>Hora: ${item.Hora[index]}<br>Ubicación: ${item.Ubicacion[index]}</li>`;
-                })
-                .reverse() // Orden descendente
-                .join("");
-
-            // Crear una nueva ventana
-            const windowsContainer = document.body;
-            const newWindow = document.createElement('div');
-            newWindow.classList.add('window');
-            newWindow.style.top = `${Math.random() * (window.innerHeight - 300)}px`;
-            newWindow.style.left = `${Math.random() * (window.innerWidth - 300)}px`;
-
-            // Estilos CSS adicionales para la lista
-            const styles = `
-                <style>
-                    .schedule-list {
-                        list-style-type: decimal;
-                        padding: 10px;
-                        margin: 10px 0;
-                    }
-                    .schedule-list li {
-                        margin-bottom: 10px;
-                    }
-                </style>
-            `;
-
-            // Contenido de la ventana con las actividades en lista ordenada
-            const content = actividades 
-                ? `<ol class="schedule-list">${actividades}</ol>` 
-                : "<p>No hay actividades programadas.</p>";
-
-            newWindow.innerHTML = `
-                ${styles}
-                <div class="title-bar">
-                    <span class="title">Horario de ${dia}</span>
-                    <button class="close-button">X</button>
-                </div>
-                <div class="content">
-                    ${content}
-                </div>
-            `;
-
-            windowsContainer.appendChild(newWindow);
-
-            // Añadir funcionalidad de cierre
-            newWindow.querySelector('.close-button').addEventListener('click', () => {
-                newWindow.remove();
-            });
-
-            // Hacer la ventana arrastrable
-            makeWindowDraggable(newWindow);
-        }
-
-    </script>
-
-
-</body>
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
