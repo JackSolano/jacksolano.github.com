@@ -1,126 +1,391 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cómic - Capítulo 1</title>
-    <style>
-        /* Estilo general */
-        body {
-            background-color: #121212; /* Fondo oscuro */
-            color: #e0e0e0; /* Texto claro */
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scribart — Capítulo 6</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+  <style>
 
-        /* Contenedor principal */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    /* ── TOKENS ──────────────────────────────── */
+    :root {
+      --ink:       #08070d;
+      --deep:      #0f0e18;
+      --surface:   #161422;
+      --panel:     #1c1a2a;
+      --blood:     #c0142a;
+      --blood-dim: #7a0d1b;
+      --ash:       #3e3952;
+      --silver:    #9e98b8;
+      --white:     #f0ece4;
+      --cream:     #d6d0c2;
+      --glow-red:  rgba(192,20,42,0.4);
+      --glow-soft: rgba(192,20,42,0.10);
 
-        /* Encabezados */
-        h1, h2, h3 {
-            color: #ffffff; /* Color de los encabezados */
-        }
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'Barlow Condensed', sans-serif;
+      --font-jp:      'Noto Serif JP', serif;
+    }
 
-        /* Estilos para enlaces */
-        a {
-            color: #bb86fc;
-            text-decoration: none;
-        }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
-        a:hover {
-            color: #03dac6; /* Efecto hover */
-        }
+    body {
+      background-color: var(--ink);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
 
-        /* Estilos para imágenes */
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
+    /* ── FONDO: LÍNEAS DE VELOCIDAD ──────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(255,255,255,0.01) 0.3deg,
+        transparent 0.6deg
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        /* Botones */
-        button {
-            background-color: #03dac6;
-            color: #000000;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-            display: block;
-            margin: 20px auto;
-        }
+    /* ── NAV SUPERIOR ─────────────────────────── */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,7,13,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--ash);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+    }
 
-        button:hover {
-            background-color: #018786;
-        }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--silver);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s, gap 0.2s;
+    }
+    .back-link:hover { color: var(--white); gap: 12px; }
 
-        /* Estilos de navegación */
-        nav {
-            background-color: #1f1f1f;
-            padding: 10px;
-            text-align: center;
-        }
+    .nav-chapter-id {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.15em;
+      color: var(--white);
+    }
 
-        nav a {
-            color: #e0e0e0;
-            margin: 0 15px;
-        }
+    .nav-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--silver);
+      text-decoration: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s, gap 0.2s;
+    }
+    .nav-next:hover { color: var(--blood); gap: 12px; }
 
-        nav a:hover {
-            color: #03dac6;
-        }
+    /* ── HERO DEL CAPÍTULO ────────────────────── */
+    .chapter-hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 60px 20px 48px;
+      border-bottom: 1px solid var(--ash);
+      background: linear-gradient(180deg, var(--deep) 0%, var(--ink) 100%);
+    }
 
-        /* Estilo de pie de página */
-        footer {
-            background-color: #1f1f1f;
-            color: #e0e0e0;
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-        }
-    </style>
-    <script>
-        function mostrarMensaje() {
-            alert("TOMATE UN ESPRESSO, ESTAMOS TRABAJANDO EN LO DEMAS ;)");
-             // Redirige al siguiente capítulo
-        }
-    </script>
+    .chapter-eyebrow {
+      font-family: var(--font-jp);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--blood);
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .chapter-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 12vw, 110px);
+      letter-spacing: 0.06em;
+      line-height: 0.9;
+      color: var(--white);
+      text-shadow:
+        4px 4px 0 var(--blood-dim),
+        0 0 60px var(--glow-red);
+    }
+
+    .chapter-line {
+      width: 48px;
+      height: 3px;
+      background: var(--blood);
+      margin: 20px auto;
+    }
+
+    .chapter-subtitle {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--silver);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ── VIÑETAS / PÁGINAS ────────────────────── */
+    .comic-container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px; /* Separación mínima, estilo páginas de manga */
+    }
+
+    .page-wrapper {
+      position: relative;
+      overflow: hidden;
+      background: var(--deep);
+      /* Panel de cómic: sombra desplazada */
+      box-shadow:
+        4px 4px 0 var(--blood-dim),
+        0 20px 60px rgba(0,0,0,0.7);
+      outline: 2px solid rgba(255,255,255,0.06);
+      outline-offset: -2px;
+      /* Animación de entrada al hacer scroll */
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .page-wrapper.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Número de página flotante */
+    .page-wrapper::after {
+      content: attr(data-page);
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      font-family: var(--font-jp);
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.1em;
+      pointer-events: none;
+    }
+
+    .comic-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      /* Sin padding; las páginas van de borde a borde */
+    }
+
+    /* ── SEPARADOR ENTRE SECCIONES ────────────── */
+    .section-break {
+      text-align: center;
+      padding: 32px 0 20px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      letter-spacing: 0.4em;
+      color: var(--ash);
+    }
+
+    /* ── BOTÓN SIGUIENTE CAPÍTULO ─────────────── */
+    .next-chapter-section {
+      position: relative;
+      z-index: 1;
+      padding: 60px 20px 80px;
+      text-align: center;
+      border-top: 1px solid var(--ash);
+      background: linear-gradient(0deg, var(--deep) 0%, var(--ink) 100%);
+    }
+
+    .next-label {
+      font-family: var(--font-jp);
+      font-size: 12px;
+      color: var(--ash);
+      letter-spacing: 0.3em;
+      margin-bottom: 16px;
+    }
+
+    .btn-next {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+      background: transparent;
+      color: var(--white);
+      border: 2px solid var(--blood);
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      padding: 16px 48px;
+      cursor: crosshair;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s;
+    }
+
+    .btn-next::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--blood);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .btn-next:hover::before { transform: translateX(0); }
+
+    .btn-next span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-next:hover { color: var(--white); }
+
+    .btn-next .arrow {
+      font-size: 24px;
+      transition: transform 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .btn-next:hover .arrow { transform: translateX(6px); }
+
+    /* Texto de vuelta al índice */
+    .back-index {
+      display: inline-block;
+      margin-top: 24px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      color: var(--ash);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .back-index:hover { color: var(--silver); }
+
+    /* ── FOOTER ───────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: var(--deep);
+      border-top: 1px solid var(--ash);
+      text-align: center;
+      padding: 24px;
+      font-family: var(--font-jp);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--ash);
+      letter-spacing: 0.2em;
+    }
+
+    /* ── RESPONSIVE ───────────────────────────── */
+    @media (max-width: 600px) {
+      .top-nav { padding: 12px 16px; }
+      .nav-chapter-id { font-size: 18px; }
+      .comic-container { padding: 24px 0; gap: 4px; }
+      .btn-next { font-size: 18px; padding: 14px 32px; }
+    }
+
+  </style>
 </head>
 <body>
-    <div class="comic-container">
-<!-- Capítulo 1 imágenes -->
-<img src="./img1.jpg" alt="Cómic Imagen 1">
-<img src="./img2.jpg" alt="Cómic Imagen 2">
-<img src="./img4.jpg" alt="Cómic Imagen 3">
-<img src="./img5.jpg" alt="Cómic Imagen 4">
-<img src="./img6.jpg" alt="Cómic Imagen 5">
-<img src="./img7.5.jpg" alt="Cómic Imagen 17">
-<img src="./img7.jpg" alt="Cómic Imagen 6">
-<img src="./img8.jpg" alt="Cómic Imagen 7">
-<img src="./img9.jpg" alt="Cómic Imagen 8">
-<img src="./img10.jpg" alt="Cómic Imagen 9">
-<img src="./img11.jpg" alt="Cómic Imagen 10">
-<img src="./img12.jpg" alt="Cómic Imagen 11">
-<img src="./img13.jpg" alt="Cómic Imagen 12">
-<img src="./img14.jpg" alt="Cómic Imagen 13">
-<img src="./img15.jpg" alt="Cómic Imagen 14">
-<img src="./img16.jpg" alt="Cómic Imagen 15">
-<img src="./img17.jpg" alt="Cómic Imagen 16">
-<img src="./img18.jpg" alt="Cómic Imagen 17">
-<img src="./img19.jpg" alt="Cómic Imagen 18">
-    </div>
 
-    <!-- Botón de siguiente capítulo ARREGLAR --> 
-     <!-- onclick="window.location.href='../capitulo2/index.html'" --> 
-    <button onclick="mostrarMensaje()" >Siguiente capítulo</button>
+  <!-- ── NAV STICKY ── -->
+  <nav class="top-nav">
+    <a href="../index.html" class="back-link">← Índice</a>
+    <div class="nav-chapter-id">CAPÍTULO 06</div>
+    <a href="../chapter7/index.html" class="nav-next">Cap. 07 →</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <div class="chapter-hero">
+    <p class="chapter-eyebrow">スクリバート — Scribart</p>
+    <h1 class="chapter-title">CAP. 06</h1>
+    <div class="chapter-line"></div>
+    <p class="chapter-subtitle">La llegada</p>
+  </div>
+
+  <!-- ── PÁGINAS DEL CÓMIC ── -->
+  <div class="comic-container">
+    <div class="page-wrapper" data-page="01"><img src="./img1.jpg" alt="Página 1"></div>
+    <div class="page-wrapper" data-page="02"><img src="./img2.jpg" alt="Página 2"></div>
+    <div class="page-wrapper" data-page="03"><img src="./img3.jpg" alt="Página 3"></div>
+    <div class="page-wrapper" data-page="04"><img src="./img4.jpg" alt="Página 4"></div>
+    <div class="page-wrapper" data-page="05"><img src="./img5.jpg" alt="Página 5"></div>
+    <div class="page-wrapper" data-page="06"><img src="./img6.jpg" alt="Página 6"></div>
+    <div class="page-wrapper" data-page="07"><img src="./img7.jpg" alt="Página 7"></div>
+    <div class="page-wrapper" data-page="08"><img src="./img8.jpg" alt="Página 8"></div>
+    <div class="page-wrapper" data-page="09"><img src="./img9.jpg" alt="Página 9"></div>
+    <div class="page-wrapper" data-page="10"><img src="./img10.jpg" alt="Página 10"></div>
+    <div class="page-wrapper" data-page="11"><img src="./img11.jpg" alt="Página 11"></div>
+    <div class="page-wrapper" data-page="12"><img src="./img12.jpg" alt="Página 12"></div>
+    <div class="page-wrapper" data-page="13"><img src="./img13.jpg" alt="Página 13"></div>
+    <div class="page-wrapper" data-page="14"><img src="./img14.jpg" alt="Página 14"></div>
+    <div class="page-wrapper" data-page="15"><img src="./img15.jpg" alt="Página 15"></div>
+    <div class="page-wrapper" data-page="16"><img src="./img16.jpg" alt="Página 16"></div>
+    <div class="page-wrapper" data-page="17"><img src="./img17.jpg" alt="Página 17"></div>
+    <div class="page-wrapper" data-page="18"><img src="./img18.jpg" alt="Página 18"></div>
+    <div class="page-wrapper" data-page="19"><img src="./img19.jpg" alt="Página 19"></div>
+  </div>
+
+  <!-- ── SIGUIENTE CAPÍTULO ── -->
+  <div class="next-chapter-section">
+    <p class="next-label">続く — CONTINÚA</p>
+    <a href="../chapter7/index.html" class="btn-next">
+      <span>CAPÍTULO 07</span>
+      <span class="arrow">→</span>
+    </a>
+    <br>
+    <a href="../index.html" class="back-index">↑ Volver al índice</a>
+  </div>
+
+  <footer>
+    SCRIBART &nbsp;／&nbsp; スクリバート &nbsp;／&nbsp; Todos los derechos reservados
+  </footer>
+
+  <!-- ── SCROLL REVEAL ── -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.page-wrapper').forEach(el => observer.observe(el));
+  </script>
+
 </body>
 </html>

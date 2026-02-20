@@ -1,49 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cómic</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scribart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<script>
-    function mostrarMensaje() {
-        alert("TOMATE UN ESPRESSO, ESTAMOS TRABAJANDO EN LO DEMAS ;)");
-         // Redirige al siguiente capítulo
-    }
-</script>
 <body>
 
-    <div class="container">
-        <a href="/..">Página principal</a>
-        <div class="image_container">
-            <img id="imagen" src="imagen1.jpg" alt="Imagen dinámica">
-        </div>
+  <div class="speed-lines" aria-hidden="true"></div>
+  <div class="ink-splatter s1" aria-hidden="true"></div>
+  <div class="ink-splatter s2" aria-hidden="true"></div>
 
-        <h1>Scribart</h1>
-        <p>Selecciona un capítulo para empezar a leer:</p>
-        <ul>
-            <li><a href="chapter1/index.html">Capítulo 1</a></li>
-            <li><a href="chapter2/index.html">Capítulo 2</a></li>
-            <li><a href="chapter3/index.html">Capítulo 3</a></li>
-            <li><a href="chapter4/index.html">Capítulo 4</a></li>
-            <li><a href="chapter5/index.html">Capítulo 5</a></li>
-            <li><a href="chapter6/index.html">Capítulo 6</a></li>
-             <li><a href="chapter7/index.html">Capítulo 7</a></li>
-            <li><a onclick="mostrarMensaje()">ESTAMOS TRABAJANDO</a></li>
-        </ul>
+  <div class="container">
+
+    <nav class="top-nav">
+      <a href="/.." class="back-link">
+        <span class="back-arrow">←</span> Página principal
+      </a>
+      <div class="logo-mark">スクリバート</div>
+    </nav>
+
+    <div class="image_container">
+      <div class="panel-border tl"></div>
+      <div class="panel-border tr"></div>
+      <div class="panel-border bl"></div>
+      <div class="panel-border br"></div>
+      <img id="imagen" src="imagen1.jpg" alt="Portada del cómic">
+      <div class="image-overlay"></div>
+      <div class="chapter-tag">NUEVA ENTREGA</div>
     </div>
 
-    <script>
-        const imagenes = ["imagen1.jpg", "imagen2.jpg", "imagen3.jpg", "imagen4.jpg","imagen5.jpg","imagen6.jpeg","imagen7.jpg","imagen8.jpg","imagen9.jpeg","imagen10.jpg","imagen11.jpeg","imagen12.jpeg"];
-        let indice = 0;
+    <div class="hero-title">
+      <h1>Scribart</h1>
+      <div class="title-slash"></div>
+      <p class="subtitle">Elige tu capítulo. Entra al caos.</p>
+    </div>
 
-        function cambiarImagen() {
-            indice = (indice + 1) % imagenes.length;
-            document.getElementById("imagen").src = imagenes[indice];
-        }
+    <p class="section-label">// CAPÍTULOS //</p>
+    <ul>
+      <li><a href="chapter1/index.html"><span class="ch-num">01</span><span class="ch-title">Capítulo 1</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter2/index.html"><span class="ch-num">02</span><span class="ch-title">Capítulo 2</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter3/index.html"><span class="ch-num">03</span><span class="ch-title">Capítulo 3</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter4/index.html"><span class="ch-num">04</span><span class="ch-title">Capítulo 4</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter5/index.html"><span class="ch-num">05</span><span class="ch-title">Capítulo 5</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter6/index.html"><span class="ch-num">06</span><span class="ch-title">Capítulo 6</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter7/index.html"><span class="ch-num">07</span><span class="ch-title">Capítulo 7</span><span class="ch-arrow">→</span></a></li>
+      <li><a href="chapter8/index.html"><span class="ch-num">07</span><span class="ch-title">Capítulo 8</span><span class="ch-arrow">→</span></a></li>
+      <li class="wip-item"><a onclick="mostrarMensaje()"><span class="ch-num wip">??</span><span class="ch-title">En construcción</span><span class="wip-badge">PRÓXIMAMENTE</span></a></li>
+    </ul>
 
-        setInterval(cambiarImagen, 3000); // Cambia cada 3 segundos
-    </script>
+  </div>
+
+  <script>
+    function mostrarMensaje() {
+      const overlay = document.createElement('div');
+      overlay.className = 'custom-alert';
+      overlay.innerHTML = `
+        <div class="alert-box">
+          <div class="alert-kanji">休</div>
+          <p class="alert-text">TOMATE UN ESPRESSO,<br>ESTAMOS TRABAJANDO EN LO DEMÁS</p>
+          <button onclick="this.closest('.custom-alert').remove()">ENTENDIDO</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    const imagenes = ["imagen1.jpg","imagen2.jpg","imagen3.jpg","imagen4.jpg","imagen5.jpg","imagen6.jpeg","imagen7.jpg","imagen8.jpg","imagen9.jpeg","imagen10.jpg","imagen11.jpeg","imagen12.jpeg"];
+    let indice = 0;
+    const imgEl = document.getElementById("imagen");
+
+    function cambiarImagen() {
+      imgEl.style.opacity = '0';
+      imgEl.style.transform = 'scale(1.06)';
+      setTimeout(() => {
+        indice = (indice + 1) % imagenes.length;
+        imgEl.src = imagenes[indice];
+        imgEl.style.opacity = '1';
+        imgEl.style.transform = 'scale(1)';
+      }, 500);
+    }
+    setInterval(cambiarImagen, 3500);
+  </script>
+</body>
 </html>
-

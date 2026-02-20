@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scribart — Capítulo 1</title>
+  <title>Scribart — Capítulo 8</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
   <style>
@@ -315,62 +315,106 @@
       .comic-container { padding: 24px 0; gap: 4px; }
       .btn-next { font-size: 18px; padding: 14px 32px; }
     }
-
+.custom-alert {
+  position: fixed; inset: 0;
+  background: rgba(8,7,13,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.3s ease;
+}
+.alert-box {
+  background: var(--surface);
+  border: 2px solid var(--blood);
+  padding: 48px 52px;
+  text-align: center;
+  box-shadow: 8px 8px 0 var(--blood-dim), 0 0 80px var(--glow-red);
+  max-width: 400px; width: 90%;
+}
+.alert-kanji {
+  font-family: var(--font-jp);
+  font-size: 72px; font-weight: 700;
+  color: var(--blood);
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px var(--glow-red);
+}
+.alert-text {
+  font-family: var(--font-display);
+  font-size: 18px; letter-spacing: 0.1em;
+  color: var(--white); line-height: 1.6;
+  margin-bottom: 28px;
+}
+.alert-box button {
+  background: transparent; color: var(--blood);
+  border: 2px solid var(--blood);
+  font-family: var(--font-display);
+  font-size: 15px; letter-spacing: 0.25em;
+  padding: 10px 32px; cursor: crosshair;
+  transition: background 0.2s, color 0.2s;
+}
+.alert-box button:hover { background: var(--blood); color: var(--white); }
   </style>
 </head>
+<script>
+  function mostrarMensaje() {
+    const overlay = document.createElement('div');
+    overlay.className = 'custom-alert';
+    overlay.innerHTML = `
+      <div class="alert-box">
+        <div class="alert-kanji">休</div>
+        <p class="alert-text">TÓMATE UN ESPRESSO,<br>ESTAMOS TRABAJANDO EN LO DEMÁS</p>
+        <button onclick="this.closest('.custom-alert').remove()">ENTENDIDO</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+</script>
 <body>
 
   <!-- ── NAV STICKY ── -->
   <nav class="top-nav">
     <a href="../index.html" class="back-link">← Índice</a>
-    <div class="nav-chapter-id">CAPÍTULO 03</div>
-    <a href="../chapter4/index.html" class="nav-next">Cap. 04 →</a>
+    <div class="nav-chapter-id">CAPÍTULO 08</div>
+    <!--<a href="../chapter3/index.html" class="nav-next">Cap. 03 →</a> -->
   </nav>
 
   <!-- ── HERO ── -->
   <div class="chapter-hero">
     <p class="chapter-eyebrow">スクリバート — Scribart</p>
-    <h1 class="chapter-title">CAP. 03</h1>
+    <h1 class="chapter-title">CAP. 08</h1>
     <div class="chapter-line"></div>
-    <p class="chapter-subtitle">Rencores</p>
+    <p class="chapter-subtitle">Silencio</p>
   </div>
 
   <!-- ── PÁGINAS DEL CÓMIC ── -->
   <div class="comic-container">
-    <div class="page-wrapper" data-page="01"><img src="./Page_01.jpg" alt="Página 1"></div>
-    <div class="page-wrapper" data-page="02"><img src="./Page_02.jpg" alt="Página 2"></div>
-    <div class="page-wrapper" data-page="03"><img src="./Page_03.jpg" alt="Página 3"></div>
-    <div class="page-wrapper" data-page="04"><img src="./Page_04.jpg" alt="Página 4"></div>
-    <div class="page-wrapper" data-page="05"><img src="./Page_05.jpg" alt="Página 5"></div>
-    <div class="page-wrapper" data-page="06"><img src="./Page_06.jpg" alt="Página 6"></div>
-    <div class="page-wrapper" data-page="07"><img src="./Page_07.jpg" alt="Página 7"></div>
-    <div class="page-wrapper" data-page="08"><img src="./Page_08.jpg" alt="Página 8"></div>
-    <div class="page-wrapper" data-page="09"><img src="./Page_09.jpg" alt="Página 9"></div>
-    <div class="page-wrapper" data-page="10"><img src="./Page_10.jpg" alt="Página 10"></div>
-    <div class="page-wrapper" data-page="11"><img src="./Page_11.jpg" alt="Página 11"></div>
-    <div class="page-wrapper" data-page="12"><img src="./Page_12.jpg" alt="Página 12"></div>
-    <div class="page-wrapper" data-page="13"><img src="./Page_13.jpg" alt="Página 13"></div>
-    <div class="page-wrapper" data-page="14"><img src="./Page_14.jpg" alt="Página 14"></div>
-    <div class="page-wrapper" data-page="15"><img src="./Page_15.jpg" alt="Página 15"></div>
-    <div class="page-wrapper" data-page="16"><img src="./Page_16.jpg" alt="Página 16"></div>
-    <div class="page-wrapper" data-page="17"><img src="./Page_17.jpg" alt="Página 17"></div>
-    <div class="page-wrapper" data-page="18"><img src="./Page_18.jpg" alt="Página 18"></div>
-    <div class="page-wrapper" data-page="19"><img src="./Page_19.jpg" alt="Página 19"></div>
-    <div class="page-wrapper" data-page="20"><img src="./Page_20.jpg" alt="Página 20"></div>
-    <div class="page-wrapper" data-page="21"><img src="./Page_21.jpg" alt="Página 21"></div>
+    <div class="page-wrapper" data-page="01"><img src="./Page_01.jpeg" alt="Página 1"></div>
+    <div class="page-wrapper" data-page="02"><img src="./Page_02.jpeg" alt="Página 2"></div>
+    <div class="page-wrapper" data-page="03"><img src="./Page_03.jpeg" alt="Página 3"></div>
+    <div class="page-wrapper" data-page="04"><img src="./Page_04.jpeg" alt="Página 4"></div>
+    <div class="page-wrapper" data-page="05"><img src="./Page_05.jpeg" alt="Página 5"></div>
+    <div class="page-wrapper" data-page="06"><img src="./Page_06.jpeg" alt="Página 6"></div>
+    <div class="page-wrapper" data-page="07"><img src="./Page_07.jpeg" alt="Página 7"></div>
+    <div class="page-wrapper" data-page="08"><img src="./Page_08.jpeg" alt="Página 8"></div>
+    <div class="page-wrapper" data-page="09"><img src="./Page_09.jpeg" alt="Página 9"></div>
+    <div class="page-wrapper" data-page="10"><img src="./Page_10.jpeg" alt="Página 10"></div>
+    <div class="page-wrapper" data-page="11"><img src="./Page_11.jpeg" alt="Página 11"></div>
+    <div class="page-wrapper" data-page="12"><img src="./Page_12.jpeg" alt="Página 12"></div>
+    <div class="page-wrapper" data-page="13"><img src="./Page_13.jpeg" alt="Página 13"></div>
+    <div class="page-wrapper" data-page="14"><img src="./Page_14.jpeg" alt="Página 14"></div>
+    <div class="page-wrapper" data-page="15"><img src="./Page_15.jpeg" alt="Página 15"></div>
   </div>
 
-  <!-- ── SIGUIENTE CAPÍTULO ── -->
-  <div class="next-chapter-section">
-    <p class="next-label">続く — CONTINÚA</p>
-    <a href="../chapter4/index.html" class="btn-next">
-      <span>CAPÍTULO 04</span>
-      <span class="arrow">→</span>
-    </a>
-    <br>
-    <a href="../index.html" class="back-index">↑ Volver al índice</a>
-  </div>
-
+<!-- ── SIGUIENTE CAPÍTULO ── -->
+<div class="next-chapter-section">
+  <p class="next-label">続く — FIN DEL CAPÍTULO</p>
+  <button class="btn-next" onclick="mostrarMensaje()">
+    <span>PRÓXIMO CAPÍTULO</span>
+    <span class="arrow">→</span>
+  </button>
+  <br>
+  <a href="../index.html" class="back-index">↑ Volver al índice</a>
+</div>
   <footer>
     SCRIBART &nbsp;／&nbsp; スクリバート &nbsp;／&nbsp; Todos los derechos reservados
   </footer>

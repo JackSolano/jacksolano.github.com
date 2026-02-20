@@ -1,139 +1,447 @@
-/* Estilo general para todo el sitio */
+/* ═══════════════════════════════════════════════
+   SCRIBART — MANGA DARK THEME
+   Estilo: Cómic dramático / tinta y sombra
+═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap');
+
+/* ── TOKENS ──────────────────────────────────── */
+:root {
+  --ink:       #08070d;
+  --deep:      #0f0e18;
+  --surface:   #161422;
+  --panel:     #1c1a2a;
+  --blood:     #c0142a;
+  --blood-dim: #7a0d1b;
+  --ash:       #3e3952;
+  --silver:    #9e98b8;
+  --white:     #f0ece4;
+  --cream:     #d6d0c2;
+  --glow-red:  rgba(192, 20, 42, 0.4);
+  --glow-soft: rgba(192, 20, 42, 0.12);
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'Barlow Condensed', sans-serif;
+  --font-jp:      'Noto Serif JP', serif;
+}
+
+/* ── RESET ───────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── BASE ────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
 body {
-    background-color: #121212; /* Fondo oscuro */
-    color: #e0e0e0; /* Texto claro */
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
+  background-color: var(--ink);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
 }
 
-/* Contenedor principal */
+/* ── SPEED LINES (decorativo de fondo) ────────── */
+.speed-lines {
+  position: fixed;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(255,255,255,0.012) 0.3deg,
+    transparent 0.6deg
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── MANCHAS DE TINTA ─────────────────────────── */
+.ink-splatter {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.ink-splatter.s1 {
+  width: 500px; height: 500px;
+  background: var(--glow-soft);
+  top: -120px; right: -80px;
+}
+.ink-splatter.s2 {
+  width: 350px; height: 350px;
+  background: rgba(192,20,42,0.07);
+  bottom: 100px; left: -100px;
+}
+
+/* ── CONTAINER ───────────────────────────────── */
 .container {
-    max-width: 1200px; /* Aumentar el tamaño máximo */
-    margin: 0 auto;
-    padding: 40px;
-    background-color: #1f1f1f; /* Fondo con un toque gris oscuro */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Sombra sutil para el contenedor */
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
 }
 
-/* Encabezados */
+/* ── NAV SUPERIOR ─────────────────────────────── */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--ash);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--silver);
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.25s, gap 0.25s;
+}
+.back-link:hover {
+  color: var(--white);
+  gap: 12px;
+}
+.back-arrow {
+  font-size: 16px;
+  display: inline-block;
+  transition: transform 0.25s;
+}
+.back-link:hover .back-arrow {
+  transform: translateX(-3px);
+}
+
+.logo-mark {
+  font-family: var(--font-jp);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ash);
+  letter-spacing: 0.05em;
+}
+
+/* ── IMAGEN HERO ──────────────────────────────── */
+.image_container {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  overflow: hidden;
+  margin-bottom: 0;
+  background: var(--deep);
+
+  /* Efecto panel de manga con bordes gruesos */
+  outline: 3px solid var(--white);
+  outline-offset: -3px;
+  box-shadow:
+    8px 8px 0 var(--blood),
+    0 0 60px rgba(0,0,0,0.8);
+}
+
+/* Esquinas decorativas estilo cómic */
+.panel-border {
+  position: absolute;
+  width: 24px; height: 24px;
+  border-color: var(--blood);
+  border-style: solid;
+  z-index: 3;
+}
+.panel-border.tl { top: -3px; left: -3px; border-width: 3px 0 0 3px; }
+.panel-border.tr { top: -3px; right: -3px; border-width: 3px 3px 0 0; }
+.panel-border.bl { bottom: -3px; left: -3px; border-width: 0 0 3px 3px; }
+.panel-border.br { bottom: -3px; right: -3px; border-width: 0 3px 3px 0; }
+
+#imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Gradiente oscuro en la parte inferior de la imagen */
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 40%,
+    rgba(8,7,13,0.7) 80%,
+    var(--ink) 100%
+  );
+  z-index: 1;
+}
+
+/* Tag flotante */
+.chapter-tag {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: var(--blood);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  padding: 5px 12px;
+  z-index: 3;
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%);
+  animation: pulse-tag 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-tag {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── TÍTULO HERO ──────────────────────────────── */
+.hero-title {
+  margin-top: -2px;
+  padding: 32px 0 8px;
+  border-left: 4px solid var(--blood);
+  padding-left: 24px;
+  animation: fadeIn 0.8s ease both;
+}
+
 h1 {
-    color: #e0e0e0; /* Blanco para el título */
-    text-align: center;
-    font-size: 3.5rem; /* Mayor tamaño */
-    font-weight: bold;
-    padding-top: 0%;
-    margin-top: 0%;
+  font-family: var(--font-display);
+  font-size: clamp(72px, 14vw, 120px);
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  color: var(--white);
+  text-shadow:
+    4px 4px 0 var(--blood-dim),
+    0 0 40px var(--glow-red);
 }
 
-/* Estilos para párrafos y textos */
-p {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    text-align: center;
+.title-slash {
+  width: 60px;
+  height: 3px;
+  background: var(--blood);
+  margin: 12px 0;
 }
 
-/* Lista de capítulos */
+.subtitle {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 17px;
+  color: var(--silver);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+/* ── SECTION LABEL ────────────────────────────── */
+.section-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--blood);
+  margin: 36px 0 16px;
+  text-align: left;
+}
+
+/* ── LISTA DE CAPÍTULOS ───────────────────────── */
 ul {
-    list-style-type: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-li a {
-    display: block;
-    padding: 12px;
-    background-color: #333333; /* Fondo gris oscuro para los enlaces */
-    border-radius: 8px; /* Bordes redondeados */
-    color: #bb86fc;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+ul li a {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  text-decoration: none;
+  color: var(--cream);
+  background: var(--surface);
+  border: 1px solid var(--ash);
+  border-left: 3px solid transparent;
+  padding: 14px 20px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
 }
 
-li a:hover {
-    background-color: #03dac6; /* Color cuando pasas el mouse */
-    color: #121212;
-    transform: translateY(-4px); /* Efecto de elevación */
+ul li a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--glow-soft), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
-/* Estilos del enlace "ESTAMOS TRABAJANDO" */
-li a:last-child {
-    background-color: #ff6200; /* Color llamativo para el último enlace */
-    color: #fff;
-    font-weight: normal;
+ul li a:hover {
+  border-left-color: var(--blood);
+  background: var(--panel);
+  color: var(--white);
+  transform: translateX(6px);
 }
 
-li a:last-child:hover {
-    background-color: #e55b00;
+ul li a:hover::before {
+  opacity: 1;
 }
 
-/* Enlace de la página principal */
-a[href="/.."] {
-    display: inline-block;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #bb86fc;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: color 0.3s;
+.ch-num {
+  font-family: var(--font-jp);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blood);
+  min-width: 36px;
+  letter-spacing: 0.05em;
 }
 
-a[href="/.."]:hover {
-    color: #03dac6;
+.ch-title {
+  flex: 1;
+  font-size: 19px;
 }
 
-/* Estilo para el mensaje de alerta */
-button {
-    background-color: #03dac6;
-    color: #000000;
-    border: none;
-    padding: 12px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    display: block;
-    margin: 20px auto;
+.ch-arrow {
+  font-size: 18px;
+  color: var(--ash);
+  transition: color 0.2s, transform 0.2s;
 }
 
-button:hover {
-    background-color: #018786;
+ul li a:hover .ch-arrow {
+  color: var(--blood);
+  transform: translateX(4px);
 }
 
-/* Efecto general de transición para todo el sitio */
-* {
-    transition: all 0.3s ease;
+/* ── ÍTEM "EN CONSTRUCCIÓN" ───────────────────── */
+.wip-item a {
+  border-style: dashed;
+  border-left-style: dashed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-
-img {
-    width: 1000px; /* Ajusta el tamaño según necesites */
-    height: auto;
-    border-radius: 10px;
+.wip-item a:hover {
+  transform: none;
+  border-left-color: #555;
+  background: var(--surface);
+  cursor: not-allowed;
 }
 
-        /* Hacer que el contenedor de la imagen ocupe toda la pantalla */
-        .image_container {
-            margin: auto;
-            padding: 4%;
-            padding-bottom: 0%;
-            width: auto; /* 100% del ancho de la ventana */
-            height: 777px; /* 50% de la altura de la ventana */
-            overflow: hidden; /* Evitar que la imagen se desborde */
-            position: relative; /* Para colocar la imagen dentro de este contenedor */
-        }
+.ch-num.wip {
+  color: var(--ash);
+}
 
-        /* Ajustar la imagen para que se vea bien en la portada */
-        #imagen {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Hace que la imagen cubra el contenedor sin deformarse */
-            object-position: center; /* La imagen empieza desde la parte superior */
-        }
+.wip-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--ash);
+  background: var(--deep);
+  border: 1px solid var(--ash);
+  padding: 3px 10px;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+}
+
+/* ── ALERTA PERSONALIZADA ─────────────────────── */
+.custom-alert {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,7,13,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.3s ease;
+}
+
+.alert-box {
+  background: var(--surface);
+  border: 2px solid var(--blood);
+  padding: 48px 52px;
+  text-align: center;
+  position: relative;
+  box-shadow: 8px 8px 0 var(--blood-dim), 0 0 80px var(--glow-red);
+  max-width: 400px;
+  width: 90%;
+}
+
+.alert-kanji {
+  font-family: var(--font-jp);
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--blood);
+  line-height: 1;
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px var(--glow-red);
+}
+
+.alert-text {
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  line-height: 1.6;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.alert-box button {
+  display: inline-block;
+  background: transparent;
+  color: var(--blood);
+  border: 2px solid var(--blood);
+  font-family: var(--font-display);
+  font-size: 15px;
+  letter-spacing: 0.25em;
+  padding: 10px 32px;
+  cursor: crosshair;
+  transition: background 0.2s, color 0.2s;
+  width: auto;
+  margin: 0 auto;
+}
+
+.alert-box button:hover {
+  background: var(--blood);
+  color: var(--white);
+}
+
+/* ── ANIMACIONES ──────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+ul li {
+  animation: fadeIn 0.5s ease both;
+}
+ul li:nth-child(1) { animation-delay: 0.05s; }
+ul li:nth-child(2) { animation-delay: 0.10s; }
+ul li:nth-child(3) { animation-delay: 0.15s; }
+ul li:nth-child(4) { animation-delay: 0.20s; }
+ul li:nth-child(5) { animation-delay: 0.25s; }
+ul li:nth-child(6) { animation-delay: 0.30s; }
+ul li:nth-child(7) { animation-delay: 0.35s; }
+ul li:nth-child(8) { animation-delay: 0.40s; }
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 24px 20px 60px; }
+  .image_container { height: 300px; }
+  h1 { font-size: 64px; }
+  .logo-mark { display: none; }
+  ul li a { font-size: 17px; }
+}
