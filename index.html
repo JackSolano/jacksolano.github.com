@@ -136,7 +136,7 @@
       <div class="start-sep"></div>
       <div class="start-item" onclick="openWindow(); toggleStartMenu()">💬 Mensaje sistema</div>
       <div class="start-sep"></div>
-      <div class="start-item shutdown">⏻ Apagar</div>
+      <div class="start-item shutdown" onclick="apagarSistema()">⏻ Apagar</div>
     </div>
   </div>
 
@@ -317,6 +317,25 @@
         makeWinDraggable(w);
       }
     }
+    // ── APAGAR ────────────────────────────────────
+    function apagarSistema() {
+      document.getElementById('start-menu').style.display = 'none';
+      const w = createWindow('⏻ Apagar el sistema', 320, `
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <span style="font-size:36px;line-height:1;">🖥️</span>
+          <p style="font-size:11px;line-height:1.7;">¿Deseas apagar el sistema operativo actual?<br>
+          <span style="color:#555;">Se cerrarán todas las ventanas y la pestaña.</span></p>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          <button class="win98-ok-btn" onclick="window.close()">⏻ Apagar</button>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
+        </div>
+      `);
+      w.style.zIndex = 99999;
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+
     // ── CONFIRMACIÓN SALIDA ───────────────────────
     function confirmarSalida(destino) {
       const w = createWindow('⚠ Salir del sistema', 300, `
@@ -333,5 +352,6 @@
       document.querySelector('.desktop').appendChild(w);
       makeWinDraggable(w);
     }
-    </script>
+  </script>
+</body>
 </html>
