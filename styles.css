@@ -30,7 +30,6 @@ body {
   font-family: var(--font-ui);
   font-size: var(--font-size);
   background-color: var(--w98-bg);
-  background-image: url('./img_decoracion/wallpaper_3 (1).png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
