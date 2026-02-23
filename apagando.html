@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Apagando...</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .shutdown-screen {
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .windows-logo {
+      font-size: 64px;
+      margin-bottom: 32px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    .shutdown-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .shutdown-msg {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+
+    /* Barra de progreso estilo Win98 */
+    .progress-outer {
+      width: 280px;
+      height: 20px;
+      border: 2px solid #555;
+      background: #111;
+      margin: 0 auto 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-inner {
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        #000080 0px,
+        #000080 12px,
+        #1084d0 12px,
+        #1084d0 16px
+      );
+      width: 0%;
+      animation: progress 3s linear forwards;
+    }
+
+    @keyframes progress {
+      0%   { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .shutdown-status {
+      font-size: 11px;
+      color: #666;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+
+    /* Mensaje final */
+    .final-msg {
+      display: none;
+      font-size: 14px;
+      color: #888;
+      margin-top: 24px;
+      animation: fadeIn 1s ease;
+    }
+
+    .btn-volver {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 24px;
+      background: transparent;
+      border: 1px solid #444;
+      color: #666;
+      font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif;
+      font-size: 11px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-volver:hover { border-color: #888; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="shutdown-screen">
+    <div class="windows-logo">🖥️</div>
+    <div class="shutdown-title">Apagando MAT...</div>
+    <div class="shutdown-msg">
+      Guardando configuración del sistema.<br>
+      Por favor espere.
+    </div>
+
+    <div class="progress-outer">
+      <div class="progress-inner" id="progress-bar"></div>
+    </div>
+    <div class="shutdown-status" id="status-text">Cerrando programas...</div>
+
+    <div class="final-msg" id="final-msg">
+      <p>Ya puede apagar el equipo.</p>
+      <a href="/" class="btn-volver">← Volver al sistema</a>
+    </div>
+  </div>
+
+  <script>
+    const mensajes = [
+      "Cerrando programas...",
+      "Guardando configuración...",
+      "Cerrando sesión de Jack Solano...",
+      "Apagando servicios del sistema...",
+      "Listo."
+    ];
+
+    const status = document.getElementById('status-text');
+    const final  = document.getElementById('final-msg');
+    let i = 0;
+
+    const interval = setInterval(() => {
+      i++;
+      if (i < mensajes.length) {
+        status.textContent = mensajes[i];
+      } else {
+        clearInterval(interval);
+        status.style.display = 'none';
+        final.style.display = 'block';
+      }
+    }, 700);
+  </script>
+</body>
+</html>
