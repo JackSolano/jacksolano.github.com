@@ -86,23 +86,10 @@
           <div class="win98-toolbar">
             <span class="toolbar-label">Documentos de matemáticas:</span>
           </div>
-          <div class="file-list">
-            <div class="file-item" ondblclick="openMathPDFWindow('matematicas/Sobre_la_Topologia_de_Zarisky.pdf','Sobre la Topología de Zariski')">
-              <span class="file-icon">📄</span>
-              <div class="file-info">
-                <span class="file-name">Sobre la Topología de Zariski</span>
-                <span class="file-meta">PDF · Topología</span>
-              </div>
-            </div>
-            <div class="file-item" ondblclick="openMathPDFWindow('matematicas/Axioma_de_Eleccion_implica_Postulado_Kuratowski.pdf','Axioma de Elección → Postulado Kuratowski')">
-              <span class="file-icon">📄</span>
-              <div class="file-info">
-                <span class="file-name">Axioma de Elección → Postulado Kuratowski</span>
-                <span class="file-meta">PDF · Teoría de Conjuntos</span>
-              </div>
-            </div>
+          <div class="file-list" id="file-list">
+            <div class="file-loading">Cargando artículos...</div>
           </div>
-          <div class="statusbar-inner">2 objeto(s)</div>
+          <div class="statusbar-inner" id="status-count">Cargando...</div>
         </div>
       </div>
     </div>
@@ -317,7 +304,65 @@
         makeWinDraggable(w);
       }
     }
-    // ── APAGAR ────────────────────────────────────
+    // ── GITHUB API: CARGAR PDFs ───────────────────
+    const GITHUB_USER = 'JackSolano';
+    const GITHUB_REPO = 'jacksolano.github.com';
+    const GITHUB_FOLDER = 'matematicas';
+
+    async function cargarPDFsDesdeGitHub() {
+      const fileList = document.getElementById('file-list');
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}`
+        );
+
+        if (!res.ok) throw new Error('No se pudo acceder al repositorio.');
+
+        const archivos = await res.json();
+        const pdfs = archivos.filter(f => f.name.toLowerCase().endsWith('.pdf'));
+
+        if (pdfs.length === 0) {
+          fileList.innerHTML = '<div class="file-loading">No hay PDFs en la carpeta matematicas/</div>';
+          document.getElementById('status-count').textContent = '0 objeto(s)';
+          return;
+        }
+
+        fileList.innerHTML = '';
+        pdfs.forEach(pdf => {
+          const titulo = pdf.name
+            .replace('.pdf', '')
+            .replace(/_/g, ' ')
+            .replace(/-/g, ' ');
+
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <span class="file-name">${titulo}</span>
+              <span class="file-meta">PDF · ${(pdf.size / 1024).toFixed(0)} KB</span>
+            </div>
+          `;
+          // Usar download_url para abrir el PDF directo
+          item.ondblclick = () => openMathPDFWindow(pdf.download_url, titulo);
+          fileList.appendChild(item);
+        });
+
+        document.getElementById('status-count').textContent = `${pdfs.length} objeto(s)`;
+
+      } catch (err) {
+        fileList.innerHTML = `<div class="file-loading" style="color:#800;">Error: ${err.message}</div>`;
+      }
+    }
+
+    // Cargar al abrir la ventana principal
+    const _openMainWindow = openMainWindow;
+    openMainWindow = function() {
+      _openMainWindow();
+      cargarPDFsDesdeGitHub();
+    };
+
+    // ── GITHUB API: CARGAR PDFs ───────────────────
     function apagarSistema() {
       document.getElementById('start-menu').style.display = 'none';
       const w = createWindow('⏻ Apagar el sistema', 320, `
@@ -327,7 +372,7 @@
           <span style="color:#555;">Se cerrarán todas las ventanas y la pestaña.</span></p>
         </div>
         <div style="display:flex;justify-content:center;gap:6px;">
-          <button class="win98-ok-btn" onclick="window.location.href='/apagando.html'">⏻ Apagar</button>
+          <button class="win98-ok-btn" onclick="window.location.href='./apagando.html'">⏻ Apagar</button>
           <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
         </div>
       `);
