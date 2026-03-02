@@ -344,7 +344,10 @@
             </div>
           `;
           // Usar download_url para abrir el PDF directo
-          item.ondblclick = () => openMathPDFWindow(pdf.download_url, titulo);
+          item.ondblclick = () => openMathPDFWindow(
+            `https://docs.google.com/viewer?url=${encodeURIComponent(pdf.download_url)}&embedded=true`,
+            titulo
+          );
           fileList.appendChild(item);
         });
 
