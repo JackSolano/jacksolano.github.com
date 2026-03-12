@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escoba de Kuratowski–Knaster</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0700;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'VT323', monospace;
+  }
+
+  /* CRT scanlines */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 2px,
+      rgba(0,0,0,0.25) 2px, rgba(0,0,0,0.25) 4px
+    );
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  #title {
+    font-family: 'VT323', monospace;
+    font-size: 22px;
+    color: #ff8c00;
+    text-shadow: 0 0 10px #ff6a00, 0 0 24px #ff4500aa;
+    letter-spacing: 0.25em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  #wrap {
+    position: relative;
+  }
+
+  svg { display: block; }
+
+  #subtitle {
+    margin-top: 16px;
+    text-align: center;
+    font-family: 'VT323', monospace;
+    font-size: 26px;
+    color: #ff8c00;
+    text-shadow: 0 0 8px #ff6a00, 0 0 20px #ff450077;
+    letter-spacing: 0.18em;
+  }
+
+  #sub2 {
+    margin-top: 5px;
+    text-align: center;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: #cc5500;
+    letter-spacing: 0.12em;
+    opacity: 0.8;
+  }
+</style>
+</head>
+<body>
+
+<div id="title">Cantor Fan &mdash; Depth 5</div>
+<div id="wrap">
+  <svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+<div id="subtitle">Escoba de Kuratowski–Knaster</div>
+<div id="sub2">Conjunto de Cantor en la base &nbsp;|&nbsp; Ápice en (0.5 , 0.5)</div>
+
+<script>
+// ── Cantor set ─────────────────────────────────────────────────
+function cantorIntervals(depth) {
+  let ivs = [[0, 1]];
+  for (let d = 0; d < depth; d++) {
+    const next = [];
+    for (const [a, b] of ivs) {
+      const t = (b - a) / 3;
+      next.push([a, a + t]);
+      next.push([b - t, b]);
+    }
+    ivs = next;
+  }
+  return ivs;
+}
+
+function cantorPoints(depth, sps) {
+  const ivs = cantorIntervals(depth);
+  const pts = [];
+  for (const [a, b] of ivs) {
+    for (let s = 0; s < sps; s++) {
+      const t = sps === 1 ? 0.5 : s / (sps - 1);
+      pts.push(a + t * (b - a));
+    }
+  }
+  return pts.sort((a, b) => a - b);
+}
+
+// ── Config ─────────────────────────────────────────────────────
+const DEPTH   = 5;
+const SPG     = 6;
+const STEP_MS = 16;
+const PAUSE_MS = 1800;
+
+const W = 700, H = 520;
+const ML = 68, MR = 18, MT = 18, MB = 52;
+const PW = W - ML - MR, PH = H - MT - MB;
+
+const ORANGE      = "#ff8c00";
+const ORANGE_DIM  = "#cc5500";
+const ORANGE_GLOW = "#ff450055";
+const BG          = "#0a0700";
+
+function toSVG(mx, my) {
+  return {
+    x: ML + mx * PW,
+    y: MT + (1 - my / 0.5) * PH
+  };
+}
+
+const svg = document.getElementById("svg");
+svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+svg.setAttribute("width",  W);
+svg.setAttribute("height", H);
+
+function el(tag, attrs, parent) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+// ── Defs: glow filters ─────────────────────────────────────────
+const defs = el("defs", {}, svg);
+
+// line glow
+const fLine = el("filter", {id:"glow-line", x:"-10%", y:"-10%", width:"120%", height:"120%"}, defs);
+el("feGaussianBlur", {stdDeviation:"1.2", result:"blur"}, fLine);
+const fm1 = el("feMerge", {}, fLine);
+el("feMergeNode", {in:"blur"}, fm1); el("feMergeNode", {in:"SourceGraphic"}, fm1);
+
+// axis glow
+const fAx = el("filter", {id:"glow-ax", x:"-5%", y:"-20%", width:"110%", height:"140%"}, defs);
+el("feGaussianBlur", {stdDeviation:"0.8", result:"blur"}, fAx);
+const fm2 = el("feMerge", {}, fAx);
+el("feMergeNode", {in:"blur"}, fm2); el("feMergeNode", {in:"SourceGraphic"}, fm2);
+
+// apex glow
+const fAp = el("filter", {id:"glow-apex", x:"-150%", y:"-150%", width:"400%", height:"400%"}, defs);
+el("feGaussianBlur", {stdDeviation:"5", result:"blur"}, fAp);
+const fm3 = el("feMerge", {}, fAp);
+el("feMergeNode", {in:"blur"}, fm3); el("feMergeNode", {in:"blur"}, fm3); el("feMergeNode", {in:"SourceGraphic"}, fm3);
+
+// ── Background rect ────────────────────────────────────────────
+el("rect", {x:0, y:0, width:W, height:H, fill:BG}, svg);
+
+// ── Border box ─────────────────────────────────────────────────
+const p0 = toSVG(0, 0), p1 = toSVG(1, 0.5);
+el("rect", {
+  x:p0.x, y:p1.y, width:PW, height:PH,
+  fill:"none", stroke:ORANGE_DIM, "stroke-width":"1.2",
+  filter:"url(#glow-ax)"
+}, svg);
+
+// ── Grid ───────────────────────────────────────────────────────
+const gridG = el("g", {}, svg);
+for (let i = 1; i < 10; i++) {
+  const a = toSVG(i/10, 0), b = toSVG(i/10, 0.5);
+  el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"#2a1400","stroke-width":"0.7"},gridG);
+}
+for (let i = 1; i < 10; i++) {
+  const my = i * 0.05;
+  const a = toSVG(0,my), b = toSVG(1,my);
+  el("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:"#2a1400","stroke-width":"0.7"},gridG);
+}
+
+// ── Axes ticks & labels ────────────────────────────────────────
+const tickG = el("g", { filter:"url(#glow-ax)" }, svg);
+
+for (let i = 0; i <= 10; i++) {
+  const mx = i/10, p = toSVG(mx, 0);
+  el("line",{x1:p.x,y1:p.y,x2:p.x,y2:p.y+5,stroke:ORANGE,"stroke-width":"1.1"},tickG);
+  const t = el("text",{x:p.x,y:p.y+18,"text-anchor":"middle",
+    fill:ORANGE,"font-family":"VT323,monospace","font-size":"16"},tickG);
+  t.textContent = mx.toFixed(1);
+}
+
+for (let i = 0; i <= 10; i++) {
+  const my = i * 0.05, p = toSVG(0, my);
+  el("line",{x1:p.x-5,y1:p.y,x2:p.x,y2:p.y,stroke:ORANGE,"stroke-width":"1.1"},tickG);
+  const t = el("text",{x:p.x-8,y:p.y+4,"text-anchor":"end",
+    fill:ORANGE,"font-family":"VT323,monospace","font-size":"16"},tickG);
+  t.textContent = my === 0 ? "0" : my.toFixed(2);
+}
+
+// axis letters
+const xl = el("text",{x:ML+PW/2, y:H-12,"text-anchor":"middle",
+  fill:ORANGE,"font-family":"VT323,monospace","font-size":"19"},svg);
+xl.textContent = "x";
+const yl = el("text",{x:14, y:MT+PH/2,"text-anchor":"middle",
+  fill:ORANGE,"font-family":"VT323,monospace","font-size":"19",
+  transform:`rotate(-90,14,${MT+PH/2})`},svg);
+yl.textContent = "y";
+
+// ── Fan lines ─────────────────────────────────────────────────
+const fanG = el("g", { filter:"url(#glow-line)" }, svg);
+const apex = toSVG(0.5, 0.5);
+
+const baseXs = cantorPoints(DEPTH, SPG);
+
+// colour: deep amber at edges → bright orange at center
+function lineColor(mx) {
+  const d = Math.abs(mx - 0.5) * 2; // 0=center,1=edge
+  // center: #ffaa00, edge: #ff3800
+  const r = 255;
+  const g = Math.round(170 - d * 120);
+  const b = Math.round(d * 10);
+  return `rgb(${r},${g},${b})`;
+}
+
+const lines = baseXs.map(mx => {
+  const bp = toSVG(mx, 0);
+  return el("line", {
+    x1:apex.x, y1:apex.y,
+    x2:bp.x,   y2:bp.y,
+    stroke: lineColor(mx),
+    "stroke-width":"0.85",
+    opacity:"0"
+  }, fanG);
+});
+
+// ── Apex dot ──────────────────────────────────────────────────
+const apG = el("g", {filter:"url(#glow-apex)"}, svg);
+el("circle",{cx:apex.x,cy:apex.y,r:6,fill:ORANGE,opacity:"0.18"},apG);
+el("circle",{cx:apex.x,cy:apex.y,r:3,fill:ORANGE},apG);
+
+// ── Animation ─────────────────────────────────────────────────
+let cur = 0;
+function step() {
+  if (cur < lines.length) {
+    lines[cur].setAttribute("opacity","1");
+    cur++;
+    setTimeout(step, STEP_MS);
+  } else {
+    setTimeout(()=>{
+      lines.forEach(l => l.setAttribute("opacity","0"));
+      cur = 0;
+      setTimeout(step, 120);
+    }, PAUSE_MS);
+  }
+}
+step();
+</script>
+</body>
+</html>
