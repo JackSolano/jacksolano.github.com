@@ -14,7 +14,7 @@
   --orange-glow: rgba(255,140,0,0.18);
   --orange-hi:   #ffb347;
   --black:       #000000;
-  --near-black:  #110900;
+  --near-black:  #000000;
   --text:        #ff8c00;
   --text-dim:    #885500;
   --border-out:  var(--orange-dim) var(--orange-dark) var(--orange-dark) var(--orange-dim);
@@ -38,7 +38,7 @@ html, body { width:100%; height:100%; overflow:hidden; }
 body {
   font-family: var(--font-ui);
   font-size: var(--font-size);
-  background-color: var(--bg);
+  background-color: #000000;
   user-select: none;
   color: var(--text);
   /* CRT phosphor glow on text */
@@ -254,7 +254,7 @@ button, a, .desktop-icon, .start-item, .menu-item,
   width: 160px;
   flex-shrink: 0;
   border-right: 1px solid var(--orange-dark);
-  background: #0d0600;
+  background: #000000;
   overflow-y: auto;
   padding: 4px 0;
 }
@@ -306,7 +306,7 @@ button, a, .desktop-icon, .start-item, .menu-item,
   flex: 1;
   padding: 8px;
   overflow-y: auto;
-  background: #0d0600;
+  background: #000000;
   border: 1px solid var(--orange-dark);
   margin: 6px;
   display: flex;
@@ -412,7 +412,7 @@ button, a, .desktop-icon, .start-item, .menu-item,
   font-size: 12px;
   padding: 4px 6px;
   border: 1px solid var(--orange-dim);
-  background: #0d0600;
+  background: #000000;
   color: var(--orange);
   outline: none;
   display: block;
@@ -452,7 +452,7 @@ button, a, .desktop-icon, .start-item, .menu-item,
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 40px;
-  background: #0d0600;
+  background: #000000;
   border-top: 1px solid var(--orange-dim);
   box-shadow: 0 -2px 12px rgba(255,140,0,0.15);
   display: flex;
@@ -533,7 +533,7 @@ button, a, .desktop-icon, .start-item, .menu-item,
   height: 28px;
   display: flex;
   align-items: center;
-  background: #0d0600;
+  background: #000000;
 }
 
 .tray-clock {
