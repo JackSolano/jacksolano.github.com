@@ -19,12 +19,22 @@
     <span>Win</span> menú inicio
   </div>
 
+<<<<<<< HEAD
+    <!-- ICONOS DEL ESCRITORIO -->
+    <div class="desktop-icons">
+      <div class="desktop-icon" ondblclick="openCollatz()">
+        <div class="icon-img">❄️</div>
+        <span>Collatz</span>
+      </div>
+      <div class="desktop-icon" ondblclick="openMainWindow()">
+=======
   <!-- DESKTOP -->
   <div class="desktop" id="desktop">
 
     <!-- ICONOS -->
     <div class="desktop-icons" id="desktop-icons">
       <div class="desktop-icon" tabindex="0" data-action="openMainWindow" ondblclick="openMainWindow()">
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
         <div class="icon-img">📐</div>
         <span>Artículos</span>
       </div>
@@ -136,23 +146,37 @@
   <script src="frases.js" onerror="window.frasesCulturaPop=[]"></script>
   <script src="script.js" onerror="void 0"></script>
   <script>
-  /* ════════════════════════════════════════════
-     MAT — RetroOS  |  Keyboard Navigation Core
-  ════════════════════════════════════════════ */
-
-  // ── HORARIO DATA ──────────────────────────
-  const horarioData = [
-    { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"],    "Hora": ["10:00 - 12:00"],  "Ubicacion": ["CAMILO TORRES"] },
-    { "Actividad": "ALGEBRA MODERNA I",           "Día": ["LUNES"],    "Hora": ["14:00 - 16:00"],  "Ubicacion": ["CAMILO TORRES"] },
-    { "Actividad": "SEMINARIO TOPOLOGIA",         "Día": ["LUNES"],    "Hora": ["16:00 - 18:00"],  "Ubicacion": ["CAMILO TORRES"] },
-    { "Actividad": "TRABAJO CAMPOLLO",            "Día": ["MARTES","JUEVES"], "Hora": ["6:30 - 12:30","14:30 - 16:30"], "Ubicacion": ["CONCORDIA","CONCORDIA"] },
-    { "Actividad": "TRABAJO DE GRADO",            "Día": ["MIERCOLES"],"Hora": ["8:00 - 12:00","14:00 - 17:00"], "Ubicacion": ["DEPENDE DEL DIA","DEPENDE DEL DIA"] },
-    { "Actividad": "TEORIA DE CONJUNTOS",         "Día": ["VIERNES"],  "Hora": ["6:00 - 8:00"],    "Ubicacion": ["CAMILO TORRES"] },
-    { "Actividad": "GEOMETRIA EUCLIDIANA",        "Día": ["VIERNES"],  "Hora": ["8:00 - 10:00"],   "Ubicacion": ["CAMILO TORRES"] },
-    { "Actividad": "TRABAJO CAMPOLLO",            "Día": ["SABADO"],   "Hora": ["DEPENDE DEL DIA"],"Ubicacion": ["DEPENDE DEL DIA"] },
-    { "Actividad": "TRABAJO CAMPOLLO",            "Día": ["DOMINGO"],  "Hora": ["7:00 - 13:00"],   "Ubicacion": ["GIRON"] },
-    { "Actividad": "WORLD OF WARCRAFT",           "Día": ["DOMINGO"],  "Hora": ["16:00 - 21:00"],  "Ubicacion": ["CUEVA GAMER"] }
-  ];
+    // ── HORARIO DATA ──────────────────────────────
+    const horarioData = [
+      { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"], "Hora": ["10:00 - 12:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "ALGEBRA MODERNA I", "Día": ["LUNES"], "Hora": ["14:00 - 16:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "SEMINARIO TOPOLOGIA", "Día": ["LUNES"], "Hora": ["16:00 - 18:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["MARTES", "JUEVES"], "Hora": ["6:30 - 12:30", "14:30 - 16:30"], "Ubicacion": ["CONCORDIA", "CONCORDIA"] },
+      { "Actividad": "TRABAJO DE GRADO", "Día": ["MIERCOLES"], "Hora": ["8:00 - 12:00", "14:00 - 17:00"], "Ubicacion": ["DEPENDE DEL DIA", "DEPENDE DEL DIA"] },
+      { "Actividad": "TEORIA DE CONJUNTOS", "Día": ["VIERNES"], "Hora": ["6:00 - 8:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "GEOMETRIA EUCLIDIANA", "Día": ["VIERNES"], "Hora": ["8:00 - 10:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["SABADO"], "Hora": ["DEPENDE DEL DIA"], "Ubicacion": ["DEPENDE DEL DIA"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["DOMINGO"], "Hora": ["7:00 - 13:00"], "Ubicacion": ["GIRON"] },
+      { "Actividad": "WORLD OF WARCRAFT", "Día": ["DOMINGO"], "Hora": ["16:00 - 21:00"], "Ubicacion": ["CUEVA GAMER"] }
+    ];
+    //── Collazt ────────────────────────────────────
+    function openCollatz() {
+      const w = createWindow('❄️ Gráfico de Collatz', 620, `
+        <iframe src="collatz.html" style="width:100%;height:500px;border:none;display:block;background:#000;"></iframe>
+      `);
+      w.style.width = 'min(680px, 95vw)';
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+    }
+    // ── RELOJ ─────────────────────────────────────
+    function mostrarHora() {
+      const now = new Date();
+      document.getElementById('hora-actual').textContent =
+        now.getHours().toString().padStart(2,'0') + ':' +
+        now.getMinutes().toString().padStart(2,'0');
+    }
+    mostrarHora();
+    setInterval(mostrarHora, 1000);
 
   // ── RELOJ ─────────────────────────────────
   function mostrarHora() {
@@ -482,16 +506,36 @@
         }
       }
     }
+<<<<<<< HEAD
+    // ── JSON: CARGAR PDFs ─────────────────────────
+    async function cargarPDFsDesdeGitHub() {
+      const fileList = document.getElementById('file-list');
+      try {
+        const res = await fetch('matematicas/index.json');
+        if (!res.ok) throw new Error('No se encontró index.json en matematicas/');
+=======
   });
 
   getIcons().forEach((ic, i) => {
     ic.addEventListener('focus', () => { iconIdx = i; highlightIcon(i); });
     ic.addEventListener('blur',  () => ic.classList.remove('kb-focus'));
   });
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
 
+<<<<<<< HEAD
+        const pdfs = await res.json();
+=======
   // ── Start menu keyboard ───────────────────
   let startMenuIdx = -1;
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
 
+<<<<<<< HEAD
+        if (pdfs.length === 0) {
+          fileList.innerHTML = '<div class="file-loading">No hay artículos disponibles.</div>';
+          document.getElementById('status-count').textContent = '0 objeto(s)';
+          return;
+        }
+=======
   function getStartItems() {
     return [...document.querySelectorAll('#start-menu-items .start-item')];
   }
@@ -499,7 +543,24 @@
   function highlightStartItem() {
     getStartItems().forEach((it, i) => it.classList.toggle('kb-focus', i === startMenuIdx));
   }
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
 
+<<<<<<< HEAD
+        fileList.innerHTML = '';
+        pdfs.forEach(pdf => {
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.innerHTML = `
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <span class="file-name">${pdf.titulo}</span>
+              <span class="file-meta">PDF · ${pdf.tema}</span>
+            </div>
+          `;
+          item.ondblclick = () => openMathPDFWindow(`matematicas/${pdf.archivo}`, pdf.titulo);
+          fileList.appendChild(item);
+        });
+=======
   document.getElementById('start-menu').addEventListener('keydown', e => {
     const items = getStartItems();
     if (e.key === 'ArrowDown') {
@@ -526,6 +587,7 @@
     return [...document.querySelectorAll('.win98-window')]
       .filter(w => w.style.display !== 'none' && w.offsetParent !== null);
   }
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
 
   function cycleWindows(reverse = false) {
     const wins = getVisibleWindows();
@@ -563,6 +625,24 @@
       }
       return;
     }
+<<<<<<< HEAD
+    function apagarSistema() {
+      document.getElementById('start-menu').style.display = 'none';
+      const w = createWindow('⏻ Apagar el sistema', 320, `
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <span style="font-size:36px;line-height:1;">🖥️</span>
+          <p style="font-size:11px;line-height:1.7;">¿Deseas apagar el sistema operativo actual?<br>
+          <span style="color:#555;">Se cerrarán todas las ventanas y la pestaña.</span></p>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          <button class="win98-ok-btn" onclick="window.location.href='./apagando.html'">⏻ Apagar</button>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
+        </div>
+      `);
+      w.style.zIndex = 99999;
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+=======
 
     // Escape → close active window or start menu
     if (e.key === 'Escape') {
@@ -582,6 +662,7 @@
       e.preventDefault();
       cycleWindows(e.shiftKey);
       return;
+>>>>>>> 4b2ca16836e380967838bb85258bf80bcdd601ba
     }
 
     // Ctrl+Win or just ignore in inputs

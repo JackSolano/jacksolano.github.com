@@ -1,0 +1,103 @@
+import numpy as np
+from scipy.interpolate import lagrange
+import matplotlib.pyplot as plt
+
+
+def ingresar_puntos():
+    """Solicita al usuario los puntos (x, y) para la interpolación."""
+    print("=== Interpolación de Lagrange ===\n")
+    n = int(input("¿Cuántos puntos deseas ingresar? "))
+    
+    x_vals = []
+    y_vals = []
+    
+    print("\nIngresa los puntos uno a uno:")
+    for i in range(n):
+        x = float(input(f"  x[{i}] = "))
+        y = float(input(f"  y[{i}] = f(x[{i}]) = "))
+        x_vals.append(x)
+        y_vals.append(y)
+    
+    return np.array(x_vals), np.array(y_vals)
+
+
+def interpolar_y_graficar(x, y):
+    """Construye el polinomio de Lagrange y muestra la gráfica."""
+    
+    # Construir el polinomio interpolador
+    P = lagrange(x, y)
+    
+    print("\n--- Polinomio interpolador de Lagrange ---")
+    print(P)
+    
+    # Evaluar en un punto extra (opcional)
+    evaluar = input("\n¿Deseas evaluar el polinomio en un punto x? (s/n): ").strip().lower()
+    if evaluar == 's':
+        x_eval = float(input("Ingresa el valor de x: "))
+        print(f"  P({x_eval}) = {P(x_eval):.6f}")
+    
+    # Graficar
+    x_plot = np.linspace(min(x) - 0.5, max(x) + 0.5, 500)
+    y_plot = P(x_plot)
+    
+    plt.figure(figsize=(9, 5))
+    plt.plot(x_plot, y_plot, 'b-', linewidth=2, label='Polinomio de Lagrange')
+    plt.scatter(x, y, color='red', zorder=5, s=80, label='Puntos dados')
+    plt.title('Interpolación de Lagrange', fontsize=14)
+    plt.xlabel('x')
+    plt.ylabel('P(x)')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    plt.savefig('interpolacion_lagrange.png', dpi=150)
+    plt.show()
+    print("\nGráfica guardada como 'interpolacion_lagrange.png'")
+
+
+def demo_fenomeno_runge():
+    """Demuestra el fenómeno de Runge con nodos equidistantes."""
+    print("\n=== Demo: Fenómeno de Runge (no convergencia) ===")
+    print("Función: f(x) = 1 / (1 + 25x²)  en [-1, 1]\n")
+    
+    n_nodos = int(input("Número de nodos equidistantes (prueba con 5, 10, 15): "))
+    
+    f = lambda x: 1 / (1 + 25 * x**2)
+    
+    x_nodos = np.linspace(-1, 1, n_nodos)
+    y_nodos = f(x_nodos)
+    
+    P = lagrange(x_nodos, y_nodos)
+    
+    x_plot = np.linspace(-1, 1, 500)
+    y_real = f(x_plot)
+    y_interp = P(x_plot)
+    
+    plt.figure(figsize=(9, 5))
+    plt.plot(x_plot, y_real, 'g-', linewidth=2, label='f(x) real')
+    plt.plot(x_plot, y_interp, 'b--', linewidth=2, label=f'Lagrange ({n_nodos} nodos)')
+    plt.scatter(x_nodos, y_nodos, color='red', zorder=5, s=60, label='Nodos')
+    plt.ylim(-2, 2)
+    plt.title(f'Fenómeno de Runge — {n_nodos} nodos equidistantes', fontsize=13)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.legend()
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    plt.savefig('fenomeno_runge.png', dpi=150)
+    plt.show()
+    print("Gráfica guardada como 'fenomeno_runge.png'")
+
+
+if __name__ == "__main__":
+    print("¿Qué deseas hacer?")
+    print("  1. Interpolación con puntos propios")
+    print("  2. Demo del fenómeno de Runge (no convergencia)")
+    opcion = input("Opción (1/2): ").strip()
+    
+    if opcion == '1':
+        x, y = ingresar_puntos()
+        interpolar_y_graficar(x, y)
+    elif opcion == '2':
+        demo_fenomeno_runge()
+    else:
+        print("Opción no válida.")
