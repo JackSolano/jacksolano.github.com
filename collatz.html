@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Collatz</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #000; font-family: monospace; padding: 12px; }
+    .ctrl { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    input[type=number] {
+      width: 100px; padding: 7px 12px;
+      border: 1px solid #ff8c00; border-radius: 6px;
+      background: #000; color: #ff8c00; font-size: 15px; outline: none;
+    }
+    input[type=number]:focus { border-color: #ffb347; }
+    button {
+      padding: 7px 20px;
+      border: 1px solid #ff8c00; border-radius: 6px;
+      background: transparent; color: #ff8c00;
+      font-size: 15px; cursor: pointer;
+    }
+    button:hover { background: #1a0a00; }
+    canvas { display: block; width: 100%; background: #000; }
+    #info { font-size: 13px; color: #ff8c00; margin-top: 8px; opacity: 0.7; min-height: 18px; }
+  </style>
+</head>
+<body>
+  <div class="ctrl">
+    <input type="number" id="nInput" min="1" value="27" placeholder="número">
+    <button onclick="run()">Graficar</button>
+  </div>
+  <canvas id="cv"></canvas>
+  <div id="info"></div>
+
+  <script>
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+
+    function collatz(x) {
+      const seq = [x];
+      while (x !== 1) {
+        x = (x % 2 === 0) ? x / 2 : 3 * x + 1;
+        seq.push(x);
+      }
+      return seq;
+    }
+
+    function draw(seq) {
+      const dpr = devicePixelRatio || 1;
+      const W = document.body.clientWidth - 24;
+      cv.width = W * dpr;
+      cv.height = Math.round(W * 0.55 * dpr);
+      cv.style.width = W + 'px';
+      cv.style.height = Math.round(W * 0.55) + 'px';
+
+      const cW = cv.width, cH = cv.height;
+      const pad = { l: 52*dpr, r: 20*dpr, t: 20*dpr, b: 40*dpr };
+      const plotW = cW - pad.l - pad.r;
+      const plotH = cH - pad.t - pad.b;
+
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, cW, cH);
+
+      const n = seq.length - 1;
+      const maxVal = Math.max(...seq);
+
+      function toX(step) { return pad.l + (n === 0 ? plotW/2 : (step / n) * plotW); }
+      function toY(val)  { return pad.t + plotH - (val / maxVal) * plotH; }
+
+      // Grid
+      ctx.strokeStyle = '#1a0900';
+      ctx.lineWidth = 0.5 * dpr;
+      const xTicks = Math.min(n, 10);
+      for (let t = 0; t <= xTicks; t++) {
+        const x = toX(Math.round(t * n / xTicks));
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, pad.t + plotH); ctx.stroke();
+      }
+      for (let t = 0; t <= 6; t++) {
+        const y = toY(Math.round(t * maxVal / 6));
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + plotW, y); ctx.stroke();
+      }
+
+      // Ejes
+      ctx.strokeStyle = '#ff8c00';
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, pad.t + plotH);
+      ctx.moveTo(pad.l, pad.t + plotH); ctx.lineTo(pad.l + plotW, pad.t + plotH);
+      ctx.stroke();
+
+      // Etiquetas ejes
+      ctx.fillStyle = '#ff8c00';
+      ctx.font = `${11*dpr}px monospace`;
+      ctx.textAlign = 'center';
+      for (let t = 0; t <= xTicks; t++) {
+        const step = Math.round(t * n / xTicks);
+        ctx.fillText(step, toX(step), pad.t + plotH + 16*dpr);
+      }
+      ctx.textAlign = 'right';
+      for (let t = 0; t <= 6; t++) {
+        const val = Math.round(t * maxVal / 6);
+        ctx.fillText(val, pad.l - 6*dpr, toY(val) + 4*dpr);
+      }
+
+      ctx.font = `${12*dpr}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText('paso', pad.l + plotW/2, cH - 4*dpr);
+      ctx.save();
+      ctx.translate(13*dpr, pad.t + plotH/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('valor', 0, 0);
+      ctx.restore();
+
+      // Línea
+      ctx.beginPath();
+      ctx.strokeStyle = '#ff8c00';
+      ctx.lineWidth = 1.8 * dpr;
+      ctx.lineJoin = 'round';
+      seq.forEach((val, i) => {
+        const x = toX(i), y = toY(val);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Puntos
+      seq.forEach((val, i) => {
+        ctx.beginPath();
+        ctx.arc(toX(i), toY(val), 2.5*dpr, 0, Math.PI*2);
+        ctx.fillStyle = '#ffb347';
+        ctx.fill();
+      });
+
+      // Punto inicial (blanco)
+      ctx.beginPath();
+      ctx.arc(toX(0), toY(seq[0]), 4*dpr, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+    }
+
+    function run() {
+      const n = parseInt(document.getElementById('nInput').value);
+      if (!n || n < 1) return;
+      const seq = collatz(n);
+      draw(seq);
+      document.getElementById('info').textContent =
+        `n = ${n}  ·  ${seq.length - 1} pasos  ·  valor máximo: ${Math.max(...seq)}`;
+    }
+
+    run();
+    window.addEventListener('resize', run);
+  </script>
+</body>
+</html>
