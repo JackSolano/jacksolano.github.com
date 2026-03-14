@@ -24,6 +24,10 @@
 
     <!-- ICONOS -->
     <div class="desktop-icons" id="desktop-icons">
+      <div class="desktop-icon" tabindex="0" data-action="openSysInfo" ondblclick="openSysInfo()">
+        <div class="icon-img">🖥️</div>
+         <span>Sistema</span>
+      </div>
       <div class="desktop-icon" tabindex="0" data-action="openMainWindow" ondblclick="openMainWindow()">
         <div class="icon-img">📐</div>
         <span>Artículos</span>
@@ -126,6 +130,7 @@
   <div class="start-menu" id="start-menu" style="display:none;" role="menu">
     <div class="start-menu-sidebar"><span>Jack Solano</span></div>
     <div class="start-menu-items" id="start-menu-items">
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openSysInfo(); closeStartMenu()">🖥️ Sistema</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openMainWindow(); closeStartMenu()">📄 Artículos</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openHorario(); closeStartMenu()">📅 Horario</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="confirmarSalida('/mi-comic'); closeStartMenu()">📖 Scribart</div>
@@ -140,6 +145,68 @@
 
   <script src="frases.js" onerror="window.frasesCulturaPop=[]"></script>
   <script>
+    // ___ Info ____________________________________
+    function openSysInfo() {
+      const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+      const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+                    'septiembre','octubre','noviembre','diciembre'];
+
+      const w = createWindow('🖥 Información del sistema', 420, `
+        <div id="sysinfo-body" style="font-family:monospace;font-size:12px;"></div>
+      `);
+
+      function row(lbl, val) {
+        return `<div style="display:flex;justify-content:space-between;padding:4px 0;
+          border-bottom:0.5px solid #ddd;">
+          <span style="color:#666">${lbl}</span>
+          <span style="font-weight:500;text-align:right;max-width:55%;word-break:break-all">${val}</span>
+        </div>`;
+      }
+
+      function section(title) {
+        return `<div style="font-size:10px;color:#999;letter-spacing:.08em;text-transform:uppercase;
+          padding:10px 0 4px;border-bottom:1px solid #ccc;margin-top:4px">${title}</div>`;
+      }
+
+      function render() {
+        const n   = new Date();
+        const off = n.getTimezoneOffset();
+        const sign = off <= 0 ? '+' : '-';
+        const uh  = Math.floor(Math.abs(off)/60);
+        const um  = Math.abs(off)%60;
+        const tz  = Intl.DateTimeFormat().resolvedOptions().timeZone || '?';
+
+        document.getElementById('sysinfo-body').innerHTML =
+          section('Fecha y hora') +
+          row('Fecha',      n.getDate() + ' de ' + meses[n.getMonth()] + ' de ' + n.getFullYear()) +
+          row('Hora',       [n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')) +
+          row('Día',        dias[n.getDay()]) +
+          row('Timestamp',  Math.floor(n.getTime()/1000)) +
+          section('Zona horaria e idioma') +
+          row('Zona',       tz) +
+          row('Offset UTC', 'UTC'+sign+String(uh).padStart(2,'0')+':'+String(um).padStart(2,'0')) +
+          row('Idioma',     navigator.language || '?') +
+          section('Pantalla') +
+          row('Resolución', screen.width+'×'+screen.height+' px') +
+          row('Ventana',    window.innerWidth+'×'+window.innerHeight+' px') +
+          row('Pixel ratio',window.devicePixelRatio.toFixed(1)+'x') +
+          section('Hardware y red') +
+          row('CPU núcleos', navigator.hardwareConcurrency || '?') +
+          row('Plataforma',  navigator.platform || '?') +
+          row('Internet',    navigator.onLine ? '✔ conectado' : '✘ sin conexión') +
+          row('Cookies',     navigator.cookieEnabled ? 'habilitadas' : 'deshabilitadas') +
+          section('Navegador') +
+          row('User agent',  navigator.userAgent.substring(0,60)+'…');
+      }
+
+      render();
+      const iv = setInterval(render, 1000);
+      w.addEventListener('remove', () => clearInterval(iv));
+      const obs = new MutationObserver((ml) => {
+        ml.forEach(m => m.removedNodes.forEach(node => { if(node===w) clearInterval(iv); }));
+      });
+      obs.observe(document.querySelector('.desktop'), { childList: true });
+    }
     // ── HORARIO DATA ──────────────────────────────
     const horarioData = [
       { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"], "Hora": ["10:00 - 12:00"], "Ubicacion": ["CAMILO TORRES"] },
