@@ -5,14 +5,458 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scribart</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Serif+JP:wght@300;700&family=Barlow+Condensed:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+
+/* ═══════════════════════════════════════════════
+   SCRIBART — RETRO FANZINE / CRT THEME
+═══════════════════════════════════════════════ */
+
+:root {
+  --ink:        #06060a;
+  --deep:       #0c0c12;
+  --surface:    #111118;
+  --panel:      #18181f;
+  --blood:      #c0142a;
+  --blood-dim:  #7a0d1b;
+  --ash:        #3a3848;
+  --silver:     #7e78a0;
+  --white:      #e8e4d8;
+  --cream:      #c8c2ae;
+  --noise:      rgba(255,255,255,0.03);
+  --glow-red:   rgba(192, 20, 42, 0.35);
+  --glow-soft:  rgba(192, 20, 42, 0.10);
+  --scanline:   rgba(0,0,0,0.55);
+
+  --font-display: 'Oswald', sans-serif;
+  --font-mono:    'Share Tech Mono', monospace;
+  --font-jp:      'Noto Serif JP', serif;
+}
+
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--ink);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* ── SCANLINES CRT ──────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    var(--scanline) 2px,
+    var(--scanline) 3px
+  );
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.18;
+}
+
+/* ── NOISE OVERLAY ──────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+  z-index: 8999;
+  opacity: 0.4;
+}
+
+/* ── MANCHA GLOW ROJO ───────────────────────── */
+.bg-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-glow.g1 {
+  width: 600px; height: 600px;
+  background: var(--glow-soft);
+  top: -200px; right: -150px;
+}
+.bg-glow.g2 {
+  width: 300px; height: 300px;
+  background: rgba(192,20,42,0.05);
+  bottom: 80px; left: -100px;
+}
+
+/* ── CONTAINER ──────────────────────────────── */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 36px 80px;
+}
+
+/* ── NAV ────────────────────────────────────── */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ash);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--silver);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 0.2s, gap 0.2s;
+}
+.back-link:hover { color: var(--white); gap: 12px; }
+.back-arrow { transition: transform 0.2s; }
+.back-link:hover .back-arrow { transform: translateX(-3px); }
+
+.logo-mark {
+  font-family: var(--font-jp);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--ash);
+  letter-spacing: 0.08em;
+}
+
+/* ── IMAGEN HERO ────────────────────────────── */
+.image_container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  background: var(--deep);
+  border: 2px solid var(--white);
+  box-shadow:
+    6px 6px 0 var(--blood),
+    -1px -1px 0 var(--ash);
+}
+
+/* Esquinas tipo cómic */
+.panel-border {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--blood);
+  border-style: solid;
+  z-index: 3;
+}
+.panel-border.tl { top: 4px;  left: 4px;  border-width: 2px 0 0 2px; }
+.panel-border.tr { top: 4px;  right: 4px; border-width: 2px 2px 0 0; }
+.panel-border.bl { bottom: 4px; left: 4px;  border-width: 0 0 2px 2px; }
+.panel-border.br { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
+
+#imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  /* El JS maneja opacity y transform directamente */
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 35%,
+    rgba(6,6,10,0.6) 75%,
+    var(--ink) 100%
+  );
+  z-index: 1;
+}
+
+/* Tag "NUEVA ENTREGA" */
+.chapter-tag {
+  position: absolute;
+  top: 16px; right: 0;
+  background: var(--blood);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  padding: 5px 14px 5px 10px;
+  z-index: 3;
+  animation: blink-tag 2.8s step-end infinite;
+}
+
+@keyframes blink-tag {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── TÍTULO ─────────────────────────────────── */
+.hero-title {
+  margin-top: 0;
+  padding: 28px 0 8px 20px;
+  border-left: 3px solid var(--blood);
+  animation: fadeUp 0.7s ease both;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(68px, 13vw, 112px);
+  letter-spacing: 0.06em;
+  line-height: 0.88;
+  color: var(--white);
+  text-transform: uppercase;
+  text-shadow:
+    3px 3px 0 var(--blood-dim),
+    0 0 50px var(--glow-red);
+}
+
+.title-rule {
+  width: 48px;
+  height: 2px;
+  background: var(--blood);
+  margin: 10px 0;
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--silver);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ── SECTION LABEL ──────────────────────────── */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--blood);
+  margin: 32px 0 12px;
+}
+
+/* ── LISTA CAPÍTULOS ────────────────────────── */
+ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+ul li a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--cream);
+  background: var(--surface);
+  border: 1px solid var(--ash);
+  border-left: 3px solid transparent;
+  padding: 12px 18px;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 18px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: crosshair;
+  position: relative;
+  overflow: hidden;
+  transition: border-left-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
+}
+
+/* Efecto glitch de hover */
+ul li a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--glow-soft) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+ul li a:hover {
+  border-left-color: var(--blood);
+  background: var(--panel);
+  color: var(--white);
+  transform: translateX(5px);
+}
+ul li a:hover::before { opacity: 1; }
+
+.ch-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--blood);
+  min-width: 38px;
+  letter-spacing: 0.05em;
+}
+
+.ch-title {
+  flex: 1;
+  font-size: 17px;
+}
+
+.ch-arrow {
+  font-size: 16px;
+  color: var(--ash);
+  transition: color 0.15s, transform 0.15s;
+  font-family: var(--font-mono);
+}
+ul li a:hover .ch-arrow {
+  color: var(--blood);
+  transform: translateX(4px);
+}
+
+/* ── ÍTEM WIP ───────────────────────────────── */
+.wip-item a {
+  border-style: dashed;
+  border-left-style: dashed;
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: auto; /* JS maneja el click */
+}
+.wip-item a:hover {
+  transform: none;
+  border-left-color: transparent;
+  background: var(--surface);
+  color: var(--cream);
+}
+.wip-item a:hover::before { opacity: 0; }
+
+.ch-num.wip { color: var(--ash); }
+
+.wip-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--ash);
+  border: 1px solid var(--ash);
+  padding: 2px 8px;
+}
+
+/* ── ALERTA ─────────────────────────────────── */
+.custom-alert {
+  position: fixed;
+  inset: 0;
+  background: rgba(6,6,10,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeUp 0.25s ease both;
+}
+
+.alert-box {
+  background: var(--surface);
+  border: 2px solid var(--blood);
+  padding: 44px 48px;
+  text-align: center;
+  position: relative;
+  box-shadow: 6px 6px 0 var(--blood-dim), 0 0 60px var(--glow-red);
+  max-width: 380px;
+  width: 90%;
+}
+
+/* Esquinas decorativas en el alert */
+.alert-box::before,
+.alert-box::after {
+  content: '';
+  position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--blood);
+  border-style: solid;
+}
+.alert-box::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.alert-box::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+
+.alert-kanji {
+  font-family: var(--font-jp);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--blood);
+  line-height: 1;
+  margin-bottom: 18px;
+  text-shadow: 0 0 24px var(--glow-red);
+}
+
+.alert-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  line-height: 1.8;
+  margin-bottom: 28px;
+  text-transform: uppercase;
+}
+
+.alert-box button {
+  background: transparent;
+  color: var(--blood);
+  border: 1px solid var(--blood);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  padding: 8px 28px;
+  cursor: crosshair;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+.alert-box button:hover {
+  background: var(--blood);
+  color: var(--white);
+}
+
+/* ── ANIMACIONES ────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+ul li {
+  animation: fadeUp 0.45s ease both;
+}
+ul li:nth-child(1) { animation-delay: 0.04s; }
+ul li:nth-child(2) { animation-delay: 0.08s; }
+ul li:nth-child(3) { animation-delay: 0.12s; }
+ul li:nth-child(4) { animation-delay: 0.16s; }
+ul li:nth-child(5) { animation-delay: 0.20s; }
+ul li:nth-child(6) { animation-delay: 0.24s; }
+ul li:nth-child(7) { animation-delay: 0.28s; }
+ul li:nth-child(8) { animation-delay: 0.32s; }
+ul li:nth-child(9) { animation-delay: 0.36s; }
+
+/* ── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 600px) {
+  .container { padding: 20px 16px 60px; }
+  .image_container { height: 260px; }
+  h1 { font-size: 60px; }
+  .logo-mark { display: none; }
+  ul li a { font-size: 15px; padding: 11px 14px; }
+}
+  </style>
 </head>
 <body>
 
-  <div class="speed-lines" aria-hidden="true"></div>
-  <div class="ink-splatter s1" aria-hidden="true"></div>
-  <div class="ink-splatter s2" aria-hidden="true"></div>
+  <div class="bg-glow g1" aria-hidden="true"></div>
+  <div class="bg-glow g2" aria-hidden="true"></div>
 
   <div class="container">
 
@@ -28,18 +472,19 @@
       <div class="panel-border tr"></div>
       <div class="panel-border bl"></div>
       <div class="panel-border br"></div>
-      <img id="imagen" src="imagen1.jpg" alt="Portada del cómic" style="transition: opacity 0.5s ease, transform 0.5s ease;">
+      <img id="imagen" src="imagen1.jpg" alt="Portada del cómic">
       <div class="image-overlay"></div>
-      <div class="chapter-tag">NUEVA ENTREGA</div>
+      <div class="chapter-tag">■ NUEVA ENTREGA</div>
     </div>
 
     <div class="hero-title">
       <h1>Scribart</h1>
-      <div class="title-slash"></div>
-      <p class="subtitle">Elige tu capítulo. Entra al caos.</p>
+      <div class="title-rule"></div>
+      <p class="subtitle">// Elige tu capítulo. Entra al caos.</p>
     </div>
 
     <p class="section-label">// CAPÍTULOS //</p>
+
     <ul>
       <li><a href="chapter1/index.html"><span class="ch-num">01</span><span class="ch-title">Capítulo 1</span><span class="ch-arrow">→</span></a></li>
       <li><a href="chapter2/index.html"><span class="ch-num">02</span><span class="ch-title">Capítulo 2</span><span class="ch-arrow">→</span></a></li>
@@ -49,40 +494,82 @@
       <li><a href="chapter6/index.html"><span class="ch-num">06</span><span class="ch-title">Capítulo 6</span><span class="ch-arrow">→</span></a></li>
       <li><a href="chapter7/index.html"><span class="ch-num">07</span><span class="ch-title">Capítulo 7</span><span class="ch-arrow">→</span></a></li>
       <li><a href="chapter8/index.html"><span class="ch-num">08</span><span class="ch-title">Capítulo 8</span><span class="ch-arrow">→</span></a></li>
-      <li class="wip-item"><a onclick="mostrarMensaje()"><span class="ch-num wip">??</span><span class="ch-title">En construcción</span><span class="wip-badge">PRÓXIMAMENTE</span></a></li>
+      <li class="wip-item">
+        <a href="#" onclick="mostrarMensaje(); return false;">
+          <span class="ch-num wip">??</span>
+          <span class="ch-title">En construcción</span>
+          <span class="wip-badge">PRÓXIMAMENTE</span>
+        </a>
+      </li>
     </ul>
 
   </div>
 
   <script>
+    /* ── ALERTA ── */
     function mostrarMensaje() {
       const overlay = document.createElement('div');
       overlay.className = 'custom-alert';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
       overlay.innerHTML = `
         <div class="alert-box">
           <div class="alert-kanji">休</div>
           <p class="alert-text">TOMATE UN ESPRESSO,<br>ESTAMOS TRABAJANDO EN LO DEMÁS</p>
-          <button onclick="this.closest('.custom-alert').remove()">ENTENDIDO</button>
+          <button autofocus>[ ENTENDIDO ]</button>
         </div>
       `;
+      // Cerrar al hacer click fuera del box
+      overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) overlay.remove();
+      });
+      // Cerrar con el botón
+      overlay.querySelector('button').addEventListener('click', function() {
+        overlay.remove();
+      });
+      // Cerrar con Escape
+      document.addEventListener('keydown', function handler(e) {
+        if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
+      });
       document.body.appendChild(overlay);
     }
 
-    const imagenes = ["imagen1.jpg","imagen2.jpg","imagen3.jpg","imagen4.jpg","imagen5.jpg","imagen6.jpg","imagen7.jpg","imagen8.jpg","imagen9.jpg","imagen10.jpg","imagen11.jpg","imagen12.jpg","imagen13.jpg","imagen14.jpg","imagen15.jpg","imagen16.jpg"];
-    let indice = 0;
-    const imgEl = document.getElementById("imagen");
+    /* ── SLIDESHOW DE IMÁGENES ── */
+    (function() {
+      const imagenes = [
+        "imagen1.jpg","imagen2.jpg","imagen3.jpg","imagen4.jpg",
+        "imagen5.jpg","imagen6.jpg","imagen7.jpg","imagen8.jpg",
+        "imagen9.jpg","imagen10.jpg","imagen11.jpg","imagen12.jpg",
+        "imagen13.jpg","imagen14.jpg","imagen15.jpg"
+      ];
+      let indice = 0;
+      const imgEl = document.getElementById("imagen");
 
-    function cambiarImagen() {
-      imgEl.style.opacity = '0';
-      imgEl.style.transform = 'scale(1.06)';
-      setTimeout(() => {
-        indice = (indice + 1) % imagenes.length;
-        imgEl.src = imagenes[indice];
-        imgEl.style.opacity = '1';
-        imgEl.style.transform = 'scale(1)';
-      }, 500);
-    }
-    setInterval(cambiarImagen, 3500);
+      if (!imgEl) return; // Seguridad: si el elemento no existe, no hace nada
+
+      function cambiarImagen() {
+        // Fade out
+        imgEl.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        imgEl.style.opacity = '0';
+        imgEl.style.transform = 'scale(1.06)';
+
+        setTimeout(function() {
+          indice = (indice + 1) % imagenes.length;
+          imgEl.src = imagenes[indice];
+          imgEl.onload = function() {
+            imgEl.style.opacity = '1';
+            imgEl.style.transform = 'scale(1)';
+          };
+          // Fallback si la imagen no carga
+          imgEl.onerror = function() {
+            imgEl.style.opacity = '1';
+            imgEl.style.transform = 'scale(1)';
+          };
+        }, 500);
+      }
+
+      setInterval(cambiarImagen, 3500);
+    })();
   </script>
 </body>
 </html>
