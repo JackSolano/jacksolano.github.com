@@ -3,610 +3,671 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scribart</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@300;700&family=Noto+Serif+JP:wght@300;700&display=swap" rel="stylesheet">
-  <style>
-
-/* ═══════════════════════════════════════════════
-   SCRIBART — RETRO FANZINE / CRT THEME
-═══════════════════════════════════════════════ */
-
-:root {
-  --ink:        #06060a;
-  --deep:       #0c0c12;
-  --surface:    #111118;
-  --panel:      #18181f;
-  --blood:      #c0142a;
-  --blood-dim:  #7a0d1b;
-  --ash:        #3a3848;
-  --silver:     #7e78a0;
-  --white:      #e8e4d8;
-  --cream:      #c8c2ae;
-  --noise:      rgba(255,255,255,0.03);
-  --glow-red:   rgba(192, 20, 42, 0.35);
-  --glow-soft:  rgba(192, 20, 42, 0.10);
-  --scanline:   rgba(0,0,0,0.55);
-
-  --font-display: 'Oswald', sans-serif;
-  --font-mono:    'Share Tech Mono', monospace;
-  --font-jp:      'Noto Serif JP', serif;
-}
-
-*, *::before, *::after {
-  margin: 0; padding: 0;
-  box-sizing: border-box;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  background-color: var(--ink);
-  color: var(--white);
-  font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.5;
-  min-height: 100vh;
-  overflow-x: hidden;
-  cursor: crosshair;
-}
-
-/* ── SCANLINES CRT ──────────────────────────── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 2px,
-    var(--scanline) 2px,
-    var(--scanline) 3px
-  );
-  pointer-events: none;
-  z-index: 9000;
-  opacity: 0.18;
-}
-
-/* ── NOISE OVERLAY ──────────────────────────── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size: 200px 200px;
-  pointer-events: none;
-  z-index: 8999;
-  opacity: 0.4;
-}
-
-/* ── MANCHA GLOW ROJO ───────────────────────── */
-.bg-glow {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(100px);
-  pointer-events: none;
-  z-index: 0;
-}
-.bg-glow.g1 {
-  width: 600px; height: 600px;
-  background: var(--glow-soft);
-  top: -200px; right: -150px;
-}
-.bg-glow.g2 {
-  width: 300px; height: 300px;
-  background: rgba(192,20,42,0.05);
-  bottom: 80px; left: -100px;
-}
-
-/* ── CONTAINER ──────────────────────────────── */
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 28px 36px 80px;
-}
-
-/* ── NAV ────────────────────────────────────── */
-.top-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--ash);
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--silver);
-  text-decoration: none;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  transition: color 0.2s, gap 0.2s;
-}
-.back-link:hover { color: var(--white); gap: 12px; }
-.back-arrow { transition: transform 0.2s; }
-.back-link:hover .back-arrow { transform: translateX(-3px); }
-
-.logo-mark {
-  font-family: var(--font-jp);
-  font-size: 12px;
-  font-weight: 300;
-  color: var(--ash);
-  letter-spacing: 0.08em;
-}
-
-/* ── IMAGEN HERO ────────────────────────────── */
-.image_container {
-  position: relative;
-  width: 100%;
-  height: 500px;
-  overflow: hidden;
-  background: var(--deep);
-  border: 2px solid var(--white);
-  box-shadow:
-    6px 6px 0 var(--blood),
-    -1px -1px 0 var(--ash);
-}
-
-/* Esquinas tipo cómic */
-.panel-border {
-  position: absolute;
-  width: 20px; height: 20px;
-  border-color: var(--blood);
-  border-style: solid;
-  z-index: 3;
-}
-.panel-border.tl { top: 4px;  left: 4px;  border-width: 2px 0 0 2px; }
-.panel-border.tr { top: 4px;  right: 4px; border-width: 2px 2px 0 0; }
-.panel-border.bl { bottom: 4px; left: 4px;  border-width: 0 0 2px 2px; }
-.panel-border.br { bottom: 4px; right: 4px; border-width: 0 2px 2px 0; }
-
-#imagen {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-}
-
-.image-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent 35%,
-    rgba(6,6,10,0.6) 75%,
-    var(--ink) 100%
-  );
-  z-index: 1;
-}
-
-/* Tag "NUEVA ENTREGA" */
-.chapter-tag {
-  position: absolute;
-  top: 16px; right: 0;
-  background: var(--blood);
-  color: var(--white);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.25em;
-  padding: 5px 14px 5px 10px;
-  z-index: 3;
-  animation: blink-tag 2.8s step-end infinite;
-}
-
-@keyframes blink-tag {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
-}
-
-/* ── TÍTULO ─────────────────────────────────── */
-.hero-title {
-  margin-top: 0;
-  padding: 28px 0 8px 20px;
-  border-left: 3px solid var(--blood);
-  animation: fadeUp 0.7s ease both;
-}
-
-h1 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(68px, 13vw, 112px);
-  letter-spacing: 0.06em;
-  line-height: 0.88;
-  color: var(--white);
-  text-transform: uppercase;
-  text-shadow:
-    3px 3px 0 var(--blood-dim),
-    0 0 50px var(--glow-red);
-}
-
-.title-rule {
-  width: 48px;
-  height: 2px;
-  background: var(--blood);
-  margin: 10px 0;
-}
-
-.subtitle {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--silver);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-/* ── SECTION LABEL ──────────────────────────── */
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: var(--blood);
-  margin: 32px 0 12px;
-}
-
-/* ── LISTA CAPÍTULOS ────────────────────────── */
-ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-ul li a {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: var(--cream);
-  background: var(--surface);
-  border: 1px solid var(--ash);
-  border-left: 3px solid transparent;
-  padding: 12px 18px;
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 18px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: crosshair;
-  position: relative;
-  overflow: hidden;
-  transition: border-left-color 0.15s, background 0.15s, color 0.15s, transform 0.15s;
-}
-
-ul li a::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--glow-soft) 0%, transparent 60%);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-ul li a:hover {
-  border-left-color: var(--blood);
-  background: var(--panel);
-  color: var(--white);
-  transform: translateX(5px);
-}
-ul li a:hover::before { opacity: 1; }
-
-.ch-num {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--blood);
-  min-width: 38px;
-  letter-spacing: 0.05em;
-}
-
-.ch-title {
-  flex: 1;
-  font-size: 17px;
-}
-
-.ch-arrow {
-  font-size: 16px;
-  color: var(--ash);
-  transition: color 0.15s, transform 0.15s;
-  font-family: var(--font-mono);
-}
-ul li a:hover .ch-arrow {
-  color: var(--blood);
-  transform: translateX(4px);
-}
-
-/* ── ÍTEM WIP ───────────────────────────────── */
-.wip-item a {
-  border-style: dashed;
-  border-left-style: dashed;
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: auto;
-}
-.wip-item a:hover {
-  transform: none;
-  border-left-color: transparent;
-  background: var(--surface);
-  color: var(--cream);
-}
-.wip-item a:hover::before { opacity: 0; }
-
-.ch-num.wip { color: var(--ash); }
-
-.wip-badge {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.2em;
-  color: var(--ash);
-  border: 1px solid var(--ash);
-  padding: 2px 8px;
-}
-
-/* ── SOCIAL BAR ────────────────────────────── */
-.social-bar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid var(--ash);
-}
-
-.social-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--ash);
-  color: var(--silver);
-  text-decoration: none;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-  cursor: crosshair;
-}
-
-.social-icon-btn:hover {
-  border-color: var(--blood);
-  color: var(--white);
-  background: var(--blood-dim);
-}
-
-/* ── ALERTA ─────────────────────────────────── */
-.custom-alert {
-  position: fixed;
-  inset: 0;
-  background: rgba(6,6,10,0.88);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  backdrop-filter: blur(4px);
-  animation: fadeUp 0.25s ease both;
-}
-
-.alert-box {
-  background: var(--surface);
-  border: 2px solid var(--blood);
-  padding: 44px 48px;
-  text-align: center;
-  position: relative;
-  box-shadow: 6px 6px 0 var(--blood-dim), 0 0 60px var(--glow-red);
-  max-width: 380px;
-  width: 90%;
-}
-
-.alert-box::before,
-.alert-box::after {
-  content: '';
-  position: absolute;
-  width: 12px; height: 12px;
-  border-color: var(--blood);
-  border-style: solid;
-}
-.alert-box::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
-.alert-box::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
-
-.alert-kanji {
-  font-family: var(--font-jp);
-  font-size: 64px;
-  font-weight: 700;
-  color: var(--blood);
-  line-height: 1;
-  margin-bottom: 18px;
-  text-shadow: 0 0 24px var(--glow-red);
-}
-
-.alert-text {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  color: var(--white);
-  line-height: 1.8;
-  margin-bottom: 28px;
-  text-transform: uppercase;
-}
-
-.alert-box button {
-  background: transparent;
-  color: var(--blood);
-  border: 1px solid var(--blood);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  padding: 8px 28px;
-  cursor: crosshair;
-  text-transform: uppercase;
-  transition: background 0.15s, color 0.15s;
-}
-.alert-box button:hover {
-  background: var(--blood);
-  color: var(--white);
-}
-
-/* ── ANIMACIONES ────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-ul li {
-  animation: fadeUp 0.45s ease both;
-}
-ul li:nth-child(1) { animation-delay: 0.04s; }
-ul li:nth-child(2) { animation-delay: 0.08s; }
-ul li:nth-child(3) { animation-delay: 0.12s; }
-ul li:nth-child(4) { animation-delay: 0.16s; }
-ul li:nth-child(5) { animation-delay: 0.20s; }
-ul li:nth-child(6) { animation-delay: 0.24s; }
-ul li:nth-child(7) { animation-delay: 0.28s; }
-ul li:nth-child(8) { animation-delay: 0.32s; }
-ul li:nth-child(9) { animation-delay: 0.36s; }
-
-/* ── RESPONSIVE ─────────────────────────────── */
-@media (max-width: 600px) {
-  .container { padding: 20px 16px 60px; }
-  .image_container { height: 260px; }
-  h1 { font-size: 60px; }
-  .logo-mark { display: none; }
-  ul li a { font-size: 15px; padding: 11px 14px; }
-}
-  </style>
+  <title>MAT — Jack Solano</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <div class="bg-glow g1" aria-hidden="true"></div>
-  <div class="bg-glow g2" aria-hidden="true"></div>
-
-  <div class="container">
-
-    <nav class="top-nav">
-      <a href="/.." class="back-link">
-        <span class="back-arrow">←</span> Página principal
-      </a>
-      <div class="logo-mark">スクリバート</div>
-    </nav>
-
-    <div class="image_container">
-      <div class="panel-border tl"></div>
-      <div class="panel-border tr"></div>
-      <div class="panel-border bl"></div>
-      <div class="panel-border br"></div>
-      <img id="imagen" src="imagen1.jpg" alt="Portada del cómic">
-      <div class="image-overlay"></div>
-      <div class="chapter-tag">■ NUEVA ENTREGA</div>
-    </div>
-
-    <div class="hero-title">
-      <h1>Scribart</h1>
-      <div class="title-rule"></div>
-      <p class="subtitle">// Elige tu capítulo. Entra al caos.</p>
-    </div>
-
-    <p class="section-label">// CAPÍTULOS //</p>
-
-    <ul>
-      <li><a href="chapter1/index.html"><span class="ch-num">01</span><span class="ch-title">Capítulo 1</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter2/index.html"><span class="ch-num">02</span><span class="ch-title">Capítulo 2</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter3/index.html"><span class="ch-num">03</span><span class="ch-title">Capítulo 3</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter4/index.html"><span class="ch-num">04</span><span class="ch-title">Capítulo 4</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter5/index.html"><span class="ch-num">05</span><span class="ch-title">Capítulo 5</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter6/index.html"><span class="ch-num">06</span><span class="ch-title">Capítulo 6</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter7/index.html"><span class="ch-num">07</span><span class="ch-title">Capítulo 7</span><span class="ch-arrow">→</span></a></li>
-      <li><a href="chapter8/index.html"><span class="ch-num">08</span><span class="ch-title">Capítulo 8</span><span class="ch-arrow">→</span></a></li>
-      <li class="wip-item">
-        <a href="#" onclick="mostrarMensaje(); return false;">
-          <span class="ch-num wip">??</span>
-          <span class="ch-title">En construcción</span>
-          <span class="wip-badge">PRÓXIMAMENTE</span>
-        </a>
-      </li>
-    </ul>
-
-    <!-- ── REDES SOCIALES ───────────────────── -->
-    <div class="social-bar">
-      <span class="section-label" style="margin:0"></span>
-      <a
-        href="https://www.instagram.com/quimerido/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-icon-btn"
-        aria-label="Instagram del autor"
-      >
-        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-      </a>
-    </div>
-
+  <!-- KEYBOARD HINTS -->
+  <div id="kb-hint">
+    <span>Tab</span> ventanas &nbsp;
+    <span>↑↓←→</span> iconos / menú<br>
+    <span>Enter</span> abrir &nbsp;
+    <span>Esc</span> cerrar &nbsp;
+    <span>Alt+F4</span> cerrar activa<br>
+    <span>Win</span> menú inicio
   </div>
 
-  <script>
-    /* ── ALERTA ── */
-    function mostrarMensaje() {
-      const overlay = document.createElement('div');
-      overlay.className = 'custom-alert';
-      overlay.setAttribute('role', 'dialog');
-      overlay.setAttribute('aria-modal', 'true');
-      overlay.innerHTML = `
-        <div class="alert-box">
-          <div class="alert-kanji">休</div>
-          <p class="alert-text">TOMATE UN ESPRESSO,<br>ESTAMOS TRABAJANDO EN LO DEMÁS</p>
-          <button autofocus>[ ENTENDIDO ]</button>
+  <!-- DESKTOP -->
+  <div class="desktop" id="desktop">
+
+    <!-- ICONOS -->
+    <div class="desktop-icons" id="desktop-icons">
+      <div class="desktop-icon" tabindex="0" data-action="openSysInfo" ondblclick="openSysInfo()">
+        <div class="icon-img">🖥️</div>
+         <span>Sistema</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="openMainWindow" ondblclick="openMainWindow()">
+        <div class="icon-img">📐</div>
+        <span>Artículos</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="openHorario" ondblclick="openHorario()">
+        <div class="icon-img">📅</div>
+        <span>Horario</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="openScribart" ondblclick="confirmarSalida('/mi-comic')">
+        <div class="icon-img">📖</div>
+        <span>Scribart</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="pedirContrasena" ondblclick="pedirContrasena()">
+        <div class="icon-img">🔒</div>
+        <span>Área Privada</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="openCollatz" ondblclick="openCollatz()">
+        <div class="icon-img">❄️</div>
+        <span>Collatz</span>
+      </div>
+    </div>
+
+    <!-- VENTANA BIENVENIDA -->
+    <div class="win98-window" id="win-bienvenida" style="top:80px; left:200px; width:300px;">
+      <div class="win98-titlebar">
+        <span class="win98-title">⚡ Bienvenido</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" title="Minimizar" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn close"    title="Cerrar"    onclick="closeWin(this)">✕</button>
         </div>
-      `;
-      overlay.addEventListener('click', function(e) {
-        if (e.target === overlay) overlay.remove();
-      });
-      overlay.querySelector('button').addEventListener('click', function() {
-        overlay.remove();
-      });
-      document.addEventListener('keydown', function handler(e) {
-        if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', handler); }
-      });
-      document.body.appendChild(overlay);
-    }
+      </div>
+      <div class="win98-body">
+        <p style="margin-bottom:8px;">👋 Bienvenido a <strong>MAT</strong>.</p>
+        <p style="color:var(--text-dim); font-size:11px;">Sitio personal de Jack Solano.<br>Doble clic en los iconos para navegar.<br>Usa <strong>Tab</strong> y las flechas del teclado.</p>
+      </div>
+    </div>
 
-    /* ── SLIDESHOW DE IMÁGENES ── */
-    (function() {
-      const imagenes = [
-        "imagen1.jpg","imagen2.jpg","imagen3.jpg","imagen4.jpg",
-        "imagen5.jpg","imagen6.jpg","imagen7.jpg","imagen8.jpg",
-        "imagen9.jpg","imagen10.jpg","imagen11.jpg","imagen12.jpg",
-        "imagen13.jpg","imagen14.jpg","imagen15.jpg"
-      ];
-      let indice = 0;
-      const imgEl = document.getElementById("imagen");
+    <!-- VENTANA F -->
+    <div class="win98-window" id="win-f" style="top:280px; left:220px; width:280px;">
+      <div class="win98-titlebar">
+        <span class="win98-title">⚠ Ventana F</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn close"    onclick="closeWin(this)">✕</button>
+        </div>
+      </div>
+      <div class="win98-body">
+        <p style="font-size:11px;">No hay prueba para demostrar la veracidad de la Ventana F.</p>
+      </div>
+    </div>
 
-      if (!imgEl) return;
+    <!-- VENTANA PRINCIPAL -->
+    <div class="win98-window main-window" id="win-main" style="display:none; top:40px; left:50%; transform:translateX(-50%); width:min(900px,95vw);">
+      <div class="win98-titlebar">
+        <span class="win98-title">📄 Artículos — Jack Solano</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn maximize" onclick="toggleMaximize('win-main')">□</button>
+          <button class="win98-btn close"    onclick="document.getElementById('win-main').style.display='none'; updateTaskbar()">✕</button>
+        </div>
+      </div>
+      <div class="win98-menubar">
+        <span class="menu-item" tabindex="0">Archivo</span>
+        <span class="menu-item" tabindex="0">Editar</span>
+        <span class="menu-item" tabindex="0">Ver</span>
+        <span class="menu-item" tabindex="0">Ayuda</span>
+      </div>
+      <div class="win98-body main-body">
+        <div class="sidebar">
+          <div class="sidebar-section">NAVEGACIÓN</div>
+          <div class="sidebar-item active" tabindex="0">📁 Artículos</div>
+        </div>
+        <div class="main-content-area">
+          <div class="win98-toolbar">
+            <span class="toolbar-label">Documentos de matemáticas:</span>
+          </div>
+          <div class="file-list" id="file-list">
+            <div class="file-loading">Cargando artículos...</div>
+          </div>
+          <div class="statusbar-inner" id="status-count">Cargando...</div>
+        </div>
+      </div>
+    </div>
 
-      function cambiarImagen() {
-        imgEl.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-        imgEl.style.opacity = '0';
-        imgEl.style.transform = 'scale(1.06)';
+  </div><!-- /desktop -->
 
-        setTimeout(function() {
-          indice = (indice + 1) % imagenes.length;
-          imgEl.src = imagenes[indice];
-          imgEl.onload = function() {
-            imgEl.style.opacity = '1';
-            imgEl.style.transform = 'scale(1)';
-          };
-          imgEl.onerror = function() {
-            imgEl.style.opacity = '1';
-            imgEl.style.transform = 'scale(1)';
-          };
-        }, 500);
+  <!-- TASKBAR -->
+  <div class="win98-taskbar">
+    <button class="start-button" id="start-btn" onclick="toggleStartMenu()" title="Menú Inicio [Win]">
+      <span class="start-logo">⊞</span> Inicio
+    </button>
+    <div class="taskbar-divider"></div>
+    <div class="taskbar-tasks" id="taskbar-tasks"></div>
+    <div class="taskbar-tray">
+      <span id="hora-actual" class="tray-clock">00:00</span>
+    </div>
+  </div>
+
+  <!-- MENÚ INICIO -->
+  <div class="start-menu" id="start-menu" style="display:none;" role="menu">
+    <div class="start-menu-sidebar"><span>Jack Solano</span></div>
+    <div class="start-menu-items" id="start-menu-items">
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openSysInfo(); closeStartMenu()">🖥️ Sistema</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openMainWindow(); closeStartMenu()">📄 Artículos</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openHorario(); closeStartMenu()">📅 Horario</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="confirmarSalida('/mi-comic'); closeStartMenu()">📖 Scribart</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="pedirContrasena(); closeStartMenu()">🔒 Área Privada</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openCollatz(); closeStartMenu()">❄️ Collatz</div>
+      <div class="start-sep"></div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openWindow(); closeStartMenu()">💬 Mensaje sistema</div>
+      <div class="start-sep"></div>
+      <div class="start-item shutdown" tabindex="0" role="menuitem" onclick="apagarSistema(); closeStartMenu()">⏻ Apagar</div>
+    </div>
+  </div>
+
+  <script src="frases.js" onerror="window.frasesCulturaPop=[]"></script>
+  <script>
+    // ___ Info ____________________________________
+    function openSysInfo() {
+      const dias  = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+      const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto',
+                    'septiembre','octubre','noviembre','diciembre'];
+
+      const w = createWindow('🖥 Información del sistema', 420, `
+        <div id="sysinfo-body" style="font-family:monospace;font-size:12px;"></div>
+      `);
+
+      function row(lbl, val) {
+        return `<div style="display:flex;justify-content:space-between;padding:4px 0;
+          border-bottom:0.5px solid #ddd;">
+          <span style="color:#666">${lbl}</span>
+          <span style="font-weight:500;text-align:right;max-width:55%;word-break:break-all">${val}</span>
+        </div>`;
       }
 
-      setInterval(cambiarImagen, 3500);
-    })();
+      function section(title) {
+        return `<div style="font-size:10px;color:#999;letter-spacing:.08em;text-transform:uppercase;
+          padding:10px 0 4px;border-bottom:1px solid #ccc;margin-top:4px">${title}</div>`;
+      }
+
+      function render() {
+        const n   = new Date();
+        const off = n.getTimezoneOffset();
+        const sign = off <= 0 ? '+' : '-';
+        const uh  = Math.floor(Math.abs(off)/60);
+        const um  = Math.abs(off)%60;
+        const tz  = Intl.DateTimeFormat().resolvedOptions().timeZone || '?';
+
+        document.getElementById('sysinfo-body').innerHTML =
+          section('Fecha y hora') +
+          row('Fecha',      n.getDate() + ' de ' + meses[n.getMonth()] + ' de ' + n.getFullYear()) +
+          row('Hora',       [n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':')) +
+          row('Día',        dias[n.getDay()]) +
+          row('Timestamp',  Math.floor(n.getTime()/1000)) +
+          section('Zona horaria e idioma') +
+          row('Zona',       tz) +
+          row('Offset UTC', 'UTC'+sign+String(uh).padStart(2,'0')+':'+String(um).padStart(2,'0')) +
+          row('Idioma',     navigator.language || '?') +
+          section('Pantalla') +
+          row('Resolución', screen.width+'×'+screen.height+' px') +
+          row('Ventana',    window.innerWidth+'×'+window.innerHeight+' px') +
+          row('Pixel ratio',window.devicePixelRatio.toFixed(1)+'x') +
+          section('Hardware y red') +
+          row('CPU núcleos', navigator.hardwareConcurrency || '?') +
+          row('Plataforma',  navigator.platform || '?') +
+          row('Internet',    navigator.onLine ? '✔ conectado' : '✘ sin conexión') +
+          row('Cookies',     navigator.cookieEnabled ? 'habilitadas' : 'deshabilitadas') +
+          section('Navegador') +
+          row('User agent',  navigator.userAgent.substring(0,60)+'…');
+      }
+
+      render();
+      const iv = setInterval(render, 1000);
+      w.addEventListener('remove', () => clearInterval(iv));
+      const obs = new MutationObserver((ml) => {
+        ml.forEach(m => m.removedNodes.forEach(node => { if(node===w) clearInterval(iv); }));
+      });
+      obs.observe(document.querySelector('.desktop'), { childList: true });
+    }
+    // ── HORARIO DATA ──────────────────────────────
+    const horarioData = [
+      { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"], "Hora": ["10:00 - 12:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "ALGEBRA MODERNA I",           "Día": ["LUNES"], "Hora": ["14:00 - 16:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "SEMINARIO TOPOLOGIA",          "Día": ["LUNES"], "Hora": ["16:00 - 18:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO",  "Día": ["MARTES","JUEVES"],  "Hora": ["6:30 - 12:30","14:30 - 16:30"], "Ubicacion": ["CONCORDIA","CONCORDIA"] },
+      { "Actividad": "TRABAJO DE GRADO",  "Día": ["MIERCOLES"], "Hora": ["8:00 - 12:00","14:00 - 17:00"], "Ubicacion": ["DEPENDE DEL DIA","DEPENDE DEL DIA"] },
+      { "Actividad": "TEORIA DE CONJUNTOS",  "Día": ["VIERNES"], "Hora": ["6:00 - 8:00"],  "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "GEOMETRIA EUCLIDIANA", "Día": ["VIERNES"], "Hora": ["8:00 - 10:00"], "Ubicacion": ["CAMILO TORRES"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["SABADO"],  "Hora": ["DEPENDE DEL DIA"], "Ubicacion": ["DEPENDE DEL DIA"] },
+      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["DOMINGO"], "Hora": ["7:00 - 13:00"],    "Ubicacion": ["GIRON"] },
+      { "Actividad": "WORLD OF WARCRAFT","Día": ["DOMINGO"], "Hora": ["16:00 - 21:00"],   "Ubicacion": ["CUEVA GAMER"] }
+    ];
+
+    // ── RELOJ ─────────────────────────────────────
+    function mostrarHora() {
+      const n = new Date();
+      document.getElementById('hora-actual').textContent =
+        String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+    }
+    mostrarHora();
+    setInterval(mostrarHora, 1000);
+
+    // ── Z-INDEX ───────────────────────────────────
+    let zCounter = 100;
+    function getTopZ() { return ++zCounter; }
+
+    // ── ACTIVE WINDOW TRACKING ────────────────────
+    let activeWin = null;
+
+    function setActiveWin(win) {
+      if (activeWin && activeWin !== win) activeWin.classList.remove('kb-active-win');
+      if (win) { win.classList.add('kb-active-win'); win.style.zIndex = getTopZ(); }
+      activeWin = win;
+      updateTaskbar();
+    }
+
+    // ── MAKE WINDOW DRAGGABLE ─────────────────────
+    function makeWinDraggable(win) {
+      const bar = win.querySelector('.win98-titlebar');
+      let ox, oy;
+      bar.addEventListener('mousedown', e => {
+        if (e.target.closest('.win98-controls')) return;
+        setActiveWin(win);
+        ox = e.clientX - win.offsetLeft;
+        oy = e.clientY - win.offsetTop;
+        const mm = e2 => {
+          win.style.left = (e2.clientX - ox) + 'px';
+          win.style.top  = (e2.clientY - oy) + 'px';
+          win.style.transform = 'none';
+        };
+        const mu = () => {
+          document.removeEventListener('mousemove', mm);
+          document.removeEventListener('mouseup', mu);
+        };
+        document.addEventListener('mousemove', mm);
+        document.addEventListener('mouseup', mu);
+      });
+      win.addEventListener('mousedown', () => setActiveWin(win));
+    }
+
+    // ── CLOSE / MINIMIZE / MAXIMIZE ──────────────
+    function closeWin(btn) {
+      const w = btn.closest('.win98-window');
+      w.style.display = 'none';
+      if (activeWin === w) activeWin = null;
+      updateTaskbar();
+    }
+
+    function toggleMinimize(btn) {
+      const b = btn.closest('.win98-window').querySelector('.win98-body, .main-body');
+      if (b) b.style.display = b.style.display === 'none' ? '' : 'none';
+    }
+
+    function toggleMaximize(id) {
+      const w = document.getElementById(id);
+      if (w.dataset.maximized === '1') {
+        w.style.cssText = w.dataset.prevStyle;
+        w.dataset.maximized = '0';
+      } else {
+        w.dataset.prevStyle = w.style.cssText;
+        w.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:calc(100vh - 40px);z-index:500;display:block;transform:none;';
+        w.dataset.maximized = '1';
+      }
+    }
+
+    // ── CREATE WINDOW ─────────────────────────────
+    function createWindow(title, width, bodyHTML) {
+      const w = document.createElement('div');
+      w.className = 'win98-window';
+      const t = 60 + Math.random() * 80;
+      const l = 80 + Math.random() * 200;
+      w.style.cssText = `top:${t}px;left:${l}px;width:${width}px;z-index:${getTopZ()};`;
+      w.innerHTML = `
+        <div class="win98-titlebar">
+          <span class="win98-title">${title}</span>
+          <div class="win98-controls">
+            <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+            <button class="win98-btn close" onclick="this.closest('.win98-window').remove(); updateTaskbar()">✕</button>
+          </div>
+        </div>
+        <div class="win98-body">${bodyHTML}</div>
+      `;
+      w.addEventListener('mousedown', () => setActiveWin(w));
+      document.querySelector('.desktop').appendChild(w);
+      makeWinDraggable(w);
+      setActiveWin(w);
+      updateTaskbar();
+      return w;
+    }
+
+    // ── TASKBAR ───────────────────────────────────
+    function updateTaskbar() {
+      const tb = document.getElementById('taskbar-tasks');
+      tb.innerHTML = '';
+      document.querySelectorAll('.win98-window').forEach(w => {
+        if (w.style.display === 'none') return;
+        const title = w.querySelector('.win98-title')?.textContent?.trim() || 'Ventana';
+        const btn = document.createElement('button');
+        btn.className = 'tb-win-btn' + (w === activeWin ? ' active-task' : '');
+        btn.textContent = title.substring(0, 24);
+        btn.title = title;
+        btn.onclick = () => {
+          const body = w.querySelector('.win98-body, .main-body');
+          if (body && body.style.display === 'none') body.style.display = '';
+          setActiveWin(w);
+        };
+        tb.appendChild(btn);
+      });
+    }
+
+    // ── MENÚ INICIO ───────────────────────────────
+    function toggleStartMenu() {
+      const m = document.getElementById('start-menu');
+      const open = m.style.display !== 'none';
+      m.style.display = open ? 'none' : 'flex';
+      if (!open) {
+        startMenuIdx = -1;
+        const items = m.querySelectorAll('.start-item');
+        if (items.length) { items[0].focus(); startMenuIdx = 0; highlightStartItem(); }
+      }
+    }
+
+    function closeStartMenu() {
+      document.getElementById('start-menu').style.display = 'none';
+      startMenuIdx = -1;
+    }
+
+    document.addEventListener('click', e => {
+      if (!e.target.closest('#start-btn') && !e.target.closest('#start-menu'))
+        closeStartMenu();
+    });
+
+    // ── OPEN MAIN WINDOW ──────────────────────────
+    function openMainWindow() {
+      const w = document.getElementById('win-main');
+      w.style.display = 'block';
+      setActiveWin(w);
+      makeWinDraggable(w);
+      cargarPDFsDesdeGitHub();
+      updateTaskbar();
+    }
+
+    // ── COLLATZ ───────────────────────────────────
+    function openCollatz() {
+      const w = createWindow('❄️ Gráfico de Collatz', 620, `
+        <iframe src="collatz.html" style="width:100%;height:500px;border:none;display:block;background:#000;"></iframe>
+      `);
+      w.style.width = 'min(680px, 95vw)';
+    }
+
+    // ── HORARIO ───────────────────────────────────
+    function openHorario() {
+      createWindow('📅 Horario', 380, `
+        <p style="margin-bottom:10px;font-weight:bold;color:var(--orange-hi)">Selecciona un día:</p>
+        <div class="dia-grid">
+          ${["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO","DOMINGO"].map(d =>
+            `<button class="win98-day-btn" onclick="mostrarHorarioDia('${d}')">${d}</button>`
+          ).join('')}
+        </div>
+      `);
+    }
+
+    function mostrarHorarioDia(dia) {
+      const items = horarioData.filter(i => i.Día.includes(dia));
+      const rows = items.length
+        ? items.map(i => {
+            const idx = i.Día.indexOf(dia);
+            return `<tr><td>${i.Actividad}</td><td>${i.Hora[idx]}</td><td>${i.Ubicacion[idx]}</td></tr>`;
+          }).join('')
+        : '<tr><td colspan="3" style="color:var(--text-dim)">Sin actividades.</td></tr>';
+      createWindow(`📅 ${dia}`, 440, `
+        <table class="schedule-table">
+          <thead><tr><th>Actividad</th><th>Hora</th><th>Lugar</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `);
+    }
+
+    // ── PDF ───────────────────────────────────────
+    function openMathPDFWindow(url, title) {
+      const w = createWindow('📄 ' + title, 860, `
+        <iframe src="${url}#view=FitH" style="width:100%;height:70vh;border:none;display:block;"></iframe>
+      `);
+      w.style.width = 'min(900px, 95vw)';
+    }
+
+    // ── GITHUB PDF LOAD ───────────────────────────
+    const GITHUB_USER   = 'JackSolano';
+    const GITHUB_REPO   = 'jacksolano.github.com';
+    const GITHUB_FOLDER = 'matematicas';
+
+    async function cargarPDFsDesdeGitHub() {
+      const fileList = document.getElementById('file-list');
+      if (!fileList) return;
+      try {
+        const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FOLDER}`);
+        if (!res.ok) throw new Error('No se pudo acceder al repositorio.');
+        const archivos = await res.json();
+        const pdfs = archivos.filter(f => f.name.toLowerCase().endsWith('.pdf'));
+        if (!pdfs.length) {
+          fileList.innerHTML = '<div class="file-loading">No hay PDFs en matematicas/</div>';
+          document.getElementById('status-count').textContent = '0 objeto(s)';
+          return;
+        }
+        fileList.innerHTML = '';
+        pdfs.forEach(pdf => {
+          const titulo = pdf.name.replace('.pdf','').replace(/_/g,' ').replace(/-/g,' ');
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.tabIndex = 0;
+          item.innerHTML = `
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <span class="file-name">${titulo}</span>
+              <span class="file-meta">PDF · ${(pdf.size/1024).toFixed(0)} KB</span>
+            </div>`;
+          const open = () => openMathPDFWindow(
+            `https://docs.google.com/viewer?url=${encodeURIComponent(pdf.download_url)}&embedded=true`,
+            titulo
+          );
+          item.ondblclick = open;
+          item.addEventListener('keydown', e => { if (e.key==='Enter') open(); });
+          fileList.appendChild(item);
+        });
+        document.getElementById('status-count').textContent = `${pdfs.length} objeto(s)`;
+      } catch (err) {
+        if (fileList) fileList.innerHTML = `<div class="file-loading" style="color:#aa4400;">Error: ${err.message}</div>`;
+      }
+    }
+
+    // ── CONTRASEÑA ────────────────────────────────
+    function pedirContrasena() {
+      createWindow('🔒 Área Privada', 300, `
+        <p style="margin-bottom:10px;">Ingresa la contraseña:</p>
+        <input type="password" id="pw-input" class="win98-input" placeholder="••••••" style="width:100%;margin-bottom:10px;">
+        <button class="win98-ok-btn" onclick="checkPw()">Aceptar</button>
+        <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
+      `);
+      setTimeout(() => document.getElementById('pw-input')?.focus(), 50);
+    }
+
+    function checkPw() {
+      const val = document.getElementById('pw-input')?.value;
+      if (val === '057721') { window.location.href = '/horarios'; }
+      else { createWindow('⚠ Error', 240, '<p>Contraseña incorrecta.</p><button class="win98-ok-btn" onclick="this.closest(\'.win98-window\').remove()">OK</button>'); }
+    }
+
+    // ── MENSAJE SISTEMA ───────────────────────────
+    function openWindow() {
+      const fc = typeof frasesCulturaPop !== 'undefined' ? frasesCulturaPop : [];
+      const msg = fc.length ? fc[Math.floor(Math.random()*fc.length)] : '> SISTEMA OPERATIVO RETRO v1.0';
+      createWindow('💬 Mensaje del sistema', 300, `<p style="line-height:1.7">${msg}</p><button class="win98-ok-btn" style="margin-top:10px" onclick="this.closest('.win98-window').remove()">OK</button>`);
+    }
+
+    // ── APAGAR ────────────────────────────────────
+    function apagarSistema() {
+      const w = createWindow('⏻ Apagar el sistema', 320, `
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <span style="font-size:36px;line-height:1;">🖥️</span>
+          <p style="font-size:12px;line-height:1.7;">¿Deseas apagar el sistema?<br>
+          <span style="color:var(--text-dim)">Se cerrarán todas las ventanas.</span></p>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          <button class="win98-ok-btn" onclick="window.location.href='./apagando.html'">⏻ Apagar</button>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">Cancelar</button>
+        </div>`);
+      w.style.zIndex = 99999;
+    }
+
+    // ── CONFIRMAR SALIDA ──────────────────────────
+    function confirmarSalida(destino) {
+      const w = createWindow('⚠ Salir del sistema', 300, `
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;">
+          <span style="font-size:32px;line-height:1;">🖥️</span>
+          <p style="font-size:12px;line-height:1.6;">¿Deseas salir al exterior?<br><span style="color:var(--text-dim)">Se abrirá una aplicación externa.</span></p>
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;">
+          <button class="win98-ok-btn" onclick="window.location.href='${destino}'">Sí</button>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">No</button>
+        </div>`);
+      w.style.zIndex = 99998;
+    }
+
+    // ══════════════════════════════════════════════
+    //   KEYBOARD NAVIGATION ENGINE
+    // ══════════════════════════════════════════════
+
+    // ── Desktop icon navigation ───────────────────
+    let iconIdx = -1;
+    const iconContainer = document.getElementById('desktop-icons');
+
+    function getIcons() { return [...iconContainer.querySelectorAll('.desktop-icon')]; }
+
+    function highlightIcon(idx) {
+      getIcons().forEach((ic, i) => ic.classList.toggle('kb-focus', i === idx));
+    }
+
+    iconContainer.addEventListener('keydown', e => {
+      const icons = getIcons();
+      if (!icons.length) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        iconIdx = (iconIdx + 1) % icons.length;
+        icons[iconIdx].focus();
+        highlightIcon(iconIdx);
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        iconIdx = (iconIdx - 1 + icons.length) % icons.length;
+        icons[iconIdx].focus();
+        highlightIcon(iconIdx);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const focused = document.activeElement;
+        if (focused && focused.dataset.action) {
+          const fn = window[focused.dataset.action];
+          if (typeof fn === 'function') fn();
+          else if (focused.dataset.action === 'openScribart') confirmarSalida('/mi-comic');
+        }
+      }
+    });
+
+    getIcons().forEach((ic, i) => {
+      ic.addEventListener('focus', () => { iconIdx = i; highlightIcon(i); });
+      ic.addEventListener('blur',  () => ic.classList.remove('kb-focus'));
+    });
+
+    // ── Start menu keyboard ───────────────────────
+    let startMenuIdx = -1;
+
+    function getStartItems() {
+      return [...document.querySelectorAll('#start-menu-items .start-item')];
+    }
+
+    function highlightStartItem() {
+      getStartItems().forEach((it, i) => it.classList.toggle('kb-focus', i === startMenuIdx));
+    }
+
+    document.getElementById('start-menu').addEventListener('keydown', e => {
+      const items = getStartItems();
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        startMenuIdx = Math.min(startMenuIdx + 1, items.length - 1);
+        highlightStartItem();
+        items[startMenuIdx]?.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        startMenuIdx = Math.max(startMenuIdx - 1, 0);
+        highlightStartItem();
+        items[startMenuIdx]?.focus();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        items[startMenuIdx]?.click();
+      } else if (e.key === 'Escape') {
+        closeStartMenu();
+        document.getElementById('start-btn').focus();
+      }
+    });
+
+    // ── Tab cycles between visible windows ─────────
+    function getVisibleWindows() {
+      return [...document.querySelectorAll('.win98-window')]
+        .filter(w => w.style.display !== 'none' && w.offsetParent !== null);
+    }
+
+    function cycleWindows(reverse = false) {
+      const wins = getVisibleWindows();
+      if (!wins.length) return;
+      let idx = wins.indexOf(activeWin);
+      if (idx === -1) idx = 0;
+      else idx = reverse
+        ? (idx - 1 + wins.length) % wins.length
+        : (idx + 1) % wins.length;
+      setActiveWin(wins[idx]);
+      const focusable = wins[idx].querySelector('button, input, [tabindex="0"]');
+      if (focusable) focusable.focus();
+    }
+
+    // ── Global keyboard handler ───────────────────
+    document.addEventListener('keydown', e => {
+      const tag = document.activeElement?.tagName;
+      const inInput = tag === 'INPUT' || tag === 'TEXTAREA';
+
+      if (e.key === 'Meta' || e.key === 'OS') {
+        e.preventDefault();
+        toggleStartMenu();
+        return;
+      }
+
+      if (e.altKey && e.key === 'F4') {
+        e.preventDefault();
+        if (activeWin) { activeWin.remove(); activeWin = null; updateTaskbar(); }
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        const sm = document.getElementById('start-menu');
+        if (sm.style.display !== 'none') { closeStartMenu(); return; }
+        if (activeWin) {
+          activeWin.style.display = 'none';
+          activeWin.classList.remove('kb-active-win');
+          activeWin = null;
+          updateTaskbar();
+        }
+        return;
+      }
+
+      if (e.altKey && e.key === 'Tab') {
+        e.preventDefault();
+        cycleWindows(e.shiftKey);
+        return;
+      }
+
+      if (inInput) return;
+
+      if (!activeWin || document.activeElement === document.body) {
+        if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+          e.preventDefault();
+          const icons = getIcons();
+          if (iconIdx === -1) iconIdx = 0;
+          if (e.key === 'ArrowDown' || e.key === 'ArrowRight')
+            iconIdx = (iconIdx + 1) % icons.length;
+          else
+            iconIdx = (iconIdx - 1 + icons.length) % icons.length;
+          icons[iconIdx].focus();
+          highlightIcon(iconIdx);
+        }
+      }
+    });
+
+    // ── Initial setup ─────────────────────────────
+    document.querySelectorAll('.win98-window').forEach(w => {
+      makeWinDraggable(w);
+      w.addEventListener('mousedown', () => setActiveWin(w));
+    });
+
+    window.addEventListener('load', () => {
+      const icons = getIcons();
+      if (icons.length) { iconIdx = 0; icons[0].focus(); highlightIcon(0); }
+      updateTaskbar();
+    });
   </script>
 </body>
 </html>
