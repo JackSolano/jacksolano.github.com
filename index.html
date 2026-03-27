@@ -378,6 +378,13 @@
       w.style.width = 'min(680px, 95vw)';
     }
 
+  function openIrracional() {
+    const w = createWindow('∞ Número Irracional', 640, `
+      <iframe src="irracional.html" style="width:100%;height:420px;border:none;background:#000;"></iframe>
+    `);
+    w.style.width = 'min(680px, 95vw)';
+  }
+
     // ── HORARIO ───────────────────────────────────
     function openHorario() {
       createWindow('📅 Horario', 380, `
