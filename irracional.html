@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Número Irracional — Jack Solano</title>
+  <style>
+    :root {
+      --bg:        #000000;
+      --orange:    #ff8c00;
+      --orange-dim:#a05800;
+      --orange-hi: #ffaa33;
+      --text-dim:  #666;
+      --border:    #ff8c00;
+      --win-bg:    #0a0a0a;
+      --title-bg:  #ff8c00;
+      --title-fg:  #000;
+      --font:      'Courier New', Courier, monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--orange);
+      font-family: var(--font);
+      font-size: 12px;
+      height: 100vh;
+      overflow: hidden;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* ── SCANLINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── DESKTOP ── */
+    .desktop {
+      position: fixed;
+      inset: 0 0 30px 0;
+      overflow: hidden;
+    }
+
+    /* ── WIN98 WINDOW ── */
+    .win98-window {
+      position: absolute;
+      border: 1px solid var(--border);
+      background: var(--win-bg);
+      min-width: 260px;
+      box-shadow: 2px 2px 0 var(--orange-dim), inset 0 0 60px rgba(255,140,0,0.03);
+    }
+
+    .win98-titlebar {
+      background: var(--title-bg);
+      color: var(--title-fg);
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      font-weight: bold;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+
+    .win98-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .win98-controls { display: flex; gap: 2px; }
+
+    .win98-btn {
+      background: var(--bg);
+      color: var(--orange);
+      border: 1px solid var(--orange);
+      width: 16px;
+      height: 14px;
+      font-size: 9px;
+      line-height: 1;
+      cursor: pointer;
+      font-family: var(--font);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .win98-btn:hover { background: var(--orange); color: var(--bg); }
+
+    .win98-body {
+      padding: 10px 12px;
+      color: var(--orange);
+      font-family: var(--font);
+      font-size: 12px;
+    }
+
+    /* ── TASKBAR ── */
+    .win98-taskbar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 30px;
+      background: #0a0a0a;
+      border-top: 1px solid var(--orange);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 4px;
+      z-index: 1000;
+    }
+
+    .start-button {
+      background: var(--orange);
+      color: var(--bg);
+      border: 1px solid var(--orange-hi);
+      padding: 2px 10px;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      height: 22px;
+    }
+    .start-button:hover { background: var(--orange-hi); }
+
+    .taskbar-divider { width: 1px; height: 20px; background: var(--orange-dim); margin: 0 2px; }
+
+    .tray-clock {
+      margin-left: auto;
+      padding: 2px 8px;
+      border: 1px solid var(--orange-dim);
+      font-size: 11px;
+      color: var(--orange);
+      letter-spacing: 0.05em;
+    }
+
+    /* ══════════════════════════════════
+       GENERADOR — contenido interno
+       ══════════════════════════════════ */
+    .gen-label {
+      font-size: 10px;
+      color: var(--orange-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .number-prefix {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .int-part, .sep-dot {
+      font-size: 32px;
+      font-family: var(--font);
+      color: var(--orange);
+      line-height: 1;
+    }
+    .sep-dot { color: var(--orange-dim); }
+
+    /* scroll container */
+    .scroll-outer {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      cursor: ew-resize;
+      padding-bottom: 4px;
+    }
+
+    .digits-track {
+      display: flex;
+      gap: 4px;
+      will-change: transform;
+    }
+
+    /* individual digit box */
+    .dbox {
+      flex-shrink: 0;
+      width: 36px;
+      height: 52px;
+      border: 1px solid var(--orange-dim);
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: border-color 0.12s;
+    }
+    .dbox:hover { border-color: var(--orange); }
+    .dbox.flash { border-color: var(--orange-hi); }
+
+    .dval {
+      font-size: 22px;
+      font-family: var(--font);
+      color: var(--orange);
+      line-height: 1;
+    }
+    .dpos {
+      font-size: 8px;
+      color: var(--orange-dim);
+      margin-top: 3px;
+      letter-spacing: 0.02em;
+    }
+
+    @keyframes popin {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .dbox.new { animation: popin 0.14s ease-out; }
+
+    /* fade right edge */
+    .fade-r {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 50px;
+      background: linear-gradient(to right, transparent, #000);
+      pointer-events: none;
+    }
+
+    /* info row */
+    .gen-info {
+      display: flex;
+      gap: 16px;
+      margin-top: 7px;
+      flex-wrap: wrap;
+    }
+    .gen-info span {
+      font-size: 10px;
+      color: var(--orange-dim);
+      letter-spacing: 0.04em;
+    }
+    .gen-info span b { color: var(--orange); }
+
+    /* buttons */
+    .gen-btns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+
+    .win98-ok-btn {
+      background: var(--bg);
+      color: var(--orange);
+      border: 1px solid var(--orange);
+      padding: 3px 14px;
+      font-family: var(--font);
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+    }
+    .win98-ok-btn:hover { background: var(--orange); color: var(--bg); }
+    .win98-ok-btn:active { transform: scale(0.97); }
+
+    .gen-hint {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    /* blinking cursor decoration */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      background: var(--orange);
+      margin-left: 3px;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+  </style>
+</head>
+<body>
+
+<div class="desktop" id="desktop">
+
+  <!-- VENTANA PRINCIPAL -->
+  <div class="win98-window" id="win-irr" style="top:60px; left:50%; transform:translateX(-50%); width:min(600px,96vw);">
+    <div class="win98-titlebar" id="titlebar-irr">
+      <span class="win98-title">∞ Generador de Número Irracional</span>
+      <div class="win98-controls">
+        <button class="win98-btn" title="Minimizar" onclick="toggleBody()">_</button>
+        <button class="win98-btn" title="Cerrar" onclick="document.getElementById('win-irr').style.display='none'">✕</button>
+      </div>
+    </div>
+    <div class="win98-body" id="win-irr-body">
+
+      <div class="gen-label">0 &lt; x &lt; 1 &nbsp;·&nbsp; irracional aleatorio<span class="cursor"></span></div>
+
+      <div class="number-prefix">
+        <span class="int-part">0</span>
+        <span class="sep-dot">.</span>
+      </div>
+
+      <div class="scroll-outer" id="scroll-outer">
+        <div class="digits-track" id="track"></div>
+        <div class="fade-r"></div>
+      </div>
+
+      <div class="gen-info">
+        <span>pos: <b id="pos-lbl">1</b></span>
+        <span>dígitos: <b id="total-lbl">0</b></span>
+      </div>
+
+      <div class="gen-btns">
+        <button class="win98-ok-btn" onclick="regenerar()">[ regenerar ]</button>
+        <button class="win98-ok-btn" onclick="volverInicio()">[ inicio ]</button>
+      </div>
+
+      <p class="gen-hint">↔ rueda del mouse · arrastra · genera infinitos dígitos →</p>
+    </div>
+  </div>
+
+  <!-- VENTANA INFO (pequeña, esquina) -->
+  <div class="win98-window" id="win-info" style="top:60px; right:20px; width:200px;">
+    <div class="win98-titlebar" id="titlebar-info">
+      <span class="win98-title">ℹ Acerca de</span>
+      <div class="win98-controls">
+        <button class="win98-btn" onclick="toggleInfo()">_</button>
+        <button class="win98-btn" onclick="document.getElementById('win-info').style.display='none'">✕</button>
+      </div>
+    </div>
+    <div class="win98-body" id="win-info-body" style="font-size:11px; line-height:1.7; color:var(--orange-dim);">
+      <p>Un número irracional no puede expresarse como fracción p/q.</p>
+      <br>
+      <p>Sus decimales son <b style="color:var(--orange)">infinitos</b> y no periódicos.</p>
+      <br>
+      <p style="color:var(--text-dim)">Ej: π, e, √2…</p>
+    </div>
+  </div>
+
+</div><!-- /desktop -->
+
+<!-- TASKBAR -->
+<div class="win98-taskbar">
+  <button class="start-button">⊞ Inicio</button>
+  <div class="taskbar-divider"></div>
+  <span style="font-size:11px; color:var(--orange-dim); padding: 0 6px;">∞ Irracional</span>
+  <span class="tray-clock" id="reloj">00:00</span>
+</div>
+
+<script>
+  // ── RELOJ ──
+  function tick() {
+    const n = new Date();
+    document.getElementById('reloj').textContent =
+      String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+
+  // ── DRAG VENTANAS ──
+  function makeDraggable(win, bar) {
+    let ox, oy;
+    bar.addEventListener('mousedown', e => {
+      if (e.target.closest('.win98-controls')) return;
+      ox = e.clientX - win.offsetLeft;
+      oy = e.clientY - win.offsetTop;
+      win.style.transform = 'none';
+      const mm = e2 => {
+        win.style.left = (e2.clientX - ox) + 'px';
+        win.style.top  = (e2.clientY - oy) + 'px';
+      };
+      const mu = () => {
+        document.removeEventListener('mousemove', mm);
+        document.removeEventListener('mouseup', mu);
+      };
+      document.addEventListener('mousemove', mm);
+      document.addEventListener('mouseup', mu);
+    });
+  }
+  makeDraggable(document.getElementById('win-irr'),  document.getElementById('titlebar-irr'));
+  makeDraggable(document.getElementById('win-info'), document.getElementById('titlebar-info'));
+
+  // ── MINIMIZAR ──
+  function toggleBody() {
+    const b = document.getElementById('win-irr-body');
+    b.style.display = b.style.display === 'none' ? '' : 'none';
+  }
+  function toggleInfo() {
+    const b = document.getElementById('win-info-body');
+    b.style.display = b.style.display === 'none' ? '' : 'none';
+  }
+
+  // ══════════════════════════════════
+  //   GENERADOR
+  // ══════════════════════════════════
+  const track   = document.getElementById('track');
+  const posLbl  = document.getElementById('pos-lbl');
+  const totLbl  = document.getElementById('total-lbl');
+  const outer   = document.getElementById('scroll-outer');
+
+  const BOX_W = 40; // 36px + 4px gap
+  let digits = [];
+  let offset = 0;
+  let targetOffset = 0;
+  let rafId = null;
+
+  function rnd() { return Math.floor(Math.random() * 10); }
+
+  function ensureDigits(upTo) {
+    while (digits.length <= upTo) {
+      const i = digits.length;
+      digits.push(rnd());
+      const box = document.createElement('div');
+      box.className = 'dbox new';
+      box.innerHTML = `<span class="dval">${digits[i]}</span><span class="dpos">${i+1}</span>`;
+      track.appendChild(box);
+      setTimeout(() => box.classList.remove('new'), 180);
+    }
+    totLbl.textContent = digits.length;
+  }
+
+  function updateView() {
+    const ww = outer.getBoundingClientRect().width || 500;
+    const lastNeeded = Math.ceil((offset + ww) / BOX_W) + 4;
+    ensureDigits(lastNeeded);
+    track.style.transform = `translateX(${-offset}px)`;
+    posLbl.textContent = Math.floor(offset / BOX_W) + 1;
+  }
+
+  function animateTo(target) {
+    if (target < 0) target = 0;
+    targetOffset = target;
+    if (rafId) return;
+    function step() {
+      const diff = targetOffset - offset;
+      if (Math.abs(diff) < 0.5) {
+        offset = targetOffset;
+        updateView();
+        rafId = null;
+        return;
+      }
+      offset += diff * 0.2;
+      updateView();
+      rafId = requestAnimationFrame(step);
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  // ── WHEEL ──
+  outer.addEventListener('wheel', e => {
+    e.preventDefault();
+    const d = e.deltaY !== 0 ? e.deltaY : e.deltaX;
+    animateTo(targetOffset + d * 0.85);
+  }, { passive: false });
+
+  // ── DRAG ──
+  let dragX = null, dragBase = 0;
+  outer.addEventListener('mousedown', e => { dragX = e.clientX; dragBase = targetOffset; });
+  window.addEventListener('mousemove', e => {
+    if (dragX === null) return;
+    animateTo(dragBase - (e.clientX - dragX));
+  });
+  window.addEventListener('mouseup', () => { dragX = null; });
+
+  // ── TOUCH ──
+  let touchX = null, touchBase = 0;
+  outer.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; touchBase = targetOffset; }, { passive: true });
+  outer.addEventListener('touchmove',  e => {
+    if (touchX === null) return;
+    animateTo(touchBase - (e.touches[0].clientX - touchX));
+  }, { passive: true });
+  outer.addEventListener('touchend', () => { touchX = null; });
+
+  // ── BUTTONS ──
+  function regenerar() {
+    digits = []; track.innerHTML = '';
+    offset = 0; targetOffset = 0;
+    updateView();
+  }
+  function volverInicio() { animateTo(0); }
+
+  // ── INIT ──
+  updateView();
+</script>
+</body>
+</html>
