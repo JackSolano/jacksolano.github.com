@@ -48,6 +48,15 @@
         <div class="icon-img">❄️</div>
         <span>Collatz</span>
       </div>
+      <div class="desktop-icon" tabindex="0" data-action="openIrracional" ondblclick="openIrracional()">
+        <div class="icon-img">∞</div>
+        <span>Irracional</span>
+      </div>
+
+      <div class="desktop-icon" tabindex="0" data-action="openPong" ondblclick="openPong()">
+        <div class="icon-img">🏓</div>
+        <span>Pong</span>
+      </div>
     </div>
 
     <!-- VENTANA BIENVENIDA -->
@@ -140,6 +149,8 @@
       <div class="start-item" tabindex="0" role="menuitem" onclick="openWindow(); closeStartMenu()">💬 Mensaje sistema</div>
       <div class="start-sep"></div>
       <div class="start-item shutdown" tabindex="0" role="menuitem" onclick="apagarSistema(); closeStartMenu()">⏻ Apagar</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openIrracional(); closeStartMenu()">∞ Irracional</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openPong(); closeStartMenu()">🏓 Pong</div>
     </div>
   </div>
 
