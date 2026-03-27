@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>PONG — Jack Solano</title>
+  <style>
+    :root {
+      --bg:        #000000;
+      --orange:    #ff8c00;
+      --orange-dim:#a05800;
+      --orange-hi: #ffaa33;
+      --text-dim:  #555;
+      --font:      'Courier New', Courier, monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--orange);
+      font-family: var(--font);
+      height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    /* scanlines */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 2px,
+        rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .desktop { position: fixed; inset: 0 0 30px 0; overflow: hidden; }
+
+    /* ── WIN98 ── */
+    .win98-window {
+      position: absolute;
+      border: 1px solid var(--orange);
+      background: #050505;
+      box-shadow: 2px 2px 0 var(--orange-dim);
+    }
+    .win98-titlebar {
+      background: var(--orange);
+      color: #000;
+      padding: 3px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      font-weight: bold;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      user-select: none;
+    }
+    .win98-title { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .win98-controls { display:flex; gap:2px; }
+    .win98-btn {
+      background:#000; color:var(--orange); border:1px solid var(--orange);
+      width:16px; height:14px; font-size:9px; cursor:pointer;
+      font-family:var(--font); display:flex; align-items:center; justify-content:center; padding:0;
+    }
+    .win98-btn:hover { background:var(--orange); color:#000; }
+    .win98-body { padding: 0; overflow: hidden; }
+
+    /* ── CANVAS ── */
+    #pong-canvas {
+      display: block;
+      background: #000;
+      image-rendering: pixelated;
+    }
+
+    /* ── OVERLAY (start / pause / gameover) ── */
+    #overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.82);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      z-index: 10;
+    }
+    #overlay.hidden { display: none; }
+    #overlay h1 {
+      font-size: 28px;
+      letter-spacing: 0.12em;
+      color: var(--orange);
+      text-shadow: 0 0 18px var(--orange-dim);
+    }
+    #overlay p {
+      font-size: 11px;
+      color: var(--orange-dim);
+      text-align: center;
+      line-height: 1.8;
+      letter-spacing: 0.05em;
+    }
+    #overlay .big-btn {
+      background: transparent;
+      color: var(--orange);
+      border: 1px solid var(--orange);
+      padding: 6px 28px;
+      font-family: var(--font);
+      font-size: 13px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+    #overlay .big-btn:hover { background: var(--orange); color: #000; }
+
+    /* ── TOUCH CONTROLS ── */
+    #touch-controls {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      display: none;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.6);
+      border-top: 1px solid var(--orange-dim);
+      z-index: 20;
+      gap: 8px;
+    }
+    .touch-side { display: flex; gap: 6px; align-items: center; }
+    .touch-btn {
+      background: transparent;
+      border: 1px solid var(--orange-dim);
+      color: var(--orange);
+      font-family: var(--font);
+      font-size: 18px;
+      width: 52px;
+      height: 42px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .touch-btn:active { background: var(--orange); color: #000; border-color: var(--orange); }
+    .touch-label { font-size: 10px; color: var(--orange-dim); letter-spacing: 0.05em; }
+
+    /* ── TASKBAR ── */
+    .win98-taskbar {
+      position: fixed; bottom:0; left:0; right:0; height:30px;
+      background: #0a0a0a; border-top: 1px solid var(--orange);
+      display: flex; align-items: center; gap: 4px; padding: 0 4px; z-index: 1000;
+    }
+    .start-button {
+      background: var(--orange); color: #000; border: 1px solid var(--orange-hi);
+      padding: 2px 10px; font-family: var(--font); font-size: 11px; font-weight: bold;
+      cursor: pointer; letter-spacing: 0.05em; height: 22px;
+    }
+    .start-button:hover { background: var(--orange-hi); }
+    .taskbar-divider { width:1px; height:20px; background:var(--orange-dim); margin:0 2px; }
+    .tray-clock {
+      margin-left: auto; padding: 2px 8px;
+      border: 1px solid var(--orange-dim); font-size: 11px; color: var(--orange);
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor { display:inline-block; width:8px; height:12px; background:var(--orange); margin-left:2px; vertical-align:middle; animation: blink 1s step-end infinite; }
+  </style>
+</head>
+<body>
+<div class="desktop" id="desktop">
+
+  <div class="win98-window" id="win-pong" style="top:20px; left:50%; transform:translateX(-50%);">
+    <div class="win98-titlebar" id="titlebar-pong">
+      <span class="win98-title">🏓 PONG.EXE<span class="cursor"></span></span>
+      <div class="win98-controls">
+        <button class="win98-btn" onclick="toggleBody()">_</button>
+        <button class="win98-btn" onclick="document.getElementById('win-pong').style.display='none'">✕</button>
+      </div>
+    </div>
+    <div class="win98-body" id="pong-body" style="position:relative;">
+      <canvas id="pong-canvas"></canvas>
+      <div id="overlay">
+        <h1>PONG</h1>
+        <p id="overlay-msg">
+          teclado: W/S · ↑/↓<br>
+          teléfono: botones ↑↓<br>
+          primer punto gana 7
+        </p>
+        <button class="big-btn" id="overlay-btn" onclick="startGame()">[ INICIAR ]</button>
+      </div>
+      <div id="touch-controls">
+        <div class="touch-side">
+          <span class="touch-label">TÚ</span>
+          <button class="touch-btn" id="t-up">▲</button>
+          <button class="touch-btn" id="t-down">▼</button>
+        </div>
+        <div class="touch-side" style="flex-direction:row-reverse;">
+          <span class="touch-label">CPU</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="win98-taskbar">
+  <button class="start-button">⊞ Inicio</button>
+  <div class="taskbar-divider"></div>
+  <span style="font-size:11px;color:var(--orange-dim);padding:0 6px;">🏓 PONG</span>
+  <span class="tray-clock" id="reloj">00:00</span>
+</div>
+
+<script>
+  // ── reloj ──
+  (function tick() {
+    const n = new Date();
+    document.getElementById('reloj').textContent =
+      String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+    setTimeout(tick, 1000);
+  })();
+
+  // ── drag ventana ──
+  (function() {
+    const win = document.getElementById('win-pong');
+    const bar = document.getElementById('titlebar-pong');
+    let ox, oy;
+    bar.addEventListener('mousedown', e => {
+      if (e.target.closest('.win98-controls')) return;
+      win.style.transform = 'none';
+      ox = e.clientX - win.offsetLeft; oy = e.clientY - win.offsetTop;
+      const mm = e2 => { win.style.left=(e2.clientX-ox)+'px'; win.style.top=(e2.clientY-oy)+'px'; };
+      const mu = () => { document.removeEventListener('mousemove',mm); document.removeEventListener('mouseup',mu); };
+      document.addEventListener('mousemove',mm); document.addEventListener('mouseup',mu);
+    });
+  })();
+
+  function toggleBody() {
+    const b = document.getElementById('pong-body');
+    b.style.display = b.style.display === 'none' ? '' : 'none';
+  }
+
+  // ════════════════════════════════
+  //   PONG ENGINE
+  // ════════════════════════════════
+  const canvas  = document.getElementById('pong-canvas');
+  const ctx     = canvas.getContext('2d');
+  const overlay = document.getElementById('overlay');
+  const overlayMsg = document.getElementById('overlay-msg');
+  const overlayBtn = document.getElementById('overlay-btn');
+  const touchCtrl  = document.getElementById('touch-controls');
+
+  const WIN_SCORE = 7;
+  const PAD_H  = 60, PAD_W = 8, PAD_SPEED = 5;
+  const BALL_START_SPEED = 4;
+
+  // detect touch device
+  const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+  // canvas size — responsive
+  function calcSize() {
+    const dw = window.innerWidth;
+    const dh = window.innerHeight - 30; // taskbar
+    // keep 4:3 ish, max 620 wide
+    let w = Math.min(dw - 8, 620);
+    let h = Math.round(w * 0.6);
+    if (h > dh - 80) { h = dh - 80; w = Math.round(h / 0.6); }
+    return { w, h };
+  }
+
+  function resizeCanvas() {
+    const { w, h } = calcSize();
+    canvas.width  = w;
+    canvas.height = h;
+    if (isTouch) {
+      touchCtrl.style.display = 'flex';
+      canvas.style.marginBottom = '0';
+    }
+  }
+
+  resizeCanvas();
+
+  // game state
+  let state = 'idle'; // idle | playing | paused | over
+  let scoreP = 0, scoreCPU = 0;
+
+  let padP   = { y: 0 };
+  let padCPU = { y: 0 };
+  let ball   = { x:0, y:0, vx:0, vy:0, speed:0 };
+
+  let keys = {};
+  let touchUp = false, touchDown = false;
+
+  function resetBall(dir = 1) {
+    const W = canvas.width, H = canvas.height;
+    ball.x = W / 2; ball.y = H / 2;
+    ball.speed = BALL_START_SPEED + (scoreP + scoreCPU) * 0.18;
+    const angle = (Math.random() * 40 - 20) * Math.PI / 180;
+    ball.vx = Math.cos(angle) * ball.speed * dir;
+    ball.vy = Math.sin(angle) * ball.speed;
+  }
+
+  function resetPads() {
+    const H = canvas.height;
+    padP.y   = H / 2 - PAD_H / 2;
+    padCPU.y = H / 2 - PAD_H / 2;
+  }
+
+  function startGame() {
+    scoreP = 0; scoreCPU = 0;
+    resetPads(); resetBall(Math.random() < 0.5 ? 1 : -1);
+    overlay.classList.add('hidden');
+    state = 'playing';
+    if (isTouch) touchCtrl.style.display = 'flex';
+    loop();
+  }
+
+  // ── CPU AI ──
+  function updateCPU() {
+    const W = canvas.width, H = canvas.height;
+    const center = padCPU.y + PAD_H / 2;
+    // reaction: slightly imperfect, speed scales with difficulty
+    const diff = ball.y - center;
+    const spd  = Math.min(Math.abs(diff), PAD_SPEED * 0.82);
+    padCPU.y += Math.sign(diff) * spd;
+    padCPU.y = Math.max(0, Math.min(H - PAD_H, padCPU.y));
+  }
+
+  // ── UPDATE ──
+  function update() {
+    const W = canvas.width, H = canvas.height;
+
+    // player input
+    if (keys['w'] || keys['W'] || keys['ArrowUp'] || touchUp) {
+      padP.y -= PAD_SPEED;
+    }
+    if (keys['s'] || keys['S'] || keys['ArrowDown'] || touchDown) {
+      padP.y += PAD_SPEED;
+    }
+    padP.y = Math.max(0, Math.min(H - PAD_H, padP.y));
+
+    updateCPU();
+
+    // ball move
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // wall bounce top/bottom
+    if (ball.y - 5 <= 0)       { ball.y = 5;      ball.vy *= -1; }
+    if (ball.y + 5 >= H)       { ball.y = H - 5;  ball.vy *= -1; }
+
+    // paddle collision — player (left)
+    const px = PAD_W + 4;
+    if (ball.x - 5 <= px + PAD_W &&
+        ball.y >= padP.y && ball.y <= padP.y + PAD_H &&
+        ball.vx < 0) {
+      ball.x = px + PAD_W + 5;
+      const rel = (ball.y - padP.y - PAD_H / 2) / (PAD_H / 2);
+      const angle = rel * 60 * Math.PI / 180;
+      ball.speed = Math.min(ball.speed + 0.3, 18);
+      ball.vx =  Math.cos(angle) * ball.speed;
+      ball.vy =  Math.sin(angle) * ball.speed;
+    }
+
+    // paddle collision — cpu (right)
+    const cpux = W - PAD_W - 4 - PAD_W;
+    if (ball.x + 5 >= cpux &&
+        ball.y >= padCPU.y && ball.y <= padCPU.y + PAD_H &&
+        ball.vx > 0) {
+      ball.x = cpux - 5;
+      const rel = (ball.y - padCPU.y - PAD_H / 2) / (PAD_H / 2);
+      const angle = rel * 60 * Math.PI / 180;
+      ball.speed = Math.min(ball.speed + 0.3, 18);
+      ball.vx = -Math.cos(angle) * ball.speed;
+      ball.vy =  Math.sin(angle) * ball.speed;
+    }
+
+    // score
+    if (ball.x < 0) {
+      scoreCPU++;
+      checkOver() || (resetPads(), resetBall(1));
+    }
+    if (ball.x > W) {
+      scoreP++;
+      checkOver() || (resetPads(), resetBall(-1));
+    }
+  }
+
+  function checkOver() {
+    if (scoreP >= WIN_SCORE || scoreCPU >= WIN_SCORE) {
+      state = 'over';
+      const won = scoreP >= WIN_SCORE;
+      overlay.classList.remove('hidden');
+      overlayMsg.innerHTML = won
+        ? `<span style="color:var(--orange-hi);font-size:15px;">¡GANASTE!</span><br>${scoreP} — ${scoreCPU}`
+        : `<span style="color:var(--text-dim);font-size:15px;">PERDISTE</span><br>${scoreP} — ${scoreCPU}`;
+      overlayBtn.textContent = '[ OTRA VEZ ]';
+      return true;
+    }
+    return false;
+  }
+
+  // ── DRAW ──
+  function draw() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // center dashed line
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = '#1a0d00';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(W/2, 0); ctx.lineTo(W/2, H); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // scores
+    ctx.fillStyle = '#2a1500';
+    ctx.font = `bold ${Math.floor(H * 0.22)}px 'Courier New'`;
+    ctx.textAlign = 'center';
+    ctx.fillText(scoreP,   W * 0.28, H * 0.26);
+    ctx.fillText(scoreCPU, W * 0.72, H * 0.26);
+
+    // labels
+    ctx.fillStyle = '#3a2000';
+    ctx.font = `10px 'Courier New'`;
+    ctx.fillText('TÚ',  W * 0.28, H * 0.34);
+    ctx.fillText('CPU', W * 0.72, H * 0.34);
+
+    // paddles
+    ctx.fillStyle = '#ff8c00';
+    ctx.fillRect(PAD_W + 4,             padP.y,   PAD_W, PAD_H);
+    ctx.fillRect(W - PAD_W - 4 - PAD_W, padCPU.y, PAD_W, PAD_H);
+
+    // ball glow
+    ctx.shadowColor = '#ff8c00';
+    ctx.shadowBlur  = 10;
+    ctx.fillStyle   = '#ff8c00';
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // ── LOOP ──
+  let rafLoop = null;
+  function loop() {
+    if (state !== 'playing') return;
+    update();
+    draw();
+    rafLoop = requestAnimationFrame(loop);
+  }
+
+  // ── KEYBOARD ──
+  document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && state === 'playing') e.preventDefault();
+    if (e.key === 'p' || e.key === 'P') togglePause();
+    if (e.key === 'Enter' && state === 'idle') startGame();
+    if (e.key === 'Enter' && state === 'over') startGame();
+  });
+  document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+  function togglePause() {
+    if (state === 'playing') {
+      state = 'paused';
+      overlay.classList.remove('hidden');
+      overlayMsg.innerHTML = 'PAUSA<br><span style="font-size:10px;color:var(--text-dim)">P · continuar</span>';
+      overlayBtn.textContent = '[ CONTINUAR ]';
+      overlayBtn.onclick = resumeGame;
+    }
+  }
+  function resumeGame() {
+    state = 'playing';
+    overlay.classList.add('hidden');
+    overlayBtn.onclick = startGame;
+    loop();
+  }
+
+  // ── TOUCH BUTTONS ──
+  function bindTouch(id, downFn, upFn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('touchstart', e => { e.preventDefault(); downFn(); }, { passive: false });
+    el.addEventListener('touchend',   e => { e.preventDefault(); upFn();   }, { passive: false });
+    el.addEventListener('mousedown',  downFn);
+    el.addEventListener('mouseup',    upFn);
+    el.addEventListener('mouseleave', upFn);
+  }
+
+  bindTouch('t-up',   () => touchUp=true,   () => touchUp=false);
+  bindTouch('t-down', () => touchDown=true,  () => touchDown=false);
+
+  // ── RESIZE ──
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    if (state === 'playing') { resetPads(); }
+  });
+
+  // init draw
+  resizeCanvas();
+  draw();
+</script>
+</body>
+</html>
