@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+----<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -32,17 +32,9 @@
         <div class="icon-img">📐</div>
         <span>Artículos</span>
       </div>
-      <div class="desktop-icon" tabindex="0" data-action="openHorario" ondblclick="openHorario()">
-        <div class="icon-img">📅</div>
-        <span>Horario</span>
-      </div>
       <div class="desktop-icon" tabindex="0" data-action="openScribart" ondblclick="confirmarSalida('/mi-comic')">
         <div class="icon-img">📖</div>
         <span>Scribart</span>
-      </div>
-      <div class="desktop-icon" tabindex="0" data-action="pedirContrasena" ondblclick="pedirContrasena()">
-        <div class="icon-img">🔒</div>
-        <span>Área Privada</span>
       </div>
       <div class="desktop-icon" tabindex="0" data-action="openCollatz" ondblclick="openCollatz()">
         <div class="icon-img">❄️</div>
@@ -52,7 +44,10 @@
         <div class="icon-img">∞</div>
         <span>Irracional</span>
       </div>
-
+      <div class="desktop-icon" tabindex="0" window.location.href = '/horarios'>
+        <div class="icon-img">"i,vee"</div>
+        <span>Irracional</span>
+      </div>
       <div class="desktop-icon" tabindex="0" data-action="openPong" ondblclick="openPong()">
         <div class="icon-img">🏓</div>
         <span>Pong</span>
@@ -141,7 +136,6 @@
     <div class="start-menu-items" id="start-menu-items">
       <div class="start-item" tabindex="0" role="menuitem" onclick="openSysInfo(); closeStartMenu()">🖥️ Sistema</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openMainWindow(); closeStartMenu()">📄 Artículos</div>
-      <div class="start-item" tabindex="0" role="menuitem" onclick="openHorario(); closeStartMenu()">📅 Horario</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="confirmarSalida('/mi-comic'); closeStartMenu()">📖 Scribart</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="pedirContrasena(); closeStartMenu()">🔒 Área Privada</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openCollatz(); closeStartMenu()">❄️ Collatz</div>

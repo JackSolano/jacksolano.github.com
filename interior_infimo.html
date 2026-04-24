@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conjuntos F_ε – Cantor desplazado (Retro)</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #0a0a0a;
+            color: #ffb86c;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(255, 140, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 140, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .container {
+            background: #111111;
+            border: 1px solid #b35900;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.25), inset 0 0 30px rgba(0,0,0,0.5);
+            padding: 2rem;
+            width: 100%;
+            max-width: 960px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+            color: #e67e22;
+            text-shadow: 0 0 8px rgba(230, 126, 34, 0.6);
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #cc8430;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px dashed #b35900;
+            padding-bottom: 0.75rem;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+        label {
+            font-weight: bold;
+            color: #db8b3b;
+            text-shadow: 0 0 5px rgba(255,140,0,0.5);
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            font-family: inherit;
+            background: #1a1a1a;
+            color: #ffae6c;
+            border: 2px solid #b35900;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="number"]:focus {
+            border-color: #e67e22;
+            box-shadow: 0 0 8px #e67e22;
+        }
+        button {
+            background: #b35900;
+            color: #111;
+            border: none;
+            border-radius: 4px;
+            padding: 0.55rem 1.4rem;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 8px rgba(179, 89, 0, 0.5);
+        }
+        button:hover:not(:disabled) {
+            background: #cc6600;
+            box-shadow: 0 0 14px rgba(230, 126, 34, 0.8);
+        }
+        button:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+        button:disabled {
+            background: #4a3b2b;
+            color: #7a6b55;
+            box-shadow: none;
+            cursor: not-allowed;
+            border: 1px solid #5c4426;
+        }
+        .status {
+            font-size: 0.85rem;
+            color: #b38b5b;
+            margin-left: 0.5rem;
+            font-style: italic;
+        }
+        #output {
+            background: #0f0f0f;
+            color: #ffb86c;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            padding: 1.25rem;
+            border-radius: 4px;
+            border: 1px solid #b35900;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 10px rgba(255,140,0,0.15);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 70vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #b35900 #1a1a1a;
+        }
+        #output::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        #output::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        #output::-webkit-scrollbar-thumb {
+            background: #b35900;
+            border-radius: 4px;
+        }
+        .warning {
+            background: #221d14;
+            border: 1px solid #b35900;
+            border-left: 4px solid #e67e22;
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            color: #d4943b;
+            font-size: 0.85rem;
+            box-shadow: 0 0 8px rgba(255,140,0,0.1);
+        }
+        footer {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #664c2e;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>◈ Conjuntos F<sub>ε</sub> — Cantor desplazado</h1>
+        <p class="subtitle">
+            Intersecciones de niveles del Cantor desplazado e interiores.<br>
+            Ejecuta <code style="color:#e67e22;">compute_all(N)</code> en tiempo real con Pyodide.
+        </p>
+
+        <div class="warning" id="largeWarning" style="display:none;">
+            ⚠ <strong>N = 5</strong> puede tardar varios segundos y producir una salida muy larga.
+            Se recomienda empezar con valores pequeños.
+        </div>
+
+        <div class="controls">
+            <label for="nInput">N =</label>
+            <input type="number" id="nInput" value="2" min="0" max="5" step="1">
+            <button id="runBtn" disabled>▶ Calcular</button>
+            <span class="status" id="pyStatus">Cargando Pyodide…</span>
+            <span class="status" id="runStatus" style="display:none;"></span>
+        </div>
+
+        <pre id="output">(El resultado aparecerá aquí)</pre>
+    </div>
+    <footer>
+        Pyodide ejecuta Python en tu navegador. ◈ Estilo terminal retro.
+    </footer>
+
+    <script>
+        // ── Pyodide setup ────────────────────────────────────────────────
+        let pyodide = null;
+        const pyStatusEl = document.getElementById('pyStatus');
+        const runBtn = document.getElementById('runBtn');
+        const nInput = document.getElementById('nInput');
+        const outputEl = document.getElementById('output');
+        const runStatusEl = document.getElementById('runStatus');
+        const largeWarning = document.getElementById('largeWarning');
+
+        // Original Python code (exactly as provided, minus the __main__ block)
+        const pythonCode = `from fractions import Fraction
+from itertools import product
+
+
+# ── Intervalo ─────────────────────────────────────────────────────────────────
+
+class Interval:
+    __slots__ = ("lo", "hi", "lo_open", "hi_open")
+
+    def __init__(self, lo, hi, lo_open=False, hi_open=False):
+        self.lo      = Fraction(lo)
+        self.hi      = Fraction(hi)
+        self.lo_open = lo_open
+        self.hi_open = hi_open
+
+    def is_empty(self):
+        if self.hi < self.lo:
+            return True
+        if self.hi == self.lo and (self.lo_open or self.hi_open):
+            return True
+        return False
+
+    def interior(self):
+        return Interval(self.lo, self.hi, lo_open=True, hi_open=True)
+
+    def __repr__(self):
+        l = '(' if self.lo_open else '['
+        r = ')' if self.hi_open else ']'
+        return f"{l}{self.lo}, {self.hi}{r}"
+
+    def __eq__(self, other):
+        return (self.lo, self.hi, self.lo_open, self.hi_open) == \\
+               (other.lo, other.hi, other.lo_open, other.hi_open)
+
+    def __lt__(self, other):
+        return (self.lo, self.lo_open) < (other.lo, other.lo_open)
+
+    def __hash__(self):
+        return hash((self.lo, self.hi, self.lo_open, self.hi_open))
+
+
+def intersect_two(a, b):
+    """Intersección de dos intervalos, None si vacía."""
+    if a.lo < b.lo:
+        lo, lo_open = b.lo, b.lo_open
+    elif b.lo < a.lo:
+        lo, lo_open = a.lo, a.lo_open
+    else:
+        lo, lo_open = a.lo, (a.lo_open or b.lo_open)
+
+    if a.hi < b.hi:
+        hi, hi_open = a.hi, a.hi_open
+    elif b.hi < a.hi:
+        hi, hi_open = b.hi, b.hi_open
+    else:
+        hi, hi_open = a.hi, (a.hi_open or b.hi_open)
+
+    iv = Interval(lo, hi, lo_open, hi_open)
+    return None if iv.is_empty() else iv
+
+
+# ── Conjunto = lista ordenada de intervalos disjuntos ─────────────────────────
+
+class IntervalSet:
+    def __init__(self, intervals=None, name=""):
+        self.name = name
+        ivs = [iv for iv in (intervals or []) if not iv.is_empty()]
+        self.ivs = self._merge(sorted(ivs))
+
+    @staticmethod
+    def _merge(ivs):
+        if not ivs:
+            return []
+        merged = [ivs[0]]
+        for cur in ivs[1:]:
+            prev = merged[-1]
+            overlap  = cur.lo < prev.hi
+            touching = (cur.lo == prev.hi and
+                        not (prev.hi_open and cur.lo_open))
+            if overlap or touching:
+                if prev.hi < cur.hi:
+                    hi, hi_open = cur.hi, cur.hi_open
+                elif cur.hi < prev.hi:
+                    hi, hi_open = prev.hi, prev.hi_open
+                else:
+                    hi, hi_open = prev.hi, (prev.hi_open and cur.hi_open)
+                merged[-1] = Interval(prev.lo, hi, prev.lo_open, hi_open)
+            else:
+                merged.append(cur)
+        return merged
+
+    def interior(self):
+        return IntervalSet(
+            [iv.interior() for iv in self.ivs],
+            name=f"i({self.name})"
+        )
+
+    def intersect(self, other):
+        result = []
+        for a in self.ivs:
+            for b in other.ivs:
+                iv = intersect_two(a, b)
+                if iv is not None:
+                    result.append(iv)
+                    if iv.is_empty():
+                        break
+        return IntervalSet(result)
+
+    def is_empty(self):
+        return len(self.ivs) == 0
+
+    def __repr__(self):
+        if not self.ivs:
+            return "∅"
+        return " ∪ ".join(str(iv) for iv in self.ivs)
+
+    def __eq__(self, other):
+        return self.ivs == other.ivs
+
+    def __hash__(self):
+        return hash(tuple(
+            (iv.lo, iv.hi, iv.lo_open, iv.hi_open) for iv in self.ivs
+        ))
+
+
+# ── Generación de niveles de Cantor desplazados ───────────────────────────────
+
+def _cantor_original(n, _cache={}):
+    """Intervalos del nivel n del Cantor estándar (memoizado)."""
+    if n in _cache:
+        return _cache[n]
+    if n == 0:
+        result = [Interval(0, 1, False, False)]
+    else:
+        result = []
+        for iv in _cantor_original(n - 1):
+            lo, hi  = iv.lo, iv.hi
+            third   = (hi - lo) / 3
+            result.append(Interval(lo,           lo + third, False, True))
+            result.append(Interval(lo + 2*third, hi,         False, True))
+    _cache[n] = result
+    return result
+
+
+def cantor_level(n, _cache={}):
+    """E_n: nivel n del Cantor desplazado por -sum_{k=1}^{n} 1/10^k (memoizado)."""
+    if n in _cache:
+        return _cache[n]
+    if n == 0:
+        s = IntervalSet([Interval(0, 1)], name="E₀")
+        _cache[0] = s
+        return s
+    shift     = sum(Fraction(1, 10**k) for k in range(1, n + 1))
+    intervals = [
+        Interval(iv.lo - shift, iv.hi - shift, iv.lo_open, iv.hi_open)
+        for iv in _cantor_original(n)
+    ]
+    name = "E" + _sub(n)
+    s    = IntervalSet(intervals, name=name)
+    _cache[n] = s
+    return s
+
+
+def _sub(n):
+    return str(n).translate(str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉"))
+
+
+# ── Construcción directa de F_epsilon ─────────────────────────────────────────
+
+def epsilon_name(eps):
+    """Nombre legible de F_epsilon."""
+    parts = []
+    for k, e in enumerate(eps):
+        level = _sub(k)
+        if e == 0:
+            parts.append(f"i(E{level})")
+        elif e == 1:
+            parts.append(f"E{level}")
+    if not parts:
+        return "ℝ"
+    return " ∩ ".join(parts)
+
+
+def compute_f_epsilon(eps, base_sets, int_sets):
+    """
+    Calcula F_epsilon intersectando solo los factores no triviales (eps_k != 2).
+    Retorna IntervalSet con nombre asignado.
+    Retorna None si eps = (2,...,2)  (sería ℝ entero).
+    """
+    factors = []
+    for k, e in enumerate(eps):
+        if e == 1:
+            factors.append(base_sets[k])
+        elif e == 0:
+            factors.append(int_sets[k])
+
+    if not factors:
+        return None
+
+    result = factors[0]
+    for f in factors[1:]:
+        result = result.intersect(f)
+        if result.is_empty():
+            break
+
+    result.name = epsilon_name(eps)
+    return result
+
+
+# ── Impresión agrupada por peso ────────────────────────────────────────────────
+
+def weight(eps):
+    """Número de coordenadas != 2."""
+    return sum(1 for e in eps if e != 2)
+
+
+_ORDINAL = {
+    1: "simples",
+    2: "pares",
+    3: "triples",
+    4: "cuádruplas",
+    5: "quíntuples",
+    6: "séxtuples",
+}
+
+def ordinal(k):
+    return _ORDINAL.get(k, f"{k}-tuplas")
+
+
+def compute_all(N):
+    """
+    Genera y muestra todos los F_epsilon para epsilon in {0,1,2}^(N+1),
+    agrupados por peso (número de factores no triviales).
+    """
+    n      = N + 1
+    base_sets = [cantor_level(k) for k in range(n)]
+    int_sets  = [s.interior() for s in base_sets]
+    for k, s in enumerate(int_sets):
+        s.name = f"i(E{_sub(k)})"
+
+    sep = "=" * 62
+    print(sep)
+    print(f"  CANTOR DESPLAZADO — niveles 0..{N}   ({3**n - 1} conjuntos F_ε)")
+    print(sep)
+
+    seen   = {}
+    totals = {}
+
+    for w in range(1, n + 1):
+        header_printed = False
+        count = 0
+
+        for eps in product(range(3), repeat=n):
+            if weight(eps) != w:
+                continue
+
+            f = compute_f_epsilon(eps, base_sets, int_sets)
+            if f is None:
+                continue
+
+            count += 1
+            val_str = repr(f)
+            h       = hash(f)
+
+            if not header_printed:
+                print(f"\\n── Intersecciones {ordinal(w)} (peso {w}) {'─'*(35-len(ordinal(w)))}")
+                header_printed = True
+
+            if h in seen and seen[h][1] == val_str:
+                dup = f"  [= {seen[h][0]}]"
+            else:
+                seen[h] = (f.name, val_str)
+                dup = ""
+
+            print(f"  {f.name}")
+            print(f"    = {val_str}{dup}")
+
+        totals[w] = count
+
+    print(f"\\n{sep}")
+    print(f"  RESUMEN")
+    print(f"  {'─'*40}")
+    total_sets   = sum(totals.values())
+    unique_vals  = len(seen)
+    for w, c in totals.items():
+        print(f"  Peso {w} ({ordinal(w):>12}):  {c:>4} conjuntos")
+    print(f"  {'─'*40}")
+    print(f"  Total F_ε (sin ℝ):     {total_sets:>4}   (= 3^{n} - 1 = {3**n - 1})")
+    print(f"  Valores distintos:     {unique_vals:>4}")
+    print(sep)
+`;
+
+        async function initPyodide() {
+            pyStatusEl.textContent = 'Cargando Pyodide… (unos segundos)';
+            try {
+                pyodide = await loadPyodide();
+                await pyodide.runPythonAsync(pythonCode);
+                pyStatusEl.textContent = '✔ Listo';
+                runBtn.disabled = false;
+            } catch (err) {
+                pyStatusEl.textContent = '✖ Error al cargar Pyodide';
+                console.error(err);
+            }
+        }
+
+        async function runComputation() {
+            const N = parseInt(nInput.value, 10);
+            if (isNaN(N) || N < 0 || N > 5) {
+                outputEl.textContent = 'Por favor, introduce un N entre 0 y 5.';
+                return;
+            }
+
+            // Show warning for N=5
+            largeWarning.style.display = (N === 5) ? 'block' : 'none';
+
+            runBtn.disabled = true;
+            runStatusEl.style.display = 'inline';
+            runStatusEl.textContent = '⏳ Calculando…';
+            outputEl.textContent = '';
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            try {
+                const snip = `
+import sys, io
+_old_stdout = sys.stdout
+sys.stdout = io.StringIO()
+try:
+    compute_all(${N})
+finally:
+    _output = sys.stdout.getvalue()
+    sys.stdout = _old_stdout
+_output
+`;
+                const result = await pyodide.runPythonAsync(snip);
+                outputEl.textContent = result;
+                runStatusEl.textContent = '✔ Completado';
+            } catch (err) {
+                outputEl.textContent = 'Error:\n' + err.toString();
+                runStatusEl.textContent = '✖ Falló';
+                console.error(err);
+            } finally {
+                runBtn.disabled = false;
+                setTimeout(() => {
+                    runStatusEl.style.display = 'none';
+                }, 2500);
+            }
+        }
+
+        runBtn.addEventListener('click', runComputation);
+        nInput.addEventListener('input', () => {
+            const N = parseInt(nInput.value, 10);
+            largeWarning.style.display = (N === 5) ? 'block' : 'none';
+        });
+
+        initPyodide();
+    </script>
+</body>
+</html>
