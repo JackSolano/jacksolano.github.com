@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniones Fₙ = (1/2²ⁿ⁺¹, 1/2²ⁿ] – Formato limpio</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #0a0a0a; color: #ffb86c;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 2rem 1rem; min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(255,140,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,140,0,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .container {
+            background: #111; border: 1px solid #b35900; border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255,140,0,0.25), inset 0 0 30px rgba(0,0,0,0.5);
+            padding: 2rem; width: 100%; max-width: 960px;
+        }
+        h1 { font-size: 1.8rem; color: #e67e22; text-shadow: 0 0 8px rgba(230,126,34,0.6); }
+        .subtitle { font-size: 0.9rem; color: #cc8430; border-bottom: 1px dashed #b35900; padding-bottom: 0.75rem; margin-bottom: 1.5rem; }
+        .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+        label { font-weight: bold; color: #db8b3b; }
+        input[type="number"] {
+            width: 80px; padding: 0.5rem; font-size: 1rem; font-family: inherit;
+            background: #1a1a1a; color: #ffae6c; border: 2px solid #b35900;
+            border-radius: 4px; outline: none;
+        }
+        button {
+            background: #b35900; color: #111; border: none; border-radius: 4px;
+            padding: 0.55rem 1.4rem; font-size: 1rem; font-family: inherit;
+            font-weight: bold; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 8px rgba(179,89,0,0.5); transition: 0.2s;
+        }
+        button:hover:not(:disabled) { background: #cc6600; box-shadow: 0 0 14px rgba(230,126,34,0.8); }
+        button:disabled { background: #4a3b2b; color: #7a6b55; cursor: not-allowed; }
+        .status { font-size: 0.85rem; color: #b38b5b; }
+        #output {
+            background: #0f0f0f; color: #ffb86c; font-family: 'Courier New', monospace;
+            font-size: 0.8rem; line-height: 1.5; padding: 1.25rem; border-radius: 4px;
+            border: 1px solid #b35900; white-space: pre-wrap; word-break: break-word;
+            max-height: 70vh; overflow: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            scrollbar-color: #b35900 #1a1a1a;
+        }
+        footer { margin-top: 1.5rem; font-size: 0.75rem; color: #664c2e; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>◈ Uniones de F<sub>n</sub> = (1/2<sup>2n+1</sup>, 1/2<sup>2n</sup>]</h1>
+        <p class="subtitle">
+            Todas las combinaciones (3<sup>N</sup>–1) de {F<sub>n</sub>, kF<sub>n</sub>}.<br>
+            Solo líneas <em>nombre = valor</em>. Unión real y su cerradura (con kF).
+        </p>
+
+        <div class="controls">
+            <label for="nInput">N =</label>
+            <input type="number" id="nInput" value="2" min="0" max="5" step="1">
+            <button id="runBtn" disabled>▶ Calcular</button>
+            <span class="status" id="pyStatus">Cargando Pyodide…</span>
+            <span class="status" id="runStatus" style="display:none;"></span>
+        </div>
+
+        <pre id="output">(El resultado aparecerá aquí)</pre>
+    </div>
+    <footer>Pyodide ejecuta Python en tu navegador. ◈ Estilo terminal retro.</footer>
+
+    <script>
+        let pyodide = null;
+        const pyStatusEl = document.getElementById('pyStatus');
+        const runBtn = document.getElementById('runBtn');
+        const nInput = document.getElementById('nInput');
+        const outputEl = document.getElementById('output');
+        const runStatusEl = document.getElementById('runStatus');
+
+        const pythonCode = `
+from fractions import Fraction
+from itertools import product
+
+class Interval:
+    __slots__ = ("lo", "hi", "lo_open", "hi_open")
+    def __init__(self, lo, hi, lo_open=False, hi_open=False):
+        self.lo = Fraction(lo); self.hi = Fraction(hi)
+        self.lo_open = lo_open; self.hi_open = hi_open
+    def is_empty(self):
+        if self.hi < self.lo: return True
+        if self.hi == self.lo and (self.lo_open or self.hi_open): return True
+        return False
+    def closure(self):
+        return Interval(self.lo, self.hi, False, False)
+    def __repr__(self):
+        l = '(' if self.lo_open else '['; r = ')' if self.hi_open else ']'
+        return f"{l}{self.lo}, {self.hi}{r}"
+    def __eq__(self, o):
+        if not isinstance(o, Interval): return False
+        return (self.lo, self.hi, self.lo_open, self.hi_open) == (o.lo, o.hi, o.lo_open, o.hi_open)
+    def __lt__(self, o):
+        if self.lo != o.lo: return self.lo < o.lo
+        return self.lo_open and not o.lo_open
+    def __hash__(self):
+        return hash((self.lo, self.hi, self.lo_open, self.hi_open))
+
+def intersect_two(a, b):
+    if a.lo < b.lo: lo, lo_open = b.lo, b.lo_open
+    elif b.lo < a.lo: lo, lo_open = a.lo, a.lo_open
+    else: lo, lo_open = a.lo, (a.lo_open or b.lo_open)
+    if a.hi < b.hi: hi, hi_open = a.hi, a.hi_open
+    elif b.hi < a.hi: hi, hi_open = b.hi, b.hi_open
+    else: hi, hi_open = a.hi, (a.hi_open or b.hi_open)
+    iv = Interval(lo, hi, lo_open, hi_open)
+    return None if iv.is_empty() else iv
+
+class IntervalSet:
+    def __init__(self, intervals=None, name=""):
+        self.name = name
+        ivs = [iv for iv in (intervals or []) if not iv.is_empty()]
+        self.ivs = self._merge(sorted(ivs))
+    @staticmethod
+    def _merge(ivs):
+        if not ivs: return []
+        merged = [ivs[0]]
+        for cur in ivs[1:]:
+            prev = merged[-1]
+            overlap = cur.lo < prev.hi
+            touching = (cur.lo == prev.hi and not (prev.hi_open and cur.lo_open))
+            if overlap or touching:
+                if prev.hi < cur.hi: hi, hi_open = cur.hi, cur.hi_open
+                elif cur.hi < prev.hi: hi, hi_open = prev.hi, prev.hi_open
+                else: hi, hi_open = prev.hi, (prev.hi_open and cur.hi_open)
+                merged[-1] = Interval(prev.lo, hi, prev.lo_open, hi_open)
+            else: merged.append(cur)
+        return merged
+    def closure(self):
+        return IntervalSet([iv.closure() for iv in self.ivs], name=f"k({self.name})")
+    @staticmethod
+    def union_multiple(sets):
+        all_ivs = []
+        for s in sets: all_ivs.extend(s.ivs)
+        return IntervalSet(all_ivs)
+    def __repr__(self):
+        if not self.ivs: return "∅"
+        return " ∪ ".join(str(iv) for iv in self.ivs)
+    def __eq__(self, o):
+        if not isinstance(o, IntervalSet): return False
+        return self.ivs == o.ivs
+    def __hash__(self):
+        return hash(tuple((iv.lo, iv.hi, iv.lo_open, iv.hi_open) for iv in self.ivs))
+
+def construir_F(niveles):
+    conj = []
+    for n in range(niveles):
+        lo = Fraction(1, 2**(2*n+1))
+        hi = Fraction(1, 2**(2*n))
+        Fn = Interval(lo, hi, lo_open=True, hi_open=False)   # (lo, hi]
+        sf = IntervalSet([Fn], name=f"F{n}")
+        kf = sf.closure()
+        kf.name = f"kF{n}"
+        conj.append(sf)
+        conj.append(kf)
+    return conj
+
+def nombre_union(elecciones):
+    partes = [f"F{k}" if e==1 else f"kF{k}" for k,e in enumerate(elecciones) if e!=0]
+    return " ∪ ".join(partes) if partes else "∅"
+
+def nombre_union_k(elecciones):
+    """Nombre de la unión pero usando siempre kF (cerraduras)."""
+    partes = [f"kF{k}" for k,e in enumerate(elecciones) if e!=0]
+    return " ∪ ".join(partes) if partes else "∅"
+
+_ORDINAL = {1:"simples",2:"pares",3:"triples",4:"cuádruplas",5:"quíntuples",6:"séxtuples"}
+def ordinal(k):
+    return _ORDINAL.get(k, f"{k}-tuplas")
+
+def compute_all(N):
+    if N == 0:
+        print("N = 0  ->  sin conjuntos (total 0 uniones)")
+        return
+    conjuntos = construir_F(N)
+    total = 3**N - 1
+    sep = "=" * 62
+    print(sep)
+    print(f"  UNIONES DE F_n = (1/2^(2n+1), 1/2^(2n)]   y   kF_n = [1/2^(2n+1), 1/2^(2n)]")
+    print(f"  Niveles: n = 0 ... {N-1}   ({total} uniones posibles)")
+    print(sep)
+    # Conjuntos base
+    for i in range(0, 2*N, 2):
+        F = conjuntos[i]
+        kF = conjuntos[i+1]
+        print(f"  {F.name} = {F}")
+        print(f"  {kF.name} = {kF}")
+    print()
+    
+    seen = {}       # hash(union_original) -> (rep_union, rep_closure_k, [expr_union])
+    agrupado = {w: [] for w in range(1, N+1)}
+    
+    for elec in product([0,1,2], repeat=N):
+        if all(e == 0 for e in elec):
+            continue
+        peso = sum(1 for e in elec if e != 0)
+        sets_original = [conjuntos[2*k + (e-1)] for k, e in enumerate(elec) if e != 0]
+        U = IntervalSet.union_multiple(sets_original)
+        # cerradura: usar siempre los kF correspondientes
+        sets_k = [conjuntos[2*k+1] for k, e in enumerate(elec) if e != 0]  # kFn para cada nivel elegido
+        clU = IntervalSet.union_multiple(sets_k)
+        expr_u = nombre_union(elec)
+        expr_k = nombre_union_k(elec)
+        repU = repr(U)
+        repCl = repr(clU)
+        clave = hash(U)
+        if clave not in seen:
+            seen[clave] = (repU, repCl, [expr_u])
+        else:
+            _, _, exprs = seen[clave]
+            exprs.append(expr_u)
+        agrupado[peso].append((expr_u, expr_k, repU, repCl, clave))
+    
+    for peso in range(1, N+1):
+        elementos = agrupado[peso]
+        if not elementos: continue
+        print(f"\\n-- Uniones {ordinal(peso)} (peso {peso}) {'-'*(35-len(ordinal(peso)))}")
+        for expr_u, expr_k, repU, repCl, clave in elementos:
+            # Primera línea: unión original
+            linea1 = f"  {expr_u} = {repU}"
+            # Ver duplicados
+            _, _, exprs = seen[clave]
+            if len(exprs) > 1 and expr_u != exprs[0]:
+                linea1 += f"   [= {exprs[0]}]"
+            print(linea1)
+            # Segunda línea: cerradura (siempre, porque es el otro extremo)
+            linea2 = f"  {expr_k} = {repCl}"
+            # Si la unión es igual a su cerradura, no repetimos la línea (son idénticas)
+            if repU != repCl:
+                print(linea2)
+            # Si son iguales, no se imprime segunda línea (ya se ve en la primera)
+    # Resumen
+    print(f"\\n{sep}")
+    print(f"  RESUMEN")
+    print(f"  {'-'*40}")
+    for peso in range(1, N+1):
+        print(f"  Peso {peso} ({ordinal(peso):>12}):  {len(agrupado[peso]):>4} uniones")
+    total_real = sum(len(v) for v in agrupado.values())
+    print(f"  {'-'*40}")
+    print(f"  Total uniones:          {total_real:>4}   (= 3^{N} - 1 = {total})")
+    print(f"  Uniones distintas:      {len(seen):>4}")
+    cerraduras_distintas = len({v[1] for v in seen.values()})
+    print(f"  Cerraduras distintas:   {cerraduras_distintas:>4}")
+    print(sep)
+`;
+
+        async function initPyodide() {
+            pyStatusEl.textContent = 'Cargando Pyodide...';
+            try {
+                pyodide = await loadPyodide();
+                await pyodide.runPythonAsync(pythonCode);
+                pyStatusEl.textContent = '✔ Listo';
+                runBtn.disabled = false;
+            } catch (err) {
+                pyStatusEl.textContent = '✖ Error al cargar Pyodide';
+                console.error(err);
+            }
+        }
+
+        async function runComputation() {
+            const N = parseInt(nInput.value, 10);
+            if (isNaN(N) || N < 0 || N > 5) {
+                outputEl.textContent = 'Por favor, introduce un N entre 0 y 5.';
+                return;
+            }
+            runBtn.disabled = true;
+            runStatusEl.style.display = 'inline';
+            runStatusEl.textContent = '⏳ Calculando...';
+            outputEl.textContent = '';
+            await new Promise(resolve => setTimeout(resolve, 50));
+            try {
+                const snip = `
+import sys
+from io import StringIO
+_old = sys.stdout
+sys.stdout = StringIO()
+try:
+    compute_all(${N})
+finally:
+    _output = sys.stdout.getvalue()
+    sys.stdout = _old
+_output
+`;
+                const result = await pyodide.runPythonAsync(snip);
+                outputEl.textContent = result;
+                runStatusEl.textContent = '✔ Completado';
+            } catch (err) {
+                outputEl.textContent = 'Error:\n' + err.toString();
+                runStatusEl.textContent = '✖ Falló';
+                console.error(err);
+            } finally {
+                runBtn.disabled = false;
+                setTimeout(() => { runStatusEl.style.display = 'none'; }, 2500);
+            }
+        }
+
+        runBtn.addEventListener('click', runComputation);
+        initPyodide();
+    </script>
+</body>
+</html>
