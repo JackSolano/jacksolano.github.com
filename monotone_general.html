@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Funciones Booleanas Monótonas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#ff8c00;font-family:'Courier New',monospace;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+#hdr{padding:5px 12px;border-bottom:1px solid #331a00;font-size:11px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:12px}
+#hdr-left{display:flex;align-items:center;gap:12px}
+.nlbl{font-size:10px;color:#664400}
+#nsel{background:#000;color:#ff8c00;border:1px solid #441a00;font-family:'Courier New',monospace;font-size:11px;padding:1px 4px;cursor:pointer;outline:none}
+#nsel option{background:#000}
+#cnt{color:#442200;font-size:10px}
+#body{display:flex;flex:1;overflow:hidden}
+#list{width:240px;min-width:200px;overflow-y:auto;border-right:1px solid #1a0800;position:relative}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;font-size:11px;color:#442200;letter-spacing:2px;z-index:10}
+.ghdr{padding:3px 8px;font-size:9px;color:#664400;background:#060200;border-bottom:1px solid #0d0400;position:sticky;top:0;z-index:2;letter-spacing:1px}
+.frow{display:flex;align-items:center;gap:4px;padding:2px 6px;cursor:pointer;border-bottom:1px solid #050100;border-left:2px solid transparent}
+.frow:hover{background:#0d0400}
+.frow.sel{background:#160700;border-left-color:#ff8c00}
+.fidx{width:28px;color:#331a00;text-align:right;flex-shrink:0;font-size:9px}
+.bbar{display:flex;gap:1px;flex-wrap:nowrap}
+#det{flex:1;overflow-y:auto;padding:14px 16px;display:flex;gap:16px;align-items:flex-start}
+#ph{flex:1;display:flex;align-items:center;justify-content:center;color:#1a0800;font-size:11px;letter-spacing:3px;align-self:center}
+.ilbl{font-size:9px;color:#664400;letter-spacing:2px;margin-top:11px;margin-bottom:3px;text-transform:uppercase}
+.ilbl:first-child{margin-top:0}
+.badge{display:inline-block;border:1px solid #553300;padding:1px 7px;margin:2px 2px;font-size:11px;color:#ff8c00}
+.formula{font-size:11px;line-height:1.9;color:#ffaa44;word-break:break-all}
+.progbar{width:100%;height:5px;background:#0a0300;margin-bottom:3px}
+.progfill{height:100%;background:#773300}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#000}
+::-webkit-scrollbar-thumb{background:#1a0800}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <div id="hdr-left">
+    <span>FUNCIONES BOOLEANAS MONÓTONAS</span>
+    <span class="nlbl">n =</span>
+    <select id="nsel">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4" selected>4</option>
+      <option value="5">5</option>
+    </select>
+  </div>
+  <span id="cnt"></span>
+</div>
+<div id="body">
+  <div id="list"><div id="loading">GENERANDO...</div></div>
+  <div id="det"><div id="ph">← SELECCIONA UNA FUNCIÓN</div></div>
+</div>
+
+<script>
+const pc = x => { let c=0,n=x>>>0; while(n){c+=n&1;n>>>=1} return c };
+
+/* ── Enumeración ─────────────────────────────────────── */
+function enumMonotone(n) {
+  const size = 1 << n;
+  if (n <= 4) {
+    const total = 1 << size;
+    const fns = [];
+    for (let m = 0; m < total; m++) {
+      let ok = true;
+      outer: for (let x = 0; x < size; x++) {
+        if ((m >> x) & 1) {
+          for (let k = 0; k < n; k++) {
+            if (!((m >> (x|(1<<k))) & 1)) { ok=false; break outer; }
+          }
+        }
+      }
+      if (ok) fns.push(m);
+    }
+    return fns;
+  }
+  // n=5: enumerar antikadenas de B_5 por backtracking
+  const elems = Array.from({length: size}, (_,i)=>i);
+  const antichains = [];
+  function bt(start, cur) {
+    antichains.push(cur.slice());
+    for (let i = start; i < size; i++) {
+      const e = elems[i];
+      let ok = true;
+      for (const c of cur) {
+        const r = c & e;
+        if (r===c || r===e) { ok=false; break; }
+      }
+      if (ok) { cur.push(e); bt(i+1, cur); cur.pop(); }
+    }
+  }
+  bt(0, []);
+  return antichains.map(ac => {
+    let mask = 0;
+    for (let x = 0; x < size; x++) {
+      for (const a of ac) {
+        if ((a & x) === a) { mask = (mask | (1<<x)) >>> 0; break; }
+      }
+    }
+    return mask;
+  });
+}
+
+/* ── Anticadena & DNF ────────────────────────────────── */
+const SUB = ['₁','₂','₃','₄','₅'];
+function getAC(mask, n) {
+  const ones = [];
+  for (let i=0; i<(1<<n); i++) if ((mask>>>i)&1) ones.push(i);
+  return ones.filter(x => !ones.some(y => y!==x && (y&x)===y));
+}
+function monoStr(v, n) {
+  if (v === 0) return '⊤';
+  const vs = [];
+  for (let k=0; k<n; k++) if ((v>>k)&1) vs.push('x'+SUB[k]);
+  return vs.join('∧');
+}
+function dnf(mask, n) {
+  if (mask === 0) return '⊥';
+  const full = n <= 4 ? (1<<(1<<n))-1 : 0xFFFFFFFF;
+  if ((mask>>>0) === (full>>>0)) return '⊤';
+  return getAC(mask, n).map(v => monoStr(v, n)).join(' ∨ ');
+}
+
+/* ── Layout Hasse ────────────────────────────────────── */
+const WCFG = {1:110, 2:160, 3:220, 4:290, 5:420};
+const HCFG = {1:120, 2:190, 3:260, 4:370, 5:460};
+const RCFG = {1:13,  2:13,  3:12,  4:11,  5:8};
+
+function layoutB(n) {
+  const size = 1<<n, H = HCFG[n], W = WCFG[n];
+  const lvN = Array.from({length:n+1}, ()=>[]);
+  for (let v=0; v<size; v++) lvN[pc(v)].push(v);
+  const NP = {};
+  for (let lv=0; lv<=n; lv++) {
+    const ns = lvN[lv], cnt = ns.length;
+    const y = H - 18 - lv * (H - 38) / n;
+    ns.forEach((v,i) => { NP[v] = {x: W*(i+1)/(cnt+1), y}; });
+  }
+  return NP;
+}
+
+/* ── SVG Hasse ───────────────────────────────────────── */
+function makeHasse(mask, n, NP) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = WCFG[n], H = HCFG[n], r = RCFG[n];
+  const size = 1<<n;
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  const seen = new Set();
+  for (let x=0; x<size; x++) {
+    for (let k=0; k<n; k++) {
+      const y = x|(1<<k); if (y===x) continue;
+      const key = Math.min(x,y)+'-'+Math.max(x,y);
+      if (seen.has(key)) continue; seen.add(key);
+      const px=NP[x], py=NP[y];
+      const both = ((mask>>>x)&1) && ((mask>>>y)&1);
+      const l = document.createElementNS(NS,'line');
+      l.setAttribute('x1',px.x); l.setAttribute('y1',px.y);
+      l.setAttribute('x2',py.x); l.setAttribute('y2',py.y);
+      l.setAttribute('stroke', both ? '#774400' : '#0e0300');
+      l.setAttribute('stroke-width', both ? '2' : '1');
+      svg.appendChild(l);
+    }
+  }
+  for (let v=0; v<size; v++) {
+    const p = NP[v], inS = !!((mask>>>v)&1);
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p.x); c.setAttribute('cy',p.y); c.setAttribute('r',r);
+    c.setAttribute('fill', inS ? '#bb4d00' : '#080200');
+    c.setAttribute('stroke', inS ? '#ff8c00' : '#1e0900');
+    c.setAttribute('stroke-width', inS ? '2' : '1');
+    svg.appendChild(c);
+    const t = document.createElementNS(NS,'text');
+    t.setAttribute('x',p.x); t.setAttribute('y',p.y+3);
+    t.setAttribute('text-anchor','middle');
+    t.setAttribute('font-family','Courier New');
+    t.setAttribute('font-size', n<=4 ? '6' : '6');
+    t.setAttribute('fill', inS ? '#fff3e0' : '#3a1400');
+    t.textContent = n<=4 ? v.toString(2).padStart(n,'0') : v.toString();
+    svg.appendChild(t);
+  }
+  return svg;
+}
+
+/* ── Estado global ───────────────────────────────────── */
+let CUR_N = 4, FNS = [], NP = {}, curRow = null;
+
+/* ── Render lista ────────────────────────────────────── */
+function renderList(n, fns) {
+  const listEl = document.getElementById('list');
+  listEl.innerHTML = '<div id="loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;font-size:11px;color:#442200;letter-spacing:2px;z-index:10">GENERANDO...</div>';
+
+  setTimeout(() => {
+    const frag = document.createDocumentFragment();
+    const size = 1<<n;
+    const bw = n<=3 ? 9 : n===4 ? 6 : 3;
+    let curLv = -1;
+    fns.forEach((mask, i) => {
+      const lv = pc(mask);
+      if (lv !== curLv) {
+        curLv = lv;
+        const cnt = fns.filter(m => pc(m)===lv).length;
+        const h = document.createElement('div');
+        h.className = 'ghdr';
+        h.textContent = 'NIVEL '+lv+' · '+cnt;
+        frag.appendChild(h);
+      }
+      const row = document.createElement('div');
+      row.className = 'frow'; row.id = 'r'+i;
+      const ix = document.createElement('div');
+      ix.className = 'fidx'; ix.textContent = i+1;
+      const bar = document.createElement('div'); bar.className = 'bbar';
+      for (let b=0; b<size; b++) {
+        const d = document.createElement('div');
+        d.style.cssText = `width:${bw}px;height:${bw+2}px;background:${(mask>>>b)&1?'#aa5500':'#0d0300'}`;
+        bar.appendChild(d);
+      }
+      row.appendChild(ix); row.appendChild(bar);
+      row.addEventListener('click', () => selFn(i, mask));
+      frag.appendChild(row);
+    });
+    listEl.innerHTML = '';
+    listEl.appendChild(frag);
+    document.getElementById('cnt').textContent = fns.length+' funciones';
+    curRow = null;
+  }, 20);
+}
+
+/* ── Seleccionar función ─────────────────────────────── */
+function selFn(idx, mask) {
+  if (curRow) curRow.classList.remove('sel');
+  curRow = document.getElementById('r'+idx);
+  if (!curRow) return;
+  curRow.classList.add('sel');
+  curRow.scrollIntoView({block:'nearest'});
+
+  const n = CUR_N;
+  const det = document.getElementById('det');
+  det.innerHTML = '';
+
+  const left = document.createElement('div');
+  left.style.flexShrink = '0';
+  left.appendChild(makeHasse(mask, n, NP));
+  det.appendChild(left);
+
+  const info = document.createElement('div');
+  info.style.cssText = 'flex:1;min-width:0;font-size:11px';
+
+  const size = 1<<n;
+  const lv = pc(mask);
+  const ac = getAC(mask, n);
+  const formula = dnf(mask, n);
+
+  const l1 = mk('div','ilbl'); l1.textContent = 'función #'+(idx+1);
+  const v1 = mk('div'); v1.style.cssText='margin-bottom:4px;font-size:11px';
+  v1.innerHTML = `|f⁻¹(1)| = ${lv} &nbsp;·&nbsp; |f⁻¹(0)| = ${size-lv}`;
+  const v1b = mk('div'); v1b.style.cssText='font-size:9px;color:#442200;margin-bottom:2px';
+  v1b.textContent = `mask = 0x${(mask>>>0).toString(16).toUpperCase().padStart(n<=4?4:8,'0')}`;
+
+  const l2 = mk('div','ilbl'); l2.textContent = 'antikadena';
+  const ac_div = mk('div'); ac_div.style.marginBottom='4px';
+  if (mask===0) {
+    const b=mk('span','badge'); b.textContent='∅'; ac_div.appendChild(b);
+  } else {
+    ac.forEach(e => { const b=mk('span','badge'); b.textContent=monoStr(e,n); ac_div.appendChild(b); });
+  }
+
+  const l3 = mk('div','ilbl'); l3.textContent = 'DNF mínima';
+  const fd = mk('div','formula'); fd.textContent = formula;
+
+  const l4 = mk('div','ilbl'); l4.textContent = 'densidad';
+  const prog = mk('div'); prog.style.marginTop='2px';
+  const pct = Math.round(lv/size*100);
+  prog.innerHTML = `<div class="progbar"><div class="progfill" style="width:${pct}%"></div></div><div style="font-size:9px;color:#442200">${lv} / ${size} entradas → 1 &nbsp;(${pct}%)</div>`;
+
+  [l1,v1,v1b,l2,ac_div,l3,fd,l4,prog].forEach(el => info.appendChild(el));
+  det.appendChild(info);
+}
+
+function mk(tag, cls) {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  return el;
+}
+
+/* ── Cambio de n ─────────────────────────────────────── */
+function loadN(n) {
+  CUR_N = n;
+  document.getElementById('cnt').textContent = '';
+  document.getElementById('det').innerHTML = '<div id="ph" style="flex:1;display:flex;align-items:center;justify-content:center;color:#1a0800;font-size:11px;letter-spacing:3px;align-self:center">← SELECCIONA UNA FUNCIÓN</div>';
+  curRow = null;
+
+  NP = layoutB(n);
+
+  setTimeout(() => {
+    FNS = enumMonotone(n);
+    FNS.sort((a,b) => pc(a)-pc(b) || (a>>>0)-(b>>>0));
+    renderList(n, FNS);
+  }, 30);
+}
+
+document.getElementById('nsel').addEventListener('change', e => loadN(+e.target.value));
+loadN(4);
+</script>
+</body>
+</html>
