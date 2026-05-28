@@ -336,11 +336,13 @@
 
     // ── CREATE WINDOW ─────────────────────────────
     function createWindow(title, width, bodyHTML) {
+      const mob = window.innerWidth < 600;
       const w = document.createElement('div');
       w.className = 'win98-window';
-      const t = 60 + Math.random() * 80;
-      const l = 80 + Math.random() * 200;
-      w.style.cssText = `top:${t}px;left:${l}px;width:${width}px;z-index:${getTopZ()};`;
+      const winW = mob ? window.innerWidth - 16 : width;
+      const t    = mob ? 8 : 60 + Math.random() * 80;
+      const l    = mob ? 8 : Math.min(80 + Math.random() * 200, window.innerWidth - winW - 20);
+      w.style.cssText = `top:${t}px;left:${l}px;width:${winW}px;z-index:${getTopZ()};`;
       w.innerHTML = `
         <div class="win98-titlebar">
           <span class="win98-title">${title}</span>

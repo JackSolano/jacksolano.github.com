@@ -648,8 +648,74 @@ button, a, .desktop-icon, .start-item, .menu-item,
 
 /* ── RESPONSIVE ───────────────────────────────── */
 @media (max-width: 600px) {
-  .main-body { flex-direction: column; height: auto; }
-  .sidebar { width: 100%; height: 80px; border-right: none; border-bottom: 1px solid var(--orange-dark); }
-  .desktop-icons { gap: 12px; }
+
+  /* Desktop scrollable verticalmente */
+  .desktop {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Iconos en cuadrícula, no columna infinita */
+  .desktop-icons {
+    position: relative;        /* sale del flujo absoluto */
+    top: unset; left: unset;
+    display: grid;
+    grid-template-columns: repeat(3, 80px);
+    gap: 12px;
+    padding: 16px 12px 60px;   /* espacio inferior para el taskbar */
+    justify-content: start;
+  }
+
+  .desktop-icon {
+    width: 80px;
+  }
+
+  /* Ventanas iniciales: no se salgan de pantalla */
+  #win-bienvenida,
+  #win-f {
+    left: 8px !important;
+    width: calc(100vw - 16px) !important;
+    transform: none !important;
+  }
+
+  #win-f {
+    top: 320px !important;
+  }
+
+  /* Ventana principal */
+  .main-body {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    border-right: none;
+    border-bottom: 1px solid var(--orange-dark);
+  }
+
+  /* Taskbar: texto más pequeño, tareas con scroll */
+  .win98-taskbar {
+    padding: 0 2px;
+    gap: 2px;
+  }
+
+  .start-button {
+    font-size: 16px;
+    padding: 0 8px;
+  }
+
+  .taskbar-tasks {
+    overflow-x: auto;
+  }
+
+  .tb-win-btn {
+    font-size: 10px;
+    max-width: 100px;
+    padding: 0 6px;
+  }
+
+  /* Ocultar hints de teclado */
   #kb-hint { display: none; }
 }
