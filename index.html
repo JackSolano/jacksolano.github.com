@@ -11,11 +11,29 @@
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 <style>
+  /* Contenedor de iconos: se acomodan en varias columnas/filas
+     y se ajustan al alto de la ventana en vez de amontonarse
+     en una sola columna hacia abajo. */
+  #desktop-icons.desktop-icons {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 100px)) !important;
+    grid-auto-rows: min-content !important;
+    gap: 6px 10px !important;
+    align-content: start !important;
+    justify-content: start !important;
+    max-height: calc(100vh - 90px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+  }
+
   .desktop-icon {
-    width: 120px;
+    width: auto;
     text-align: center;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px 4px;
+    box-sizing: border-box;
   }
 
   .desktop-icon:hover {
@@ -24,8 +42,15 @@
   }
 
   .icon-img {
-    font-size: 30px;
+    font-size: clamp(18px, 2.2vw, 30px);
     margin-bottom: 5px;
+  }
+
+  .desktop-icon span {
+    font-size: clamp(10px, 1vw, 12px);
+    display: block;
+    word-break: break-word;
+    line-height: 1.2;
   }
 </style>
 
