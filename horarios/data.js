@@ -17,8 +17,8 @@ const HORARIOS = {
         grupo: "A",
         creditos: 5,
         sesiones: [
-          { dia: "Mar", inicio: 10, fin: 12, aula: "FC 108" },
-          { dia: "Mar", inicio: 14, fin: 16, aula: "FC 108" }
+          { dia: "Lun", inicio: 10, fin: 12, aula: "FC 108" },
+          { dia: "Mie", inicio: 14, fin: 16, aula: "FC 108" }
         ]
       },
       {
@@ -37,8 +37,8 @@ const HORARIOS = {
         grupo: "A",
         creditos: 5,
         sesiones: [
-          { dia: "Jue", inicio: 10, fin: 12, aula: "EDIC 612" },
-          { dia: "Sab", inicio: 10, fin: 12, aula: "EDIC 612" }
+          { dia: "Mar", inicio: 10, fin: 12, aula: "EDIC 612" },
+          { dia: "Jue", inicio: 10, fin: 12, aula: "EDIC 612" }
         ]
       }
     ]
