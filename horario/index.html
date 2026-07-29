@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horarios — Jack Solano</title>
+<link rel="icon" href="../favicon.ico" type="image/x-icon">
+<style>
+  :root{
+    --bg:#0a0908;
+    --panel:#111009;
+    --orange:#ff9d1c;
+    --orange-dim:#c97a12;
+    --orange-glow: rgba(255,157,28,0.35);
+    --border:#3a2a12;
+    --text-dim:#c9a877;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    height:100%;
+    background:var(--bg);
+    color:var(--orange);
+    font-family:"Courier New", "Consolas", monospace;
+  }
+
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding:20px;
+    background:
+      radial-gradient(ellipse at center, #14110a 0%, #060504 100%);
+  }
+
+  /* ---------- SCANLINES / CRT FLICKER ---------- */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.02) 0px,
+      rgba(255,255,255,0.02) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    z-index:999;
+  }
+
+  /* ============ LOGIN SCREEN ============ */
+  #login-screen{
+    width:100%;
+    max-width:420px;
+    background:var(--panel);
+    border:2px solid var(--border);
+    border-radius:14px;
+    padding:40px 32px;
+    box-shadow:0 0 40px var(--orange-glow), inset 0 0 30px rgba(0,0,0,0.6);
+    text-align:center;
+  }
+
+  #login-screen h1{
+    margin:0 0 6px 0;
+    font-size:22px;
+    letter-spacing:4px;
+    text-shadow:0 0 10px var(--orange-glow);
+  }
+
+  #login-screen p{
+    color:var(--text-dim);
+    font-size:12px;
+    letter-spacing:2px;
+    margin:0 0 28px 0;
+  }
+
+  .terminal-prompt{
+    text-align:left;
+    font-size:13px;
+    color:var(--orange-dim);
+    margin-bottom:8px;
+    letter-spacing:1px;
+  }
+
+  #password-input{
+    width:100%;
+    background:#000;
+    border:1px solid var(--border);
+    border-radius:6px;
+    color:var(--orange);
+    font-family:inherit;
+    font-size:18px;
+    letter-spacing:6px;
+    padding:12px 14px;
+    outline:none;
+    text-align:center;
+  }
+
+  #password-input:focus{
+    border-color:var(--orange-dim);
+    box-shadow:0 0 12px var(--orange-glow);
+  }
+
+  #login-btn{
+    margin-top:18px;
+    width:100%;
+    background:var(--orange);
+    color:#1a1200;
+    border:none;
+    border-radius:6px;
+    padding:12px;
+    font-family:inherit;
+    font-weight:bold;
+    letter-spacing:3px;
+    font-size:13px;
+    cursor:pointer;
+    transition:transform 0.08s ease, box-shadow 0.2s ease;
+  }
+
+  #login-btn:hover{
+    box-shadow:0 0 18px var(--orange-glow);
+  }
+  #login-btn:active{
+    transform:scale(0.98);
+  }
+
+  #login-error{
+    margin-top:14px;
+    font-size:12px;
+    letter-spacing:1px;
+    color:#ff5252;
+    min-height:16px;
+    visibility:hidden;
+  }
+
+  #login-error.show{ visibility:visible; }
+
+  .blink{ animation:blink 1s steps(2,start) infinite; }
+  @keyframes blink{ to{ visibility:hidden; } }
+
+  /* ============ SCHEDULE SCREEN ============ */
+  #schedule-screen{ display:none; width:100%; max-width:1500px; }
+
+  .board{
+    background:var(--panel);
+    border:2px solid var(--border);
+    border-radius:16px;
+    padding:32px 36px 24px;
+    box-shadow:0 0 50px var(--orange-glow), inset 0 0 30px rgba(0,0,0,0.6);
+  }
+
+  .board-header{ text-align:center; margin-bottom:20px; }
+
+  .board-header h1{
+    margin:0;
+    font-size:34px;
+    letter-spacing:6px;
+    text-shadow:0 0 14px var(--orange-glow);
+  }
+
+  .board-header .subtitle{
+    margin-top:8px;
+    font-size:13px;
+    letter-spacing:3px;
+    color:#fff;
+  }
+
+  .board-header .datestamp{
+    margin-top:4px;
+    font-size:12px;
+    letter-spacing:2px;
+    color:var(--text-dim);
+  }
+
+  .student-info{
+    text-align:center;
+    font-size:11px;
+    letter-spacing:1px;
+    color:var(--orange-dim);
+    margin-top:10px;
+    line-height:1.6;
+  }
+
+  .horario-tabs{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:20px 0 10px;
+  }
+
+  .horario-tab{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:inherit;
+    font-size:11px;
+    letter-spacing:2px;
+    padding:8px 16px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+
+  .horario-tab.active{
+    border-color:var(--orange);
+    color:var(--orange);
+    box-shadow:0 0 10px var(--orange-glow);
+  }
+
+  .grid-wrap{
+    overflow-x:auto;
+    margin-top:18px;
+  }
+
+  table.grid{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+  }
+
+  table.grid th{
+    border:1px solid var(--border);
+    color:#1a1200;
+    background:var(--orange);
+    padding:10px 6px;
+    font-size:13px;
+    letter-spacing:2px;
+  }
+
+  table.grid td.hour-label{
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-size:12px;
+    text-align:right;
+    padding:2px 10px;
+    width:60px;
+    vertical-align:top;
+  }
+
+  table.grid td.slot{
+    border:1px solid var(--border);
+    height:34px;
+    padding:0;
+    position:relative;
+  }
+
+  .class-block{
+    position:absolute;
+    inset:2px;
+    background:var(--orange);
+    color:#1a1200;
+    border-radius:4px;
+    padding:6px 8px;
+    font-size:11px;
+    line-height:1.5;
+    overflow:hidden;
+    z-index:2;
+  }
+
+  .class-block b{
+    display:block;
+    font-size:12px;
+    letter-spacing:0.5px;
+  }
+
+  .legend{
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    margin-top:24px;
+    padding-top:14px;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    letter-spacing:1px;
+  }
+
+  .legend-item{ display:flex; align-items:center; gap:8px; color:#fff; }
+
+  .legend-swatch{
+    width:12px; height:12px; border-radius:3px; background:var(--orange);
+  }
+
+  .board-footer{
+    text-align:center;
+    margin-top:22px;
+    font-size:10px;
+    letter-spacing:3px;
+    color:#5a4626;
+  }
+
+  .logout-btn{
+    position:absolute;
+    top:16px;
+    right:16px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-dim);
+    font-family:inherit;
+    font-size:10px;
+    letter-spacing:1px;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+
+  #schedule-screen{ position:relative; }
+</style>
+</head>
+<body>
+
+  <!-- ======= PANTALLA DE CONTRASEÑA ======= -->
+  <div id="login-screen">
+    <h1>ACCESO RESTRINGIDO</h1>
+    <p>TERMINAL DE HORARIOS · UIS</p>
+    <div class="terminal-prompt">&gt; INGRESE CONTRASEÑA<span class="blink">_</span></div>
+    <input type="password" id="password-input" maxlength="20" autocomplete="off" />
+    <button id="login-btn">ENTRAR</button>
+    <div id="login-error">CONTRASEÑA INCORRECTA</div>
+  </div>
+
+  <!-- ======= PANTALLA DE HORARIO ======= -->
+  <div id="schedule-screen">
+    <div class="board">
+      <button class="logout-btn" id="logout-btn">SALIR</button>
+
+      <div class="board-header">
+        <h1>HORARIOS</h1>
+        <div class="subtitle" id="board-subtitle"></div>
+        <div class="datestamp" id="board-date"></div>
+        <div class="student-info" id="student-info"></div>
+      </div>
+
+      <div class="horario-tabs" id="horario-tabs"></div>
+
+      <div class="grid-wrap">
+        <table class="grid" id="grid-table"></table>
+      </div>
+
+      <div class="legend" id="legend"></div>
+
+      <div class="board-footer">MODELO TR-1968 · TERMINAL DE DATOS</div>
+    </div>
+  </div>
+
+<script src="auth.js"></script>
+<script src="data.js"></script>
+<script>
+  // ---------- LOGIN ----------
+  const loginScreen = document.getElementById("login-screen");
+  const scheduleScreen = document.getElementById("schedule-screen");
+  const passwordInput = document.getElementById("password-input");
+  const loginBtn = document.getElementById("login-btn");
+  const loginError = document.getElementById("login-error");
+
+  async function attemptLogin(){
+    const val = passwordInput.value;
+    const ok = await checkPassword(val);
+    if(ok){
+      markSessionAuthed();
+      showSchedule();
+    } else {
+      loginError.classList.add("show");
+      passwordInput.value = "";
+      passwordInput.focus();
+    }
+  }
+
+  loginBtn.addEventListener("click", attemptLogin);
+  passwordInput.addEventListener("keydown", e => {
+    if(e.key === "Enter") attemptLogin();
+    loginError.classList.remove("show");
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    sessionStorage.removeItem("horarios_auth_ok");
+    location.reload();
+  });
+
+  // ---------- RENDER HORARIO ----------
+  const DAYS = ["Lun","Mar","Mie","Jue","Vie","Sab"];
+  const DAY_LABELS = { Lun:"LUN", Mar:"MAR", Mie:"MIE", Jue:"JUE", Vie:"VIE", Sab:"SAB" };
+
+  let currentHorarioId = null;
+
+  function showSchedule(){
+    loginScreen.style.display = "none";
+    scheduleScreen.style.display = "block";
+    renderTabs();
+    const firstId = Object.keys(HORARIOS)[0];
+    renderHorario(currentHorarioId || firstId);
+  }
+
+  function renderTabs(){
+    const tabsEl = document.getElementById("horario-tabs");
+    tabsEl.innerHTML = "";
+    const ids = Object.keys(HORARIOS);
+    if(ids.length <= 1) return; // no mostrar tabs si solo hay uno
+    ids.forEach(id => {
+      const btn = document.createElement("button");
+      btn.className = "horario-tab" + (id === currentHorarioId ? " active" : "");
+      btn.textContent = HORARIOS[id].titulo;
+      btn.onclick = () => renderHorario(id);
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  function renderHorario(id){
+    currentHorarioId = id;
+    const h = HORARIOS[id];
+
+    document.getElementById("board-subtitle").textContent =
+      `${h.titulo.toUpperCase()} · ${h.asignaturas.length} ASIGNATURAS · ${h.asignaturas.reduce((s,a)=>s+a.creditos,0)} CREDITOS`;
+    document.getElementById("board-date").textContent = h.periodo || "";
+    document.getElementById("student-info").innerHTML =
+      (h.estudiante || "") + (h.programa ? "<br>" + h.programa : "");
+
+    renderTabs();
+    buildGrid(h);
+    buildLegend(h);
+  }
+
+  function buildGrid(h){
+    const table = document.getElementById("grid-table");
+    table.innerHTML = "";
+
+    const startHour = h.horaInicio ?? 6;
+    const endHour = h.horaFin ?? 20;
+
+    // header
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    headRow.innerHTML = `<th style="background:var(--panel); color:var(--orange); border:1px solid var(--border);"></th>` +
+      DAYS.map(d => `<th>${DAY_LABELS[d]}</th>`).join("");
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    // build occupancy map: day -> hour -> class info (only on start hour, with rowspan)
+    const occupied = {}; // "day-hour" -> {skip:true} or block info
+    DAYS.forEach(d => { occupied[d] = {}; });
+
+    h.asignaturas.forEach(asig => {
+      asig.sesiones.forEach(ses => {
+        for(let hh = ses.inicio; hh < ses.fin; hh++){
+          occupied[ses.dia][hh] = occupied[ses.dia][hh] || null;
+        }
+        occupied[ses.dia][ses.inicio] = {
+          asig, ses, span: ses.fin - ses.inicio, isStart:true
+        };
+        for(let hh = ses.inicio+1; hh < ses.fin; hh++){
+          occupied[ses.dia][hh] = { skip:true };
+        }
+      });
+    });
+
+    for(let hour = startHour; hour < endHour; hour++){
+      const tr = document.createElement("tr");
+
+      const tdHour = document.createElement("td");
+      tdHour.className = "hour-label";
+      tdHour.textContent = `${hour}:00`;
+      tr.appendChild(tdHour);
+
+      DAYS.forEach(day => {
+        const cell = occupied[day][hour];
+        if(cell && cell.skip) return; // parte de un rowspan anterior
+
+        const td = document.createElement("td");
+        td.className = "slot";
+
+        if(cell && cell.isStart){
+          td.rowSpan = cell.span;
+          const block = document.createElement("div");
+          block.className = "class-block";
+          block.style.position = "static";
+          block.style.inset = "auto";
+          block.style.height = "100%";
+          const a = cell.asig, s = cell.ses;
+          block.innerHTML = `<b>${a.nombre}</b>` +
+            `${a.codigo} · ${a.grupo} · ${s.inicio}:00-${s.fin}:00<br>` +
+            (a.profesor ? `PROF: ${a.profesor}<br>` : "") +
+            (s.aula ? `AULA: ${s.aula}` : (a.aula ? `AULA: ${a.aula}` : ""));
+          td.appendChild(block);
+        }
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(tbody);
+  }
+
+  function buildLegend(h){
+    const legend = document.getElementById("legend");
+    legend.innerHTML = "";
+    h.asignaturas.forEach(a => {
+      const item = document.createElement("div");
+      item.className = "legend-item";
+      item.innerHTML = `<span class="legend-swatch"></span>${a.nombre} · G.${a.grupo}`;
+      legend.appendChild(item);
+    });
+  }
+
+  // ---------- INIT ----------
+  if(isSessionAuthed()){
+    showSchedule();
+  } else {
+    passwordInput.focus();
+  }
+</script>
+
+</body>
+</html>
