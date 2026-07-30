@@ -16,6 +16,7 @@ const HORARIOS = {
         nombre: "ALGEBRA LINEAL",
         grupo: "A",
         creditos: 5,
+        profesor: "Adriana Alexandra Albarracín Mantilla",
         sesiones: [
           { dia: "Lun", inicio: 10, fin: 12, aula: "FC 108" },
           { dia: "Mie", inicio: 14, fin: 16, aula: "FC 108" }
@@ -26,6 +27,7 @@ const HORARIOS = {
         nombre: "ANALISIS EN RN",
         grupo: "A",
         creditos: 5,
+        profesor: "Diego Armando Rueda Gómez",
         sesiones: [
           { dia: "Mie", inicio: 8, fin: 10, aula: "FC 108" },
           { dia: "Vie", inicio: 8, fin: 10, aula: "FC 108" }
@@ -36,6 +38,7 @@ const HORARIOS = {
         nombre: "TOPOLOGIA",
         grupo: "A",
         creditos: 5,
+        profesor: "Javier Enrique Camargo García",
         sesiones: [
           { dia: "Mar", inicio: 10, fin: 12, aula: "EDIC 612" },
           { dia: "Jue", inicio: 10, fin: 12, aula: "EDIC 612" }
