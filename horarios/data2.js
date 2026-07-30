@@ -25,6 +25,7 @@ Object.assign(HORARIOS, {
         nombre: "LABORATORIO DE ARCHIVISTICA II",
         grupo: "A",
         creditos: 3,
+        profesor: "Dolly Esperanza Rojas Peña",
         sesiones: [
           { dia: "Mar", inicio: 7, fin: 10, aula: "CH 303" }
         ]
@@ -34,6 +35,7 @@ Object.assign(HORARIOS, {
         nombre: "SEMINARIO DE TOP ESPECIALES II",
         grupo: "A",
         creditos: 3,
+        profesor: "Daniel Orlando Ramírez Galvis",
         sesiones: [
           { dia: "Mie", inicio: 8, fin: 11, aula: "CH 222" }
         ]
@@ -43,6 +45,7 @@ Object.assign(HORARIOS, {
         nombre: "HISTORIA DE AMERICA LATINA II",
         grupo: "A",
         creditos: 4,
+        profesor: "Alfonso Antonio Fernandez Villa",
         sesiones: [
           { dia: "Mar", inicio: 10, fin: 12, aula: "CH2 305" },
           { dia: "Jue", inicio: 10, fin: 12, aula: "CH2 305" }
@@ -53,6 +56,7 @@ Object.assign(HORARIOS, {
         nombre: "FUENTES HISTORICAS",
         grupo: "A",
         creditos: 3,
+        profesor: "Robinson Salazar Carreño",
         sesiones: [
           { dia: "Mie", inicio: 14, fin: 17, aula: "CH 510" }
         ]
@@ -62,6 +66,7 @@ Object.assign(HORARIOS, {
         nombre: "FILOSOFIA DE LA HISTORIA",
         grupo: "A",
         creditos: 3,
+        profesor: "Alvaro Acevedo Tarazona",
         sesiones: [
           { dia: "Vie", inicio: 8, fin: 11, aula: "CH 510" }
         ]
@@ -71,6 +76,7 @@ Object.assign(HORARIOS, {
         nombre: "SOPORTES DOCUMENTALES Y GESTION DE LA INFORMACION",
         grupo: "A",
         creditos: 3,
+        profesor: "Daniel Felipe Ardila Arias",
         sesiones: [
           { dia: "Mie", inicio: 17, fin: 20, aula: "CH 222" }
         ]
