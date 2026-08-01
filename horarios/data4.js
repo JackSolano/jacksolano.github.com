@@ -16,8 +16,8 @@ HORARIOS["farit"] = {
       creditos: 4,
       profesor: "Jennifer Carol Guarin Delgado",
       sesiones: [
-        { dia: "Lun", inicio: 16, fin: 18 },
-        { dia: "Jue", inicio: 16, fin: 18 },
+        { dia: "Lun", inicio: 16, fin: 18, aula: "II 502" },
+        { dia: "Jue", inicio: 16, fin: 18, aula: "II 302" },
         { dia: "Vie", inicio: 14, fin: 16 }
       ]
     },
@@ -41,8 +41,8 @@ HORARIOS["farit"] = {
       profesor: "Edson Jair Suárez Porras",
       sesiones: [
         { dia: "Lun", inicio: 14, fin: 16 },
-        { dia: "Mar", inicio: 14, fin: 16 },
-        { dia: "Jue", inicio: 14, fin: 16 }
+        { dia: "Mar", inicio: 14, fin: 16, aula: "II 306" },
+        { dia: "Jue", inicio: 14, fin: 16, aula: "IQ 230" }
       ]
     },
     {
