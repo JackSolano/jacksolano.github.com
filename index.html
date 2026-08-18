@@ -52,29 +52,6 @@
     word-break: break-word;
     line-height: 1.2;
   }
-
-  /* Iconos pastel dentro de la carpeta situs */
-  .situs-icons.desktop-icons {
-    max-height: 60vh !important;
-    background: repeating-linear-gradient(135deg, #fffaf3, #fffaf3 10px, #fef3e6 10px, #fef3e6 20px);
-    border: 1px solid #e8d9c3;
-    border-radius: 6px;
-  }
-
-  .situs-pastel {
-    background: #fdf1e0;
-    border: 1px solid #f0c9a0;
-    border-radius: 10px;
-  }
-  .situs-pastel:nth-child(6n+1) { background: #fdf1e0; border-color: #f0c9a0; } /* durazno */
-  .situs-pastel:nth-child(6n+2) { background: #eaf3ea; border-color: #b8dcc0; } /* menta */
-  .situs-pastel:nth-child(6n+3) { background: #eef0fb; border-color: #c3caf0; } /* lavanda */
-  .situs-pastel:nth-child(6n+4) { background: #fdeaf1; border-color: #f0b8ce; } /* rosa */
-  .situs-pastel:nth-child(6n+5) { background: #fbf6e3; border-color: #e6d99a; } /* mantequilla */
-  .situs-pastel:nth-child(6n+6) { background: #e6f5f7; border-color: #a9dbe2; } /* celeste */
-
-  .situs-pastel .icon-img { color: #7a5a3a; }
-  .situs-pastel:hover { filter: brightness(0.97); }
 </style>
 
 <body>
@@ -207,30 +184,48 @@
           <div class="win98-toolbar">
             <span class="toolbar-label">Apartados matemáticos:</span>
           </div>
-          <div class="desktop-icons situs-icons" id="situs-icons">
-            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='interior_infimo.html'">
-              <div class="icon-img">\( i \wedge \)</div>
-              <span>interior_infimo</span>
+          <div class="file-list" id="situs-list">
+            <div class="file-item situs-item" tabindex="0" data-open="nav" data-href="situs/interior_infimo.html">
+              <span class="file-icon" style="background:#eef0fb;border-radius:6px;">📐</span>
+              <div class="file-info">
+                <span class="file-name">interior_infimo</span>
+                <span class="file-meta">HTML · Interior e ínfimo en familias de operadores de Kuratowski</span>
+              </div>
             </div>
-            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='clausura_supremo.html'">
-              <div class="icon-img">\( k \vee \)</div>
-              <span>clausura_supremo</span>
+            <div class="file-item situs-item" tabindex="0" data-open="nav" data-href="situs/clausura_supremo.html">
+              <span class="file-icon" style="background:#eaf3ea;border-radius:6px;">📐</span>
+              <div class="file-info">
+                <span class="file-name">clausura_supremo</span>
+                <span class="file-meta">HTML · Clausura y supremo en familias de operadores de Kuratowski</span>
+              </div>
             </div>
-            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='monotone_general.html'">
-              <div class="icon-img">\( D_n \)</div>
-              <span>Numero de Dedekin</span>
+            <div class="file-item situs-item" tabindex="0" data-open="nav" data-href="situs/monotone_general.html">
+              <span class="file-icon" style="background:#fdeaf1;border-radius:6px;">📐</span>
+              <div class="file-info">
+                <span class="file-name">Numero de Dedekin</span>
+                <span class="file-meta">HTML · Funciones booleanas monótonas y números de Dedekind</span>
+              </div>
             </div>
-            <div class="desktop-icon situs-pastel" tabindex="0" data-action="openCollatz" onclick="openCollatz()">
-              <div class="icon-img">❄️</div>
-              <span>Collatz</span>
+            <div class="file-item situs-item" tabindex="0" data-open="fn" data-fn="openCollatz">
+              <span class="file-icon" style="background:#fbf6e3;border-radius:6px;">❄️</span>
+              <div class="file-info">
+                <span class="file-name">Collatz</span>
+                <span class="file-meta">HTML · Gráfico interactivo de la conjetura de Collatz</span>
+              </div>
             </div>
-            <div class="desktop-icon situs-pastel" tabindex="0" data-action="openIrracional" onclick="openIrracional()">
-              <div class="icon-img">∞</div>
-              <span>Irracional</span>
+            <div class="file-item situs-item" tabindex="0" data-open="fn" data-fn="openIrracional">
+              <span class="file-icon" style="background:#e6f5f7;border-radius:6px;">∞</span>
+              <div class="file-info">
+                <span class="file-name">Irracional</span>
+                <span class="file-meta">HTML · Generador de números irracionales aleatorios</span>
+              </div>
             </div>
-            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='pastel-26.html'">
-              <div class="icon-img">🍬</div>
-              <span>pastel-26</span>
+            <div class="file-item situs-item" tabindex="0" data-open="nav" data-href="situs/pastel-26.html">
+              <span class="file-icon" style="background:#fdf1e0;border-radius:6px;">🍬</span>
+              <div class="file-info">
+                <span class="file-name">pastel-26</span>
+                <span class="file-meta">HTML · (agrega aquí una breve descripción)</span>
+              </div>
             </div>
           </div>
           <div class="statusbar-inner">6 objeto(s)</div>
@@ -507,6 +502,19 @@
       makeWinDraggable(w);
       updateTaskbar();
     }
+
+    document.querySelectorAll('#situs-list .situs-item').forEach(item => {
+      const activar = () => {
+        if (item.dataset.open === 'nav') {
+          window.location.href = item.dataset.href;
+        } else if (item.dataset.open === 'fn') {
+          const fn = window[item.dataset.fn];
+          if (typeof fn === 'function') fn();
+        }
+      };
+      item.ondblclick = activar;
+      item.addEventListener('keydown', e => { if (e.key === 'Enter') activar(); });
+    });
     // ── infimo_interior ───────────────────────────────────
     function irPagina() {
       window.location.href = "interior_infimo.html";
@@ -515,14 +523,14 @@
     // ── COLLATZ ───────────────────────────────────
     function openCollatz() {
       const w = createWindow('❄️ Gráfico de Collatz', 620, `
-        <iframe src="collatz.html" style="width:100%;height:500px;border:none;display:block;background:#000;"></iframe>
+        <iframe src="situs/collatz.html" style="width:100%;height:500px;border:none;display:block;background:#000;"></iframe>
       `);
       w.style.width = 'min(680px, 95vw)';
     }
       //----- Aleatrio -----------------------------------------------
       function openIrracional() {
         const w = createWindow('∞ Número Irracional', 640, `
-          <iframe src="irracional.html" style="width:100%;height:420px;border:none;background:#000;"></iframe>
+          <iframe src="situs/irracional.html" style="width:100%;height:420px;border:none;background:#000;"></iframe>
         `);
         w.style.width = 'min(680px, 95vw)';
       }
