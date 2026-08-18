@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Pastel(5) = 26 — Corte de un sólido con 5 planos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --fg:#ffb000;
+    --fg-dim:#7a5200;
+    --line:#3a2600;
+    --glow:0 0 6px rgba(255,176,0,0.55);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; height:100%; background:var(--bg);
+    font-family:'Courier New', monospace; color:var(--fg);
+    overflow:hidden;
+  }
+  #scene{position:fixed; inset:0;}
+  .scanlines{
+    pointer-events:none; position:fixed; inset:0; z-index:5;
+    background:repeating-linear-gradient(
+      to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px, rgba(0,0,0,0) 4px
+    );
+    mix-blend-mode:multiply;
+  }
+  .vignette{
+    pointer-events:none; position:fixed; inset:0; z-index:4;
+    box-shadow: inset 0 0 160px 40px rgba(0,0,0,0.85);
+  }
+  #hud{
+    position:fixed; top:14px; left:14px; z-index:10;
+    border:1px solid var(--line); padding:10px 14px;
+    background:rgba(10,8,0,0.55); max-width:340px;
+    text-shadow:var(--glow);
+  }
+  #hud h1{font-size:15px; margin:0 0 4px 0; letter-spacing:1px;}
+  #hud .eq{font-size:12px; color:var(--fg-dim); margin-bottom:8px; line-height:1.5;}
+  #hud .stat{font-size:12px; margin:2px 0;}
+  #hud .stat b{color:var(--fg); text-shadow:var(--glow);}
+
+  #panel{
+    position:fixed; bottom:14px; left:14px; right:14px; z-index:10;
+    display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center;
+    border:1px solid var(--line); padding:10px 14px;
+    background:rgba(10,8,0,0.55); text-shadow:var(--glow);
+    font-size:12px;
+  }
+  #panel label{display:flex; align-items:center; gap:8px; white-space:nowrap;}
+  input[type=range]{
+    -webkit-appearance:none; width:150px; height:2px; background:var(--line);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:10px; height:10px; background:var(--fg);
+    box-shadow:var(--glow); cursor:pointer;
+  }
+  button{
+    font-family:inherit; background:transparent; color:var(--fg);
+    border:1px solid var(--fg-dim); padding:5px 10px; cursor:pointer;
+    text-shadow:var(--glow); font-size:12px; letter-spacing:0.5px;
+  }
+  button:hover{background:rgba(255,176,0,0.12); border-color:var(--fg);}
+  button.active{background:rgba(255,176,0,0.18); border-color:var(--fg);}
+  #hint{
+    position:fixed; top:14px; right:14px; z-index:10; font-size:11px;
+    color:var(--fg-dim); text-align:right; text-shadow:var(--glow);
+  }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div id="hud">
+  <h1>PASTEL(5) = 26</h1>
+  <div class="eq">P(n) = C(n,0)+C(n,1)+C(n,2)+C(n,3) = (n³+5n+6)/6</div>
+  <div class="stat">planos de corte: <b>n = 5</b></div>
+  <div class="stat">piezas resultantes: <b id="pieceCount">26</b></div>
+  <div class="stat">volumen total: <b id="volCheck">—</b> (control: 8.000)</div>
+</div>
+
+<div id="hint">arrastra para rotar · rueda para zoom</div>
+
+<div id="panel">
+  <label>explosión
+    <input id="explode" type="range" min="0" max="2" step="0.01" value="0">
+  </label>
+  <label>rotación auto
+    <input id="autorot" type="range" min="0" max="1" step="0.01" value="0.15">
+  </label>
+  <button id="btnPlanes">mostrar planos</button>
+  <button id="btnEdges" class="active">aristas</button>
+  <button id="btnReset">reset vista</button>
+</div>
+
+<script>
+/* ===================== GEOMETRÍA: media-espacios -> 26 piezas ===================== */
+
+function norm(v){const l=Math.hypot(v[0],v[1],v[2]); return [v[0]/l,v[1]/l,v[2]/l];}
+function cross(a,b){return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];}
+function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];}
+
+const cubePlanes = [
+  {n:[1,0,0], d:1}, {n:[-1,0,0], d:1},
+  {n:[0,1,0], d:1}, {n:[0,-1,0], d:1},
+  {n:[0,0,1], d:1}, {n:[0,0,-1], d:1},
+];
+
+const cutDefs = [
+  {n:norm([1,1,0.2]),  d:0.15},
+  {n:norm([1,-1,0.6]), d:-0.05},
+  {n:norm([0.3,1,1]),  d:0.2},
+  {n:norm([1,0.2,-1]), d:-0.1},
+  {n:norm([1,1,1]),    d:0.0},
+];
+
+function solve3(A,b){
+  const det=(m)=> m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1])
+                 -m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])
+                 +m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+  const D=det(A);
+  if(Math.abs(D)<1e-9) return null;
+  const A0=[[b[0],A[0][1],A[0][2]],[b[1],A[1][1],A[1][2]],[b[2],A[2][1],A[2][2]]];
+  const A1=[[A[0][0],b[0],A[0][2]],[A[1][0],b[1],A[1][2]],[A[2][0],b[2],A[2][2]]];
+  const A2=[[A[0][0],A[0][1],b[0]],[A[1][0],A[1][1],b[1]],[A[2][0],A[2][1],b[2]]];
+  return [det(A0)/D, det(A1)/D, det(A2)/D];
+}
+
+function piecePlanes(signs){
+  const planes=[...cubePlanes];
+  for(let i=0;i<5;i++){
+    const c=cutDefs[i], s=signs[i];
+    if(s>0) planes.push({n:c.n, d:c.d});
+    else planes.push({n:[-c.n[0],-c.n[1],-c.n[2]], d:-c.d});
+  }
+  return planes;
+}
+
+function vertices(planes){
+  const eps=1e-6, pts=[];
+  for(let i=0;i<planes.length;i++)
+  for(let j=i+1;j<planes.length;j++)
+  for(let k=j+1;k<planes.length;k++){
+    const A=[planes[i].n, planes[j].n, planes[k].n];
+    const b=[planes[i].d, planes[j].d, planes[k].d];
+    const p=solve3(A,b);
+    if(!p) continue;
+    let ok=true;
+    for(const pl of planes){
+      const val=pl.n[0]*p[0]+pl.n[1]*p[1]+pl.n[2]*p[2];
+      if(val>pl.d+eps){ok=false;break;}
+    }
+    if(ok) pts.push(p);
+  }
+  const uniq=[];
+  for(const p of pts){
+    let dup=false;
+    for(const q of uniq) if(Math.hypot(p[0]-q[0],p[1]-q[1],p[2]-q[2])<1e-5){dup=true;break;}
+    if(!dup) uniq.push(p);
+  }
+  return uniq;
+}
+
+function buildFaces(planes, verts){
+  const eps=1e-4, faces=[];
+  for(const pl of planes){
+    const onFace = verts.filter(v => Math.abs(pl.n[0]*v[0]+pl.n[1]*v[1]+pl.n[2]*v[2]-pl.d) < eps);
+    if(onFace.length<3) continue;
+    let up=[0,0,1];
+    if(Math.abs(pl.n[2])>0.9) up=[0,1,0];
+    const u=norm(cross(pl.n, up));
+    const v=cross(pl.n, u);
+    const c=[0,0,0];
+    onFace.forEach(p=>{c[0]+=p[0];c[1]+=p[1];c[2]+=p[2];});
+    c[0]/=onFace.length; c[1]/=onFace.length; c[2]/=onFace.length;
+    const withAngle=onFace.map(p=>{
+      const dx=p[0]-c[0], dy=p[1]-c[1], dz=p[2]-c[2];
+      return {p, ang: Math.atan2(dx*v[0]+dy*v[1]+dz*v[2], dx*u[0]+dy*u[1]+dz*u[2])};
+    });
+    withAngle.sort((a,b)=>a.ang-b.ang);
+    const poly=[];
+    for(const w of withAngle){
+      if(poly.length===0 || Math.hypot(poly[poly.length-1][0]-w.p[0],poly[poly.length-1][1]-w.p[1],poly[poly.length-1][2]-w.p[2])>1e-5)
+        poly.push(w.p);
+    }
+    if(poly.length>=3) faces.push({normal:pl.n, poly, center:c});
+  }
+  return faces;
+}
+
+function volumeFromFaces(faces){
+  let vol=0;
+  for(const f of faces){
+    const poly=f.poly;
+    for(let i=1;i<poly.length-1;i++){
+      const a=poly[0], b=poly[i], cc=poly[i+1];
+      vol += dot(a, cross(b,cc))/6;
+    }
+  }
+  return Math.abs(vol);
+}
+
+function computePieces(){
+  const pieces=[];
+  for(let mask=0; mask<32; mask++){
+    const signs=[0,1,2,3,4].map(i => (mask&(1<<i)) ? 1 : -1);
+    const planes = piecePlanes(signs);
+    const vs = vertices(planes);
+    if(vs.length<4) continue;
+    const faces = buildFaces(planes, vs);
+    if(faces.length<4) continue;
+    const vol = volumeFromFaces(faces);
+    const centroid=[0,0,0];
+    vs.forEach(p=>{centroid[0]+=p[0];centroid[1]+=p[1];centroid[2]+=p[2];});
+    centroid[0]/=vs.length; centroid[1]/=vs.length; centroid[2]/=vs.length;
+    pieces.push({faces, centroid, vol, signs});
+  }
+  return pieces;
+}
+
+/* ===================== THREE.JS ===================== */
+
+const pieces = computePieces();
+document.getElementById('pieceCount').textContent = pieces.length;
+document.getElementById('volCheck').textContent =
+  pieces.reduce((s,p)=>s+p.vol,0).toFixed(3);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+let camDist = 8.5;
+camera.position.set(camDist*0.6, camDist*0.5, camDist*0.7);
+camera.lookAt(0,0,0);
+
+const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+document.getElementById('scene').appendChild(renderer.domElement);
+
+scene.add(new THREE.AmbientLight(0xffb000, 0.35));
+const key = new THREE.DirectionalLight(0xffe6b0, 1.0);
+key.position.set(4,6,5);
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xff7a00, 0.5);
+rim.position.set(-5,-3,-4);
+scene.add(rim);
+
+const world = new THREE.Group();
+scene.add(world);
+
+// palette: warm amber shades, each piece a slightly different hue/lightness
+function pieceColor(i, total){
+  const t = i/total;
+  const hue = 0.08 + 0.05*Math.sin(t*Math.PI*2.3);      // amber/orange range
+  const light = 0.32 + 0.18*((i*47)%13)/13;
+  const c = new THREE.Color();
+  c.setHSL(hue, 0.85, light);
+  return c;
+}
+
+const pieceGroup = new THREE.Group();
+world.add(pieceGroup);
+const pieceMeshes = [];
+
+pieces.forEach((piece, idx) => {
+  const positions = [];
+  piece.faces.forEach(f=>{
+    const poly = f.poly;
+    for(let i=1;i<poly.length-1;i++){
+      const a=poly[0], b=poly[i], c=poly[i+1];
+      // winding check: face normal should point outward relative to piece centroid
+      const fn = cross(
+        [b[0]-a[0], b[1]-a[1], b[2]-a[2]],
+        [c[0]-a[0], c[1]-a[1], c[2]-a[2]]
+      );
+      const toCentroid = [piece.centroid[0]-a[0], piece.centroid[1]-a[1], piece.centroid[2]-a[2]];
+      const outward = dot(fn, toCentroid) < 0;
+      if(outward){
+        positions.push(...a,...b,...c);
+      } else {
+        positions.push(...a,...c,...b);
+      }
+    }
+  });
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.computeVertexNormals();
+
+  const mat = new THREE.MeshStandardMaterial({
+    color: pieceColor(idx, pieces.length),
+    roughness:0.55, metalness:0.08,
+    flatShading:true,
+    transparent:true, opacity:0.92,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+
+  const edgesGeo = new THREE.EdgesGeometry(geo, 20);
+  const edges = new THREE.LineSegments(edgesGeo, new THREE.LineBasicMaterial({color:0x1a1000, linewidth:1}));
+  mesh.add(edges);
+
+  mesh.userData.dir = new THREE.Vector3(...piece.centroid).normalize();
+  mesh.userData.base = new THREE.Vector3(...piece.centroid);
+  mesh.userData.edges = edges;
+
+  pieceGroup.add(mesh);
+  pieceMeshes.push(mesh);
+});
+
+// cutting planes (toggleable), shown as translucent disks through the cube
+const planeGroup = new THREE.Group();
+planeGroup.visible = false;
+world.add(planeGroup);
+cutDefs.forEach((c, i) => {
+  const geo = new THREE.PlaneGeometry(3.6, 3.6);
+  const mat = new THREE.MeshBasicMaterial({
+    color:0xffb000, transparent:true, opacity:0.10,
+    side:THREE.DoubleSide, depthWrite:false
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  const normal = new THREE.Vector3(...c.n);
+  const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0,0,1), normal);
+  mesh.quaternion.copy(quat);
+  mesh.position.copy(normal.clone().multiplyScalar(c.d));
+  const wire = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({color:0xffb000, transparent:true, opacity:0.4})
+  );
+  mesh.add(wire);
+  planeGroup.add(mesh);
+});
+
+/* ===================== INTERACCIÓN ===================== */
+
+let rotX = -0.35, rotY = 0.55;
+let autoSpeed = 0.15;
+let dragging = false, lastX=0, lastY=0;
+
+renderer.domElement.addEventListener('pointerdown', e=>{
+  dragging = true; lastX=e.clientX; lastY=e.clientY;
+});
+window.addEventListener('pointerup', ()=> dragging=false);
+window.addEventListener('pointermove', e=>{
+  if(!dragging) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX=e.clientX; lastY=e.clientY;
+  rotY += dx*0.006;
+  rotX += dy*0.006;
+  rotX = Math.max(-1.4, Math.min(1.4, rotX));
+});
+renderer.domElement.addEventListener('wheel', e=>{
+  camDist += e.deltaY*0.003;
+  camDist = Math.max(4, Math.min(20, camDist));
+  e.preventDefault();
+}, {passive:false});
+
+document.getElementById('explode').addEventListener('input', e=>{
+  const k = parseFloat(e.target.value);
+  pieceMeshes.forEach(m=>{
+    const offset = m.userData.dir.clone().multiplyScalar(k*1.6);
+    m.position.copy(offset);
+  });
+});
+document.getElementById('autorot').addEventListener('input', e=>{
+  autoSpeed = parseFloat(e.target.value);
+});
+document.getElementById('btnPlanes').addEventListener('click', e=>{
+  planeGroup.visible = !planeGroup.visible;
+  e.target.classList.toggle('active', planeGroup.visible);
+});
+document.getElementById('btnEdges').addEventListener('click', e=>{
+  const show = !pieceMeshes[0].userData.edges.visible;
+  pieceMeshes.forEach(m=> m.userData.edges.visible = show);
+  e.target.classList.toggle('active', show);
+});
+document.getElementById('btnReset').addEventListener('click', ()=>{
+  rotX=-0.35; rotY=0.55; camDist=8.5;
+  document.getElementById('explode').value = 0;
+  pieceMeshes.forEach(m=> m.position.set(0,0,0));
+});
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+const camPos = new THREE.Vector3();
+function animate(){
+  requestAnimationFrame(animate);
+  if(!dragging) rotY += autoSpeed*0.008;
+  world.rotation.set(rotX, rotY, 0);
+  camPos.set(0,0,camDist).applyAxisAngle(new THREE.Vector3(1,0,0), -0.5);
+  camera.position.copy(camPos);
+  camera.up.set(0,1,0);
+  camera.lookAt(0,0,0);
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>
