@@ -1,4 +1,4 @@
-----<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -52,6 +52,29 @@
     word-break: break-word;
     line-height: 1.2;
   }
+
+  /* Iconos pastel dentro de la carpeta situs */
+  .situs-icons.desktop-icons {
+    max-height: 60vh !important;
+    background: repeating-linear-gradient(135deg, #fffaf3, #fffaf3 10px, #fef3e6 10px, #fef3e6 20px);
+    border: 1px solid #e8d9c3;
+    border-radius: 6px;
+  }
+
+  .situs-pastel {
+    background: #fdf1e0;
+    border: 1px solid #f0c9a0;
+    border-radius: 10px;
+  }
+  .situs-pastel:nth-child(6n+1) { background: #fdf1e0; border-color: #f0c9a0; } /* durazno */
+  .situs-pastel:nth-child(6n+2) { background: #eaf3ea; border-color: #b8dcc0; } /* menta */
+  .situs-pastel:nth-child(6n+3) { background: #eef0fb; border-color: #c3caf0; } /* lavanda */
+  .situs-pastel:nth-child(6n+4) { background: #fdeaf1; border-color: #f0b8ce; } /* rosa */
+  .situs-pastel:nth-child(6n+5) { background: #fbf6e3; border-color: #e6d99a; } /* mantequilla */
+  .situs-pastel:nth-child(6n+6) { background: #e6f5f7; border-color: #a9dbe2; } /* celeste */
+
+  .situs-pastel .icon-img { color: #7a5a3a; }
+  .situs-pastel:hover { filter: brightness(0.97); }
 </style>
 
 <body>
@@ -83,31 +106,9 @@
         <div class="icon-img">📦</div>
           <span>El Cartonero</span>
       </div>
-      <div class="desktop-icon" tabindex="0" data-action="openCollatz" onclick="openCollatz()">
-        <div class="icon-img">❄️</div>
-        <span>Collatz</span>
-      </div>
-      <div class="desktop-icon" tabindex="0" data-action="openIrracional" onclick="openIrracional()">
-        <div class="icon-img">∞</div>
-        <span>Irracional</span>
-      </div>
-      <div class="desktop-icon" onclick="window.location.href='interior_infimo.html'">
-        <div class="icon-img">
-          \( i \wedge \)
-        </div>
-        <span>interior_infimo</span>
-      </div>
-            <div class="desktop-icon" onclick="window.location.href='clausura_supremo.html'">
-        <div class="icon-img">
-          \( k \vee \)
-        </div>
-        <span>clausura_supremo</span>
-      </div>
-            <div class="desktop-icon" onclick="window.location.href='monotone_general.html'">
-        <div class="icon-img">
-          \( D_n \)
-        </div>
-        <span>Numero de Dedekin</span>
+      <div class="desktop-icon" tabindex="0" data-action="openSitusWindow" onclick="openSitusWindow()">
+        <div class="icon-img">🥔</div>
+        <span>Situs</span>
       </div>
       <div class="desktop-icon" tabindex="0" data-action="openPong" onclick="openPong()">
         <div class="icon-img">🏓</div>
@@ -181,6 +182,62 @@
       </div>
     </div>
 
+    <!-- VENTANA SITUS -->
+    <div class="win98-window main-window" id="win-situs" style="display:none; top:60px; left:50%; transform:translateX(-50%); width:min(760px,95vw);">
+      <div class="win98-titlebar">
+        <span class="win98-title">🥔 situs — Jack Solano</span>
+        <div class="win98-controls">
+          <button class="win98-btn minimize" onclick="toggleMinimize(this)">_</button>
+          <button class="win98-btn maximize" onclick="toggleMaximize('win-situs')">□</button>
+          <button class="win98-btn close"    onclick="document.getElementById('win-situs').style.display='none'; updateTaskbar()">✕</button>
+        </div>
+      </div>
+      <div class="win98-menubar">
+        <span class="menu-item" tabindex="0">Archivo</span>
+        <span class="menu-item" tabindex="0">Editar</span>
+        <span class="menu-item" tabindex="0">Ver</span>
+        <span class="menu-item" tabindex="0">Ayuda</span>
+      </div>
+      <div class="win98-body main-body">
+        <div class="sidebar">
+          <div class="sidebar-section">NAVEGACIÓN</div>
+          <div class="sidebar-item active" tabindex="0">🥔 situs</div>
+        </div>
+        <div class="main-content-area">
+          <div class="win98-toolbar">
+            <span class="toolbar-label">Apartados matemáticos:</span>
+          </div>
+          <div class="desktop-icons situs-icons" id="situs-icons">
+            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='interior_infimo.html'">
+              <div class="icon-img">\( i \wedge \)</div>
+              <span>interior_infimo</span>
+            </div>
+            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='clausura_supremo.html'">
+              <div class="icon-img">\( k \vee \)</div>
+              <span>clausura_supremo</span>
+            </div>
+            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='monotone_general.html'">
+              <div class="icon-img">\( D_n \)</div>
+              <span>Numero de Dedekin</span>
+            </div>
+            <div class="desktop-icon situs-pastel" tabindex="0" data-action="openCollatz" onclick="openCollatz()">
+              <div class="icon-img">❄️</div>
+              <span>Collatz</span>
+            </div>
+            <div class="desktop-icon situs-pastel" tabindex="0" data-action="openIrracional" onclick="openIrracional()">
+              <div class="icon-img">∞</div>
+              <span>Irracional</span>
+            </div>
+            <div class="desktop-icon situs-pastel" tabindex="0" onclick="window.location.href='pastel-26.html'">
+              <div class="icon-img">🍬</div>
+              <span>pastel-26</span>
+            </div>
+          </div>
+          <div class="statusbar-inner">6 objeto(s)</div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /desktop -->
 
   <!-- TASKBAR -->
@@ -201,6 +258,7 @@
     <div class="start-menu-items" id="start-menu-items">
       <div class="start-item" tabindex="0" role="menuitem" onclick="openSysInfo(); closeStartMenu()">🖥️ Sistema</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openMainWindow(); closeStartMenu()">📄 Artículos</div>
+      <div class="start-item" tabindex="0" role="menuitem" onclick="openSitusWindow(); closeStartMenu()">🥔 Situs</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="confirmarSalida('https://elcartonero.github.io/'); closeStartMenu()">📦 El Cartonero</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="pedirContrasena(); closeStartMenu()">🔒 Área Privada</div>
       <div class="start-item" tabindex="0" role="menuitem" onclick="openCollatz(); closeStartMenu()">❄️ Collatz</div>
@@ -439,6 +497,14 @@
       setActiveWin(w);
       makeWinDraggable(w);
       cargarPDFsDesdeGitHub();
+      updateTaskbar();
+    }
+    // ── OPEN SITUS WINDOW ──────────────────────────
+    function openSitusWindow() {
+      const w = document.getElementById('win-situs');
+      w.style.display = 'block';
+      setActiveWin(w);
+      makeWinDraggable(w);
       updateTaskbar();
     }
     // ── infimo_interior ───────────────────────────────────
