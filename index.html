@@ -52,7 +52,164 @@
     word-break: break-word;
     line-height: 1.2;
   }
+
+  /* ── TABLERO DE HORARIO ESTILO CRT (para la ventana "Horarios mío") ── */
+  .horario-board{
+    --hb-bg:#0a0908;
+    --hb-panel:#111009;
+    --hb-orange:#ff9d1c;
+    --hb-orange-dim:#c97a12;
+    --hb-orange-glow: rgba(255,157,28,0.35);
+    --hb-border:#3a2a12;
+    --hb-text-dim:#c9a877;
+
+    background:var(--hb-bg);
+    color:var(--hb-orange);
+    font-family:"Courier New","Consolas",monospace;
+    border:2px solid var(--hb-border);
+    border-radius:14px;
+    padding:20px 18px 16px;
+    box-shadow:0 0 30px var(--hb-orange-glow), inset 0 0 24px rgba(0,0,0,0.6);
+  }
+
+  .horario-board .hb-header{ text-align:center; margin-bottom:14px; }
+
+  .horario-board .hb-header h1{
+    margin:0;
+    font-size:22px;
+    letter-spacing:4px;
+    text-shadow:0 0 10px var(--hb-orange-glow);
+  }
+
+  .horario-board .hb-subtitle{
+    margin-top:6px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:#fff;
+  }
+
+  .horario-board .hb-date{
+    margin-top:3px;
+    font-size:10px;
+    letter-spacing:1.5px;
+    color:var(--hb-text-dim);
+  }
+
+  .horario-board .hb-student{
+    text-align:center;
+    font-size:10px;
+    letter-spacing:0.5px;
+    color:var(--hb-orange-dim);
+    margin-top:8px;
+    line-height:1.5;
+  }
+
+  .horario-board .hb-tabs{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:14px 0 6px;
+  }
+
+  .horario-board .hb-tab{
+    background:transparent;
+    border:1px solid var(--hb-border);
+    color:var(--hb-text-dim);
+    font-family:inherit;
+    font-size:10px;
+    letter-spacing:1.5px;
+    padding:6px 12px;
+    border-radius:16px;
+    cursor:pointer;
+  }
+
+  .horario-board .hb-tab.active{
+    border-color:var(--hb-orange);
+    color:var(--hb-orange);
+    box-shadow:0 0 8px var(--hb-orange-glow);
+  }
+
+  .horario-board .hb-grid-wrap{
+    overflow-x:auto;
+    margin-top:12px;
+  }
+
+  .horario-board table.hb-grid{
+    width:100%;
+    border-collapse:collapse;
+    min-width:640px;
+  }
+
+  .horario-board table.hb-grid th{
+    border:1px solid var(--hb-border);
+    color:#1a1200;
+    background:var(--hb-orange);
+    padding:7px 4px;
+    font-size:11px;
+    letter-spacing:1.5px;
+  }
+
+  .horario-board table.hb-grid td.hb-hour-label{
+    border:1px solid var(--hb-border);
+    color:var(--hb-text-dim);
+    font-size:10px;
+    text-align:right;
+    padding:2px 8px;
+    width:48px;
+    vertical-align:top;
+  }
+
+  .horario-board table.hb-grid td.hb-slot{
+    border:1px solid var(--hb-border);
+    height:30px;
+    padding:0;
+    position:relative;
+  }
+
+  .horario-board .hb-class-block{
+    background:var(--hb-orange);
+    color:#1a1200;
+    border-radius:4px;
+    padding:4px 6px;
+    font-size:9.5px;
+    line-height:1.35;
+    overflow:hidden;
+    height:100%;
+  }
+
+  .horario-board .hb-class-block b{
+    display:block;
+    font-size:10.5px;
+    letter-spacing:0.3px;
+  }
+
+  .horario-board .hb-legend{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-top:16px;
+    padding-top:10px;
+    border-top:1px solid var(--hb-border);
+    font-size:10px;
+    letter-spacing:0.5px;
+  }
+
+  .horario-board .hb-legend-item{ display:flex; align-items:center; gap:6px; color:#fff; }
+
+  .horario-board .hb-legend-swatch{
+    width:10px; height:10px; border-radius:3px; background:var(--hb-orange); flex-shrink:0;
+  }
+
+  .horario-board .hb-footer{
+    text-align:center;
+    margin-top:16px;
+    font-size:9px;
+    letter-spacing:2px;
+    color:#5a4626;
+  }
 </style>
+
 
 <body>
 
@@ -94,6 +251,10 @@
       <div class="desktop-icon" tabindex="0" onclick="window.location.href='horarios/index.html'">
         <div class="icon-img">🗓️</div>
         <span>Horarios</span>
+      </div>
+      <div class="desktop-icon" tabindex="0" data-action="openHorarioMio" onclick="openHorarioMio()">
+        <div class="icon-img">📆</div>
+        <span>Horarios mío</span>
       </div>
     </div>
 
@@ -267,6 +428,7 @@
   </div>
 
   <script src="frases.js" onerror="window.frasesCulturaPop=[]"></script>
+  <script src="horarios/data.js" onerror="console.warn('No se pudo cargar horarios/data.js')"></script>
   <script>
     // ___ Info ____________________________________
     function openSysInfo() {
@@ -330,19 +492,15 @@
       });
       obs.observe(document.querySelector('.desktop'), { childList: true });
     }
-    // ── HORARIO DATA ──────────────────────────────
-    const horarioData = [
-      { "Actividad": "FUNDAMENTOS DE MATEMATICAS", "Día": ["LUNES"], "Hora": ["10:00 - 12:00"], "Ubicacion": ["CAMILO TORRES"] },
-      { "Actividad": "ALGEBRA MODERNA I",           "Día": ["LUNES"], "Hora": ["14:00 - 16:00"], "Ubicacion": ["CAMILO TORRES"] },
-      { "Actividad": "SEMINARIO TOPOLOGIA",          "Día": ["LUNES"], "Hora": ["16:00 - 18:00"], "Ubicacion": ["CAMILO TORRES"] },
-      { "Actividad": "TRABAJO CAMPOLLO",  "Día": ["MARTES","JUEVES"],  "Hora": ["6:30 - 12:30","14:30 - 16:30"], "Ubicacion": ["CONCORDIA","CONCORDIA"] },
-      { "Actividad": "TRABAJO DE GRADO",  "Día": ["MIERCOLES"], "Hora": ["8:00 - 12:00","14:00 - 17:00"], "Ubicacion": ["DEPENDE DEL DIA","DEPENDE DEL DIA"] },
-      { "Actividad": "TEORIA DE CONJUNTOS",  "Día": ["VIERNES"], "Hora": ["6:00 - 8:00"],  "Ubicacion": ["CAMILO TORRES"] },
-      { "Actividad": "GEOMETRIA EUCLIDIANA", "Día": ["VIERNES"], "Hora": ["8:00 - 10:00"], "Ubicacion": ["CAMILO TORRES"] },
-      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["SABADO"],  "Hora": ["DEPENDE DEL DIA"], "Ubicacion": ["DEPENDE DEL DIA"] },
-      { "Actividad": "TRABAJO CAMPOLLO", "Día": ["DOMINGO"], "Hora": ["7:00 - 13:00"],    "Ubicacion": ["GIRON"] },
-      { "Actividad": "WORLD OF WARCRAFT","Día": ["DOMINGO"], "Hora": ["16:00 - 21:00"],   "Ubicacion": ["CUEVA GAMER"] }
-    ];
+    // ── HORARIO (leído desde horarios/data.js) ─────
+    const DIAS_TABLERO = ["Lun","Mar","Mie","Jue","Vie","Sab","Dom"];
+    const DIA_LABEL_TABLERO = { Lun:"LUN", Mar:"MAR", Mie:"MIE", Jue:"JUE", Vie:"VIE", Sab:"SAB", Dom:"DOM" };
+
+    function fmtHora(h) {
+      const hh = Math.floor(h);
+      const mm = Math.round((h - hh) * 60);
+      return String(hh).padStart(2,'0') + ':' + String(mm).padStart(2,'0');
+    }
 
     // ── RELOJ ─────────────────────────────────────
     function mostrarHora() {
@@ -542,32 +700,147 @@
       w.style.width = 'min(660px, 95vw)';
     }
     
-    // ── HORARIO ───────────────────────────────────
-    function openHorario() {
-      createWindow('📅 Horario', 380, `
-        <p style="margin-bottom:10px;font-weight:bold;color:var(--orange-hi)">Selecciona un día:</p>
-        <div class="dia-grid">
-          ${["LUNES","MARTES","MIERCOLES","JUEVES","VIERNES","SABADO","DOMINGO"].map(d =>
-            `<button class="win98-day-btn" onclick="mostrarHorarioDia('${d}')">${d}</button>`
-          ).join('')}
+    // ── HORARIO (ventana emergente estilo tablero CRT, desde horarios/data.js) ──
+    let horarioBoardWin = null;
+    let horarioBoardId = null;
+
+    function openHorarioMio() {
+      if (typeof HORARIOS === 'undefined' || !HORARIOS || !Object.keys(HORARIOS).length) {
+        createWindow('⚠ Horario no disponible', 300, `
+          <p>No se pudo leer <code>horarios/data.js</code>.</p>
+          <button class="win98-ok-btn" onclick="this.closest('.win98-window').remove()">OK</button>
+        `);
+        return;
+      }
+      horarioBoardId = horarioBoardId || Object.keys(HORARIOS)[0];
+      horarioBoardWin = createWindow('🗓️ Horarios mío', 780, `
+        <div class="horario-board">
+          <div class="hb-header">
+            <h1>HORARIOS</h1>
+            <div class="hb-subtitle" id="hb-subtitle"></div>
+            <div class="hb-date" id="hb-date"></div>
+            <div class="hb-student" id="hb-student"></div>
+          </div>
+          <div class="hb-tabs" id="hb-tabs"></div>
+          <div class="hb-grid-wrap">
+            <table class="hb-grid" id="hb-grid"></table>
+          </div>
+          <div class="hb-legend" id="hb-legend"></div>
+          <div class="hb-footer">MODELO TR-1968 · TERMINAL DE DATOS</div>
         </div>
       `);
+      horarioBoardWin.style.width = 'min(820px, 95vw)';
+      renderHorarioBoard(horarioBoardId);
     }
 
-    function mostrarHorarioDia(dia) {
-      const items = horarioData.filter(i => i.Día.includes(dia));
-      const rows = items.length
-        ? items.map(i => {
-            const idx = i.Día.indexOf(dia);
-            return `<tr><td>${i.Actividad}</td><td>${i.Hora[idx]}</td><td>${i.Ubicacion[idx]}</td></tr>`;
-          }).join('')
-        : '<tr><td colspan="3" style="color:var(--text-dim)">Sin actividades.</td></tr>';
-      createWindow(`📅 ${dia}`, 440, `
-        <table class="schedule-table">
-          <thead><tr><th>Actividad</th><th>Hora</th><th>Lugar</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `);
+    function renderHorarioBoard(id) {
+      if (!horarioBoardWin) return;
+      horarioBoardId = id;
+      const h = HORARIOS[id];
+      const root = horarioBoardWin;
+
+      root.querySelector('#hb-subtitle').textContent =
+        `${(h.titulo || '').toUpperCase()} · ${h.asignaturas.length} ASIGNATURAS · ${h.asignaturas.reduce((s,a)=>s+(a.creditos||0),0)} CREDITOS`;
+      root.querySelector('#hb-date').textContent = h.periodo || '';
+      root.querySelector('#hb-student').innerHTML =
+        (h.estudiante || '') + (h.programa ? '<br>' + h.programa : '');
+
+      renderHorarioTabs(root);
+      buildHorarioGrid(root, h);
+      buildHorarioLegend(root, h);
+    }
+
+    function renderHorarioTabs(root) {
+      const tabsEl = root.querySelector('#hb-tabs');
+      tabsEl.innerHTML = '';
+      const ids = Object.keys(HORARIOS);
+      if (ids.length <= 1) return; // no mostrar tabs si solo hay uno
+      ids.forEach(id => {
+        const btn = document.createElement('button');
+        btn.className = 'hb-tab' + (id === horarioBoardId ? ' active' : '');
+        btn.textContent = HORARIOS[id].titulo;
+        btn.onclick = () => renderHorarioBoard(id);
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    function buildHorarioGrid(root, h) {
+      const table = root.querySelector('#hb-grid');
+      table.innerHTML = '';
+
+      const startHour = Math.floor(h.horaInicio ?? 6);
+      const endHour = Math.ceil(h.horaFin ?? 20);
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      headRow.innerHTML = `<th style="background:var(--hb-panel); color:var(--hb-orange); border:1px solid var(--hb-border);"></th>` +
+        DIAS_TABLERO.map(d => `<th>${DIA_LABEL_TABLERO[d]}</th>`).join('');
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+
+      const occupied = {};
+      DIAS_TABLERO.forEach(d => { occupied[d] = {}; });
+
+      (h.asignaturas || []).forEach(asig => {
+        (asig.sesiones || []).forEach(ses => {
+          if (!occupied[ses.dia]) return;
+          for (let hh = ses.inicio; hh < ses.fin; hh++) {
+            occupied[ses.dia][hh] = occupied[ses.dia][hh] || null;
+          }
+          occupied[ses.dia][ses.inicio] = { asig, ses, span: ses.fin - ses.inicio, isStart: true };
+          for (let hh = ses.inicio + 1; hh < ses.fin; hh++) {
+            occupied[ses.dia][hh] = { skip: true };
+          }
+        });
+      });
+
+      for (let hour = startHour; hour < endHour; hour++) {
+        const tr = document.createElement('tr');
+
+        const tdHour = document.createElement('td');
+        tdHour.className = 'hb-hour-label';
+        tdHour.textContent = `${hour}:00`;
+        tr.appendChild(tdHour);
+
+        DIAS_TABLERO.forEach(day => {
+          const cell = occupied[day][hour];
+          if (cell && cell.skip) return;
+
+          const td = document.createElement('td');
+          td.className = 'hb-slot';
+
+          if (cell && cell.isStart) {
+            td.rowSpan = cell.span;
+            const block = document.createElement('div');
+            block.className = 'hb-class-block';
+            const a = cell.asig, s = cell.ses;
+            block.innerHTML = `<b>${a.nombre}</b>` +
+              (a.codigo ? `${a.codigo}${a.grupo ? ' · ' + a.grupo : ''} · ` : '') +
+              `${fmtHora(s.inicio)}-${fmtHora(s.fin)}<br>` +
+              (a.profesor ? `PROF: ${a.profesor}<br>` : '') +
+              (s.aula && s.aula.trim() ? `AULA: ${s.aula}` : '');
+            td.appendChild(block);
+          }
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+    }
+
+    function buildHorarioLegend(root, h) {
+      const legend = root.querySelector('#hb-legend');
+      legend.innerHTML = '';
+      (h.asignaturas || []).forEach(a => {
+        const item = document.createElement('div');
+        item.className = 'hb-legend-item';
+        item.innerHTML = `<span class="hb-legend-swatch"></span>${a.nombre}${a.grupo ? ' · G.' + a.grupo : ''}`;
+        legend.appendChild(item);
+      });
     }
 
     // ── PDF ───────────────────────────────────────

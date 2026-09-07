@@ -9,7 +9,7 @@ const HORARIOS = {
     estudiante: "2269518 - SOLANO GELVEZ JACK FREDDY",
     programa: "301 - MAESTRIA EN MATEMATICAS",
     horaInicio: 6,
-    horaFin: 18,
+    horaFin: 22,
     asignaturas: [
       {
         codigo: "24405",
@@ -40,8 +40,39 @@ const HORARIOS = {
         creditos: 5,
         profesor: "Javier Enrique Camargo García",
         sesiones: [
-          { dia: "Mar", inicio: 10, fin: 12, aula: "EDIC 612" },
-          { dia: "Jue", inicio: 10, fin: 12, aula: "EDIC 612" }
+          { dia: "Mar", inicio: 8, fin: 10, aula: "FC 101" },
+          { dia: "Jue", inicio: 8, fin: 10, aula: "FC 101" }
+        ]
+      },
+      {
+        codigo: "",
+        nombre: "SEMINARIO DE TOPOLOGIA",
+        grupo: "",
+        creditos: 0,
+        profesor: "",
+        sesiones: [
+          { dia: "Lun", inicio: 16, fin: 17, aula: "" }
+        ]
+      },
+      {
+        codigo: "",
+        nombre: "CAMPOLLO",
+        grupo: "",
+        creditos: 0,
+        profesor: "",
+        sesiones: [
+          { dia: "Sab", inicio: 12, fin: 18, aula: "" },
+          { dia: "Dom", inicio: 8, fin: 18, aula: "" }
+        ]
+      },
+      {
+        codigo: "",
+        nombre: "NOCHE DE HALO",
+        grupo: "",
+        creditos: 0,
+        profesor: "",
+        sesiones: [
+          { dia: "Mie", inicio: 20, fin: 22, aula: "" }
         ]
       }
     ]
