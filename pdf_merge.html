@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unir PDF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<style>
+  :root {
+    --bg: #080400;
+    --panel: #120800;
+    --fg: #ff9a1f;
+    --hi: #ffc060;
+    --dim: #8a5412;
+    --err: #ff5a36;
+    --glow: 0 0 6px rgba(255,154,31,.55);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); }
+  body {
+    color: var(--fg);
+    font: 21px/1.25 'VT323', 'Courier New', monospace;
+    text-shadow: var(--glow);
+    min-height: 100vh;
+    padding: 28px 16px 60px;
+  }
+  /* Efecto CRT: líneas de barrido + viñeta */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 10;
+    background:
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0) 2px, rgba(0,0,0,.28) 3px),
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.65) 100%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    body { animation: flicker 6s infinite; }
+    @keyframes flicker { 0%,100% { opacity: 1 } 47% { opacity: 1 } 48% { opacity: .93 } 49% { opacity: 1 } }
+  }
+  main { max-width: 780px; margin: 0 auto; }
+  h1 { font-weight: 400; font-size: 52px; margin: 0 0 2px; letter-spacing: 2px; color: var(--hi); }
+  .sub { color: var(--dim); margin: 0 0 22px; text-shadow: none; }
+
+  #drop {
+    display: block; cursor: pointer; text-align: center;
+    border: 2px dashed var(--dim); padding: 26px 12px; margin-bottom: 18px;
+    transition: background .15s, border-color .15s;
+  }
+  #drop:hover, #drop.over, #drop:focus-within { border-color: var(--fg); background: var(--panel); }
+  #drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  body.loading #drop { opacity: .4; pointer-events: none; }
+
+  #list { display: flex; flex-direction: column; gap: 10px; }
+  .item { border: 1px solid var(--dim); background: var(--panel); padding: 10px 12px; }
+  .item.bad { border-color: var(--err); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .name { flex: 1 1 220px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--hi); }
+  .pages { color: var(--dim); text-shadow: none; }
+  .ctrl { display: flex; gap: 6px; }
+  .rng { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 8px; }
+  .rng label { color: var(--dim); text-shadow: none; }
+
+  input[type=text] {
+    font: inherit; color: var(--hi); background: #000; text-shadow: var(--glow);
+    border: 1px solid var(--dim); padding: 3px 8px; min-width: 0;
+  }
+  input[type=text]:focus { outline: 2px solid var(--fg); outline-offset: 1px; }
+  input.rangeIn { flex: 1 1 200px; }
+  .info { text-shadow: none; }
+  .info.err { color: var(--err); text-shadow: 0 0 6px rgba(255,90,54,.5); }
+
+  button {
+    font: inherit; color: var(--fg); background: transparent; text-shadow: inherit;
+    border: 1px solid var(--fg); padding: 2px 10px; cursor: pointer;
+  }
+  button:hover:not(:disabled), button:focus-visible { background: var(--fg); color: #000; text-shadow: none; outline: none; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  .big { font-size: 28px; padding: 6px 22px; }
+
+  .empty { color: var(--dim); text-align: center; padding: 14px 0; text-shadow: none; }
+  .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 20px 0 14px; }
+  .bar .total { flex: 1 1 200px; }
+  .out { display: flex; align-items: center; gap: 6px; }
+
+  #log {
+    border-top: 1px solid var(--dim); margin-top: 18px; padding-top: 10px;
+    max-height: 190px; overflow-y: auto; text-shadow: none; color: var(--dim);
+  }
+  #log .ok { color: var(--hi); text-shadow: var(--glow); }
+  #log .err { color: var(--err); }
+  .cursor::after { content: "█"; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0 } }
+  @media (prefers-reduced-motion: reduce) { .cursor::after { animation: none; } }
+</style>
+</head>
+<body class="loading">
+<main>
+  <h1>Unir PDF</h1>
+  <p class="sub">Python (pypdf) corriendo en tu navegador. Los archivos no se suben a ningún servidor.</p>
+
+  <label id="drop" for="file">
+    Arrastra PDFs aquí o haz clic para elegirlos
+    <input id="file" type="file" accept="application/pdf,.pdf" multiple>
+  </label>
+
+  <div id="list"></div>
+
+  <div class="bar">
+    <div class="total" id="total"></div>
+    <div class="out">
+      <input type="text" id="outname" value="fusionado" size="14" aria-label="Nombre del archivo de salida">.pdf
+    </div>
+    <button id="merge" class="big" disabled>Unir y descargar</button>
+  </div>
+
+  <div id="log" aria-live="polite"></div>
+</main>
+
+<!-- ===================== CÓDIGO PYTHON ===================== -->
+<script type="text/x-python" id="py-code">
+import os, re, json
+from pypdf import PdfReader, PdfWriter
+
+os.makedirs("/work", exist_ok=True)
+SALIDA = "/work/salida.pdf"
+
+
+def _abrir(path):
+    reader = PdfReader(path)
+    if reader.is_encrypted and not reader.decrypt(""):
+        raise ValueError("PDF protegido con contraseña")
+    return reader
+
+
+def contar_paginas(path):
+    return len(_abrir(path).pages)
+
+
+def parse_range(texto, n):
+    """'1-3, 5, 8-' -> índices base 0. Vacío/'todas' = todas. '-4' = de 1 a 4. Se pueden repetir páginas."""
+    texto = (texto or "").strip().lower().replace(" ", "")
+    if texto in ("", "todas", "all", "*"):
+        return list(range(n))
+    paginas = []
+    for parte in texto.split(","):
+        if not parte:
+            continue
+        m = re.fullmatch(r"(\d*)(-?)(\d*)", parte)
+        if not m:
+            raise ValueError(f"'{parte}' no es un rango válido")
+        a, guion, b = m.groups()
+        if guion:
+            ini = int(a) if a else 1
+            fin = int(b) if b else n
+        else:
+            ini = fin = int(a)
+        if ini < 1 or fin > n or ini > fin:
+            raise ValueError(f"'{parte}' fuera de rango (el PDF tiene {n} págs.)")
+        paginas.extend(range(ini - 1, fin))
+    if not paginas:
+        raise ValueError("selección vacía")
+    return paginas
+
+
+def validar(texto, n):
+    try:
+        return json.dumps({"ok": True, "count": len(parse_range(texto, n))})
+    except ValueError as e:
+        return json.dumps({"ok": False, "error": str(e)})
+
+
+def unir(spec_json):
+    spec = json.loads(spec_json)
+    writer = PdfWriter()
+    total = 0
+    for item in spec:
+        try:
+            reader = _abrir(item["path"])
+            for i in parse_range(item["range"], len(reader.pages)):
+                writer.add_page(reader.pages[i])
+                total += 1
+        except ValueError as e:
+            raise ValueError(f"{item['name']}: {e}")
+    if total == 0:
+        raise ValueError("No hay páginas seleccionadas")
+    with open(SALIDA, "wb") as f:
+        writer.write(f)
+    return total
+</script>
+
+<!-- ===================== INTERFAZ ===================== -->
+<script>
+const $ = s => document.querySelector(s);
+const files = [];          // {id, name, n, range, ok, count}
+let uid = 0;
+let py, validar, contarPaginas, unir;
+
+function log(msg, cls = '') {
+  const d = document.createElement('div');
+  if (cls) d.className = cls;
+  d.textContent = '> ' + msg;
+  $('#log').appendChild(d);
+  $('#log').scrollTop = $('#log').scrollHeight;
+}
+const lastLine = e => String(e.message || e).trim().split('\n').pop().replace(/^\w*Error:\s*/, '');
+
+async function boot() {
+  const cur = document.createElement('div');
+  cur.className = 'cursor'; cur.textContent = '> Cargando Python…';
+  $('#log').appendChild(cur);
+  try {
+    py = await loadPyodide();
+    cur.textContent = '> Instalando pypdf…';
+    await py.loadPackage('micropip');
+    await py.runPythonAsync("import micropip\nawait micropip.install('pypdf')");
+    await py.runPythonAsync($('#py-code').textContent);
+    validar = py.globals.get('validar');
+    contarPaginas = py.globals.get('contar_paginas');
+    unir = py.globals.get('unir');
+    cur.remove();
+    log('Listo. Agrega uno o más PDFs.', 'ok');
+    document.body.classList.remove('loading');
+    render();
+  } catch (e) {
+    cur.remove();
+    log('Error al iniciar: ' + lastLine(e) + ' (se necesita conexión para cargar Pyodide y pypdf)', 'err');
+  }
+}
+
+async function addFiles(list) {
+  for (const f of list) {
+    if (!/\.pdf$/i.test(f.name) && f.type !== 'application/pdf') {
+      log('Ignorado (no es PDF): ' + f.name, 'err');
+      continue;
+    }
+    const id = ++uid, path = `/work/${id}.pdf`;
+    py.FS.writeFile(path, new Uint8Array(await f.arrayBuffer()));
+    try {
+      const n = contarPaginas(path);
+      files.push({ id, name: f.name, n, range: '' });
+      log(`${f.name}: ${n} págs.`);
+    } catch (e) {
+      py.FS.unlink(path);
+      log(`No se pudo leer ${f.name}: ${lastLine(e)}`, 'err');
+    }
+  }
+  render();
+}
+
+function removeFile(i) {
+  py.FS.unlink(`/work/${files[i].id}.pdf`);
+  files.splice(i, 1);
+  render();
+}
+function move(i, d) {
+  const j = i + d;
+  if (j < 0 || j >= files.length) return;
+  [files[i], files[j]] = [files[j], files[i]];
+  render();
+}
+
+function check(item, infoEl, box) {
+  const r = JSON.parse(validar(item.range, item.n));
+  item.ok = r.ok; item.count = r.count;
+  infoEl.textContent = r.ok ? `${r.count} de ${item.n} págs.` : r.error;
+  infoEl.className = 'info' + (r.ok ? '' : ' err');
+  box.classList.toggle('bad', !r.ok);
+  updateTotal();
+}
+
+function updateTotal() {
+  const bad = files.some(f => !f.ok);
+  const pages = files.reduce((s, f) => s + (f.ok ? f.count : 0), 0);
+  $('#total').textContent = files.length
+    ? `${files.length} archivo${files.length > 1 ? 's' : ''}, ${pages} págs. en total`
+    : '';
+  $('#merge').disabled = !files.length || bad;
+}
+
+function render() {
+  const list = $('#list');
+  list.innerHTML = '';
+  if (!files.length) {
+    list.innerHTML = '<div class="empty">Sin archivos todavía.</div>';
+    updateTotal();
+    return;
+  }
+  files.forEach((item, i) => {
+    const box = document.createElement('div');
+    box.className = 'item';
+
+    const row = document.createElement('div'); row.className = 'row';
+    const name = document.createElement('span'); name.className = 'name'; name.textContent = item.name; name.title = item.name;
+    const pages = document.createElement('span'); pages.className = 'pages'; pages.textContent = `${item.n} págs.`;
+    const ctrl = document.createElement('div'); ctrl.className = 'ctrl';
+    [['▲', 'Subir', () => move(i, -1), i === 0],
+     ['▼', 'Bajar', () => move(i, 1), i === files.length - 1],
+     ['✕', 'Quitar', () => removeFile(i), false]].forEach(([t, label, fn, dis]) => {
+      const b = document.createElement('button');
+      b.textContent = t; b.setAttribute('aria-label', label); b.title = label; b.disabled = dis;
+      b.onclick = fn; ctrl.appendChild(b);
+    });
+    row.append(name, pages, ctrl);
+
+    const rng = document.createElement('div'); rng.className = 'rng';
+    const lab = document.createElement('label'); lab.textContent = 'Páginas:';
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.className = 'rangeIn'; inp.value = item.range;
+    inp.placeholder = 'todas  ·  ej: 1-3, 5, 8-';
+    inp.setAttribute('aria-label', 'Páginas a incluir de ' + item.name);
+    const info = document.createElement('span');
+    inp.oninput = () => { item.range = inp.value; check(item, info, box); };
+    rng.append(lab, inp, info);
+
+    box.append(row, rng);
+    list.appendChild(box);
+    check(item, info, box);
+  });
+}
+
+async function fusionar() {
+  const btn = $('#merge');
+  btn.disabled = true;
+  log('Uniendo…');
+  await new Promise(r => setTimeout(r, 30));   // deja pintar el log
+  try {
+    const spec = files.map(f => ({ path: `/work/${f.id}.pdf`, name: f.name, range: f.range }));
+    const total = unir(JSON.stringify(spec));
+    const data = py.FS.readFile('/work/salida.pdf');
+    const url = URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+    const base = ($('#outname').value.trim().replace(/\.pdf$/i, '').replace(/[\\/:*?"<>|]/g, '_')) || 'fusionado';
+    const a = document.createElement('a');
+    a.href = url; a.download = base + '.pdf';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    log(`${base}.pdf generado: ${total} págs., ${(data.length / 1024).toFixed(0)} KB.`, 'ok');
+  } catch (e) {
+    log('Error: ' + lastLine(e), 'err');
+  }
+  updateTotal();
+}
+
+$('#file').addEventListener('change', e => { addFiles([...e.target.files]); e.target.value = ''; });
+$('#merge').addEventListener('click', fusionar);
+const drop = $('#drop');
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles([...e.dataTransfer.files]));
+
+boot();
+</script>
+</body>
+</html>
