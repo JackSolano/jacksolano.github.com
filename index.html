@@ -707,10 +707,7 @@
 
     // ── UNIR PDF ──────────────────────────────────
     function openPdfMerge() {
-      const w = createWindow('📑 UNIR_PDF.EXE', 760, `
-        <iframe src="pdf_merge.html" style="width:100%;height:560px;border:none;display:block;background:#080400;"></iframe>
-      `);
-      w.style.width = 'min(800px, 95vw)';
+      window.location.href = 'pdf_merge.html';
     }
     
     // ── HORARIO (ventana emergente estilo tablero CRT, desde horarios/data.js) ──
