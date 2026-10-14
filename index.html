@@ -223,29 +223,35 @@
     <span>Win</span> menú inicio
   </div>
 
-  <!-- DESKTOP -->
-  <div class="desktop" id="desktop">
 
-    <!-- ICONOS -->
-    <div class="desktop-icons" id="desktop-icons">
-      <div class="desktop-icon" tabindex="0" data-action="openSysInfo" onclick="openSysInfo()">
-        <div class="icon-img">🖥️</div>
-         <span>Sistema</span>
-      </div>
+<!-- ICONOS -->
+<div class="desktop-icons" id="desktop-icons">
 
+  <!-- Sistema -->
+  <div class="desktop-icon"
+       tabindex="0"
+       data-action="openSysInfo"
+       onclick="openSysInfo()">
+    <div class="icon-img">🖥️</div>
+    <span>Sistema</span>
+  </div>
 
+  <!-- Linear -->
+  <div class="desktop-icon"
+       tabindex="0"
+       onclick="window.location.href='linear/Plano, normal y proyección (retro 3D).html'">
+    <div class="icon-img">↗️</div>
+    <span>Linear</span>
+  </div>
 
-    <div class="desktop-icons" id="desktop-icons">
-      <div class="desktop-icon"
-          tabindex="0"
-          data-action="openSysInfo"
-          onclick="window.location.href='linear/Plano, normal y proyección (retro 3D).html'">
-        <div class="icon-img">↗️</div>
-        <span>Linear</span>
-      </div>
-    </div>
-
-
+  <!-- Artículos -->
+  <div class="desktop-icon"
+       tabindex="0"
+       data-action="openMainWindow"
+       onclick="openMainWindow()">
+    <div class="icon-img">📐</div>
+    <span>Artículos</span>
+  </div>
 
       <div class="desktop-icon" tabindex="0" data-action="openMainWindow" onclick="openMainWindow()">
         <div class="icon-img">📐</div>
@@ -414,6 +420,7 @@
     </div>
 
   </div><!-- /desktop -->
+</div>
 
   <!-- TASKBAR -->
   <div class="win98-taskbar">
