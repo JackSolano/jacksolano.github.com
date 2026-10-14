@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plano, normal y proyección</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--or:#ff8a1f;--dim:#a65410;--soft:#ffb866;--ye:#ffd23f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{color-scheme:dark;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:#000;color:var(--or);font:15px/1.55 "IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+background-image:repeating-linear-gradient(0deg,rgba(255,138,31,.05) 0 1px,transparent 1px 3px)}
+main{max-width:1040px;margin:0 auto;padding:20px 14px 48px}
+h1{font:400 clamp(38px,8vw,64px)/1 "VT323",monospace;margin:0 0 6px;text-shadow:0 0 12px rgba(255,138,31,.55)}
+.bar{border-top:3px solid var(--or);border-bottom:1px solid var(--or);height:8px;margin-bottom:18px}
+.stage{border:2px solid var(--or);box-shadow:0 0 18px rgba(255,138,31,.18);position:relative}
+canvas{display:block;width:100%;height:min(62vh,520px);touch-action:none;cursor:grab}
+.hint{position:absolute;right:10px;bottom:6px;color:var(--dim);font-size:13px;pointer-events:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:16px}
+.panel{border:2px solid var(--or)}
+.panel h2{font:400 26px "VT323",monospace;margin:0;padding:2px 12px;background:var(--or);color:#000}
+.panel .b{padding:12px 14px}
+.tabs{display:flex;gap:0;margin-bottom:12px}
+.tabs button{flex:1;font:inherit;background:#000;color:var(--or);border:1px solid var(--or);padding:7px 6px;cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--or);color:#000}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ye);outline-offset:2px}
+.row{display:flex;align-items:center;gap:8px;margin:7px 0;flex-wrap:wrap}
+.row label{width:3.2em;color:var(--soft)}
+.row input{width:4.6em;font:inherit;background:#000;color:var(--ye);border:1px solid var(--dim);padding:4px 6px}
+.eqn{color:var(--ye);margin:0 0 8px}
+.out div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--dim);padding:4px 0}
+.out span:last-child{color:var(--ye);text-align:right}
+.ok{color:#9dff6a!important}
+.err{color:#ff5a3c;margin:0}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>Plano y normal</h1>
+<div class="bar"></div>
+
+<div class="stage"><canvas id="cv" aria-label="Vista 3D del plano, su normal y la proyección"></canvas><span class="hint">arrastra para girar · rueda para zoom</span></div>
+
+<div class="grid">
+  <section class="panel"><h2>Plano W</h2><div class="b">
+    <div class="tabs">
+      <button id="t1" aria-pressed="true">Por coeficientes</button>
+      <button id="t2" aria-pressed="false">Por dos vectores</button>
+    </div>
+    <div id="g1">
+      <p class="eqn" id="eqn"></p>
+      <div class="row"><label>a</label><input id="a" type="number" step="0.5" value="2"></div>
+      <div class="row"><label>b</label><input id="b" type="number" step="0.5" value="-1"></div>
+      <div class="row"><label>c</label><input id="c" type="number" step="0.5" value="3"></div>
+    </div>
+    <div id="g2" class="hide">
+      <div class="row"><label>u</label><input id="ux" type="number" step="0.5" value="1"><input id="uy" type="number" step="0.5" value="0"><input id="uz" type="number" step="0.5" value="1"></div>
+      <div class="row"><label>w</label><input id="wx" type="number" step="0.5" value="0"><input id="wy" type="number" step="0.5" value="1"><input id="wz" type="number" step="0.5" value="2"></div>
+      <p class="eqn">W = gen{u, w}, normal n = u × w</p>
+    </div>
+    <div class="row"><label>v</label><input id="vx" type="number" step="0.5" value="3"><input id="vy" type="number" step="0.5" value="2"><input id="vz" type="number" step="0.5" value="4"></div>
+    <p class="err" id="err"></p>
+  </div></section>
+
+  <section class="panel"><h2>Resultados</h2><div class="b out" id="out"></div></section>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id), N=id=>parseFloat($(id).value)||0;
+const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]], sub=(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],
+mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+len=a=>Math.hypot(a[0],a[1],a[2]), unit=a=>mul(a,1/len(a)),
+f=x=>(Math.abs(x)<5e-10?0:x).toFixed(2), vs=a=>'('+a.map(f).join(', ')+')';
+
+let mode=1, yaw=0.8, pitch=1.0, zoom=1;
+const cv=$('cv'), ctx=cv.getContext('2d'), R=5;
+
+function setMode(m){mode=m;$('t1').setAttribute('aria-pressed',m==1);$('t2').setAttribute('aria-pressed',m==2);
+ $('g1').classList.toggle('hide',m!=1);$('g2').classList.toggle('hide',m!=2);draw();}
+$('t1').onclick=()=>setMode(1);$('t2').onclick=()=>setMode(2);
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',draw));
+
+function plane(){
+ if(mode==1){
+  const n=[N('a'),N('b'),N('c')]; if(len(n)<1e-9) return null;
+  const ax=[0,0,0]; const k=[0,1,2].sort((i,j)=>Math.abs(n[i])-Math.abs(n[j]))[0]; ax[k]=1;
+  const e1=unit(cross(n,ax)), e2=cross(unit(n),e1);
+  return {n,e1,e2,gen:null};
+ }
+ const u=[N('ux'),N('uy'),N('uz')], w=[N('wx'),N('wy'),N('wz')], n=cross(u,w);
+ if(len(n)<1e-9) return null;
+ const e1=unit(u), e2=unit(sub(w,mul(e1,dot(w,e1))));
+ return {n,e1,e2,gen:[u,w]};
+}
+
+function proj(p,W,H,s){
+ const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+ const x1=p[0]*cy-p[1]*sy, y1=p[0]*sy+p[1]*cy;
+ const z2=y1*sp+p[2]*cp;
+ return [W/2+x1*s, H/2-z2*s+ (0)];
+}
+
+function draw(){
+ const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight;
+ if(cv.width!=W*dpr||cv.height!=H*dpr){cv.width=W*dpr;cv.height=H*dpr}
+ ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,W,H);
+ const s=Math.min(W,H)/(2*R)*0.95*zoom, P=p=>proj(p,W,H,s);
+ ctx.font='18px VT323, monospace'; ctx.lineCap='round';
+ const line=(a,b,col,w,dash)=>{ctx.beginPath();ctx.setLineDash(dash||[]);ctx.strokeStyle=col;ctx.lineWidth=w||1;
+   const A=P(a),B=P(b);ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();ctx.setLineDash([])};
+ const label=(p,t,col)=>{const A=P(p);ctx.fillStyle=col;ctx.fillText(t,A[0]+7,A[1]-7)};
+ const arrow=(a,b,col,w,t,dash)=>{line(a,b,col,w,dash);const A=P(a),B=P(b),d=Math.atan2(B[1]-A[1],B[0]-A[0]);
+   ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(B[0],B[1]);
+   ctx.lineTo(B[0]-11*Math.cos(d-.4),B[1]-11*Math.sin(d-.4));ctx.lineTo(B[0]-11*Math.cos(d+.4),B[1]-11*Math.sin(d+.4));ctx.fill();
+   if(t)label(b,t,col)};
+ const O=[0,0,0];
+ // ejes
+ [['x',[R,0,0]],['y',[0,R,0]],['z',[0,0,R]]].forEach(([t,e])=>{line(mul(e,-1),e,'#5a3000',1);label(e,t,'#a65410')});
+
+ const pl=plane(), err=$('err'), out=$('out');
+ if(!pl){err.textContent=mode==1?'Pon al menos un coeficiente distinto de cero.':'u y w son paralelos: no generan un plano.';out.innerHTML='';
+   $('eqn').textContent='';return}
+ err.textContent='';
+ const {n,e1,e2,gen}=pl, nh=unit(n);
+ const C=(a,b)=>add(mul(e1,a),mul(e2,b));
+ // plano
+ const q=[C(-R,-R),C(R,-R),C(R,R),C(-R,R)].map(P);
+ ctx.beginPath();q.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();
+ ctx.fillStyle='rgba(255,138,31,.13)';ctx.fill();ctx.strokeStyle='#ff8a1f';ctx.lineWidth=2;ctx.stroke();
+ for(let k=-R+1;k<R;k++){line(C(-R,k),C(R,k),'rgba(255,138,31,.3)',1);line(C(k,-R),C(k,R),'rgba(255,138,31,.3)',1)}
+ // normal y ángulo recto
+ line(mul(nh,-R*.8),O,'rgba(255,210,63,.35)',1,[4,4]);
+ arrow(O,mul(nh,R*.8),'#ffd23f',3,'n');
+ const m=.45; ctx.beginPath();[mul(e1,m),add(mul(e1,m),mul(nh,m)),mul(nh,m)].forEach((p,i)=>{const A=P(p);i?ctx.lineTo(A[0],A[1]):ctx.moveTo(A[0],A[1])});
+ ctx.strokeStyle='#ffd23f';ctx.lineWidth=1.5;ctx.stroke();
+ if(gen){arrow(O,gen[0],'#ffb866',2.5,'u');arrow(O,gen[1],'#ffb866',2.5,'w')}
+ // v y proyección
+ const v=[N('vx'),N('vy'),N('vz')], p=add(mul(e1,dot(v,e1)),mul(e2,dot(v,e2))), perp=sub(v,p);
+ line(p,v,'#fff1dc',1.5,[5,4]);
+ arrow(O,p,'#ff8a1f',3.5,'proj');
+ arrow(O,v,'#fff1dc',2,'v');
+ const Pp=P(p);ctx.fillStyle='#ff8a1f';ctx.beginPath();ctx.arc(Pp[0],Pp[1],4,0,7);ctx.fill();
+
+ // lectura
+ $('eqn').textContent=`W: ${f(n[0])}x + ${f(n[1])}y + ${f(n[2])}z = 0`.replace(/\+ -/g,'− ');
+ const d1=dot(n,e1), d2=dot(n,e2);
+ const rows=[['Normal n',vs(n)],
+  [gen?'n · u':'n · e₁ (base de W)',f(dot(n,gen?gen[0]:e1))],
+  [gen?'n · w':'n · e₂ (base de W)',f(dot(n,gen?gen[1]:e2))],
+  ['W ⊥ Z = gen{n}',(Math.abs(d1)+Math.abs(d2)<1e-6)?'<span class="ok">sí, ambos productos = 0</span>':'no'],
+  ['v',vs(v)],
+  ['proj<sub>W</sub> v',vs(p)],
+  ['v − proj (en Z)',vs(perp)],
+  ['(v − proj) ∥ n',len(cross(perp,n))<1e-6*Math.max(1,len(n))?'<span class="ok">sí</span>':'no'],
+  ['|v|² = |proj|² + |v−proj|²',`${f(dot(v,v))} = ${f(dot(p,p))} + ${f(dot(perp,perp))}`]];
+ out.innerHTML=rows.map(r=>`<div><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+}
+
+let drag=null;
+cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'});
+cv.addEventListener('pointermove',e=>{if(!drag)return;yaw+=(e.clientX-drag[0])*.008;pitch=Math.max(.05,Math.min(Math.PI-.05,pitch+(e.clientY-drag[1])*.008));drag=[e.clientX,e.clientY];draw()});
+cv.addEventListener('pointerup',()=>{drag=null;cv.style.cursor='grab'});
+cv.addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.4,Math.min(3,zoom*(e.deltaY<0?1.1:.9)));draw()},{passive:false});
+window.addEventListener('resize',draw);
+document.fonts&&document.fonts.ready.then(draw);
+draw();
+</script>
+</body>
+</html>
