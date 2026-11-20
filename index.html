@@ -281,12 +281,13 @@
         <div class="icon-img">📑</div>
         <span>Unir PDF</span>
       </div>
+      <div class="desktop-icon" tabindex="0" data-action="openRe" onclick="openRe()">
+        <div class="icon-img">▶️</div>
+        <span>Re</span>
+      </div>
     </div>
 
-    <div class="desktop-icon" tabindex="0" data-action="openRe" onclick="openRe()">
-      <div class="icon-img">▶️</div>
-      <span>Re</span>
-    </div>
+
 
     <!-- VENTANA BIENVENIDA -->
     <div class="win98-window" id="win-bienvenida" style="top:80px; left:200px; width:300px;">
@@ -738,7 +739,7 @@
     }
     // ── REPRODUCTOR ──────────────────────────────────
     function openRe() {
-      window.open('Re.html', '_blank');
+      window.open('Re/Re.html', '_blank');
     }
     // ── HORARIO (ventana emergente estilo tablero CRT, desde horarios/data.js) ──
     let horarioBoardWin = null;

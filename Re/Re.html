@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Avenida Brasil</title>
+  <link rel="stylesheet" href="re.css">
+</head>
+<body>
+  <main class="reproductor">
+    <header class="cabecera">
+      <h1 id="titulo">Cargando…</h1>
+      <p id="subtitulo" class="subtitulo"></p>
+    </header>
+
+    <div class="pantalla" id="pantalla">
+      <p class="vacio" id="vacio">Cargando capítulos…</p>
+    </div>
+
+    <p id="aviso" class="aviso" role="status" aria-live="polite"></p>
+
+    <nav class="controles" aria-label="Controles de capítulo">
+      <button id="ant" type="button">← Anterior</button>
+      <select id="sel" aria-label="Elegir capítulo"></select>
+      <button id="sig" type="button">Siguiente →</button>
+    </nav>
+  </main>
+
+  <script src="re.js"></script>
+</body>
+</html>
