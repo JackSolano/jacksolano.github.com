@@ -285,6 +285,10 @@
         <div class="icon-img">▶️</div>
         <span>Re</span>
       </div>
+            <div class="desktop-icon" tabindex="0" data-action="openRe" onclick="openNe()">
+        <div class="icon-img">🗃️</div>
+        <span>Expediente</span>
+      </div>
     </div>
 
 
@@ -740,6 +744,10 @@
     // ── REPRODUCTOR ──────────────────────────────────
     function openRe() {
       window.open('Re/Re.html', '_blank');
+    }
+    //  Ventana nueva
+    function openNe() {
+      window.open('./Qwen_html_20261124_1s8vahzek.html', '_blank');
     }
     // ── HORARIO (ventana emergente estilo tablero CRT, desde horarios/data.js) ──
     let horarioBoardWin = null;

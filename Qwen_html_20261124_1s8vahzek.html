@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expediente Ley 2341 · Checklist de documentos</title>
+<meta name="description" content="Lista de verificación interactiva de documentos — Estudiante superior al 5.º semestre y/o graduado como profesional · Ley 2341 de 2023 · Ejército Nacional de Colombia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================= SISTEMA ============================= */
+:root{
+  color-scheme:dark;
+  --bg0:#0f150a; --bg1:#141c0d; --surface:#1a2311; --surface2:#212c16;
+  --line:#33402296; --line-solid:#3a4a28;
+  --paper:#f6f2e2; --paper2:#ece6d0; --paper3:#e2dcc4;
+  --ink:#242e18; --ink2:#49523a; --ink3:#6b7252;
+  --text:#ece8d6; --text2:#b9c1a0; --text3:#8f987a;
+  --amarillo:#fcd116; --amber:#f59e0b; --azul:#2b59c3; --azul-rey:#1e40af;
+  --rojo:#ce1126; --rojo2:#ff5d64; --verde:#3f9b4f; --verde2:#7dd87f;
+  --acero:#5b6b7a; --na:#8fa0b0;
+  --focus:#fcd116;
+  --disp:'Black Ops One', 'Archivo', sans-serif;
+  --body:'Archivo', system-ui, sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, monospace;
+  --nav-h:58px;
+  --shadow:0 10px 30px rgba(4,8,2,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body); font-size:15.5px; line-height:1.5;
+  background:var(--bg0); color:var(--text);
+  overflow-x:hidden; min-height:100vh;
+}
+::selection{background:var(--amarillo);color:#1c2410}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit}
+a{color:var(--azul-rey)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+mark{
+  background:linear-gradient(100deg, rgba(252,209,22,0) 0%, rgba(252,209,22,.95) 4%, rgba(255,214,10,.85) 96%, rgba(252,209,22,0) 100%);
+  color:inherit;padding:.02em .22em;margin:0 -.06em;border-radius:2px;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone;font-weight:700;
+}
+/* Scrollbars del expediente */
+html{scrollbar-width:thin;scrollbar-color:#55663a #10160a}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:#10160a}
+::-webkit-scrollbar-thumb{background:#46552e;border:3px solid #10160a;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:var(--amarillo)}
+.drawer ::-webkit-scrollbar-track{background:var(--paper2)}
+.drawer ::-webkit-scrollbar-thumb{background:#b3ab8d;border-color:var(--paper2)}
+.drawer ::-webkit-scrollbar-thumb:hover{background:var(--azul-rey)}
+.drawer{scrollbar-color:#b3ab8d var(--paper2)}
+
+/* ============================= FONDO ============================= */
+.bg{position:fixed;inset:0;z-index:-3;background:
+  radial-gradient(900px 620px at 88% -12%, rgba(252,209,22,.10), transparent 62%),
+  radial-gradient(820px 620px at -12% 32%, rgba(43,89,195,.13), transparent 60%),
+  radial-gradient(1000px 800px at 55% 118%, rgba(206,17,38,.08), transparent 60%),
+  linear-gradient(180deg,#141c0d 0%, #0f150a 100%);}
+.bg-camo{position:fixed;inset:-12%;z-index:-2;opacity:.55;pointer-events:none;
+  background:
+   radial-gradient(430px 300px at 18% 22%, #1d2813 0 58%, transparent 60%),
+   radial-gradient(520px 340px at 78% 14%, #18210e 0 56%, transparent 58%),
+   radial-gradient(480px 360px at 62% 62%, #1f2b14 0 55%, transparent 57%),
+   radial-gradient(560px 380px at 12% 82%, #17200d 0 57%, transparent 59%),
+   radial-gradient(380px 280px at 92% 78%, #202c15 0 55%, transparent 57%),
+   radial-gradient(300px 220px at 40% 40%, #1a2410 0 55%, transparent 57%);
+  animation:camoDrift 70s ease-in-out infinite alternate;}
+@keyframes camoDrift{from{transform:translate(-1.2%,-.8%) scale(1)}to{transform:translate(1.2%,1%) scale(1.03)}}
+body::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");}
+
+/* ============================= NAV ============================= */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 clamp(12px,3vw,28px);
+  background:rgba(15,21,10,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-solid);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand-t{font-family:var(--disp);font-size:.92rem;letter-spacing:.06em;color:var(--text);white-space:nowrap}
+.brand-t em{font-style:normal;color:var(--amarillo)}
+.brand-s{font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;color:var(--text3);display:block;margin-top:1px}
+.mini{display:flex;align-items:center;gap:8px;margin-left:auto}
+.mini-bar{width:130px;height:6px;border-radius:99px;background:#2a3519;overflow:hidden;border:1px solid var(--line-solid)}
+.mini-fill{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,var(--amarillo),var(--verde));transition:width .6s cubic-bezier(.2,.9,.2,1)}
+.mini-pct{font-family:var(--mono);font-size:.72rem;font-weight:600;color:var(--amarillo);min-width:38px;text-align:right}
+.save-chip{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--text3);border:1px solid var(--line-solid);padding:4px 9px;border-radius:99px;white-space:nowrap;transition:all .3s}
+.save-chip.flash{color:#1c2410;background:var(--verde2);border-color:var(--verde2)}
+.icon-btn{
+  width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex:none;
+  border:1px solid var(--line-solid);color:var(--text2);background:rgba(33,44,22,.5);
+  transition:all .2s;
+}
+.icon-btn:hover{color:var(--amarillo);border-color:var(--amarillo);transform:translateY(-1px)}
+.icon-btn:active{transform:translateY(0) scale(.94)}
+.icon-btn.muted{color:var(--rojo2);border-color:#5c2a2e}
+.top-progress{position:fixed;top:var(--nav-h);left:0;height:3px;z-index:51;width:0%;
+  background:linear-gradient(90deg,var(--amarillo) 0 55%,var(--azul) 55% 80%,var(--rojo) 80% 100%);
+  transition:width .6s cubic-bezier(.2,.9,.2,1);box-shadow:0 0 10px rgba(252,209,22,.5)}
+
+/* ============================= HERO ============================= */
+.hero{max-width:1060px;margin:0 auto;padding:calc(var(--nav-h) + 44px) clamp(14px,3.5vw,30px) 26px;position:relative}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.16em;padding:5px 11px;border-radius:4px;border:1px solid var(--line-solid);color:var(--text2);background:rgba(26,35,17,.6)}
+.chip.hot{color:#1c2410;background:var(--amarillo);border-color:var(--amarillo)}
+.chip.blue{color:#cdd9ff;border-color:#2b59c3;background:rgba(43,89,195,.18)}
+.hero-grid{display:grid;grid-template-columns:1fr auto;gap:34px;align-items:center}
+h1{font-family:var(--disp);font-weight:400;font-size:clamp(1.4rem, .95rem + 2.3vw, 2.55rem);line-height:1.2;letter-spacing:.02em;text-transform:uppercase;color:var(--text);text-wrap:balance}
+h1 .y{color:var(--amarillo)}
+.hero-sub{margin-top:14px;color:var(--text2);max-width:56ch;font-size:.98rem}
+.hero-sub b{color:var(--text)}
+.tricolor{height:7px;width:190px;margin-top:20px;border-radius:2px;overflow:hidden;display:flex;box-shadow:0 2px 10px rgba(0,0,0,.4)}
+.tricolor i{display:block;height:100%}
+.tricolor i:nth-child(1){flex:2;background:var(--amarillo)}
+.tricolor i:nth-child(2){flex:1;background:var(--azul)}
+.tricolor i:nth-child(3){flex:1;background:var(--rojo)}
+.hero-alert{
+  margin-top:22px;display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(100deg,rgba(252,209,22,.16),rgba(245,158,11,.1));
+  border:1px solid rgba(252,209,22,.45);border-left:4px solid var(--amarillo);
+  padding:10px 16px;border-radius:6px;color:#ffe9a3;font-weight:600;font-size:.92rem;
+}
+.hero-alert svg{flex:none;color:var(--amarillo)}
+.hero-alert mark{background:none;color:var(--amarillo);padding:0;font-weight:800}
+/* anillo */
+.ring-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 24px;border:1px solid var(--line-solid);border-radius:16px;background:linear-gradient(160deg,rgba(33,44,22,.75),rgba(20,28,13,.9));box-shadow:var(--shadow)}
+.ring-wrap{position:relative;width:148px;height:148px}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:#2b3719;stroke-width:11}
+.ring-fg{fill:none;stroke:url(#ringGrad);stroke-width:11;stroke-linecap:round;stroke-dasharray:339.292;stroke-dashoffset:339.292;transition:stroke-dashoffset .8s cubic-bezier(.2,.9,.2,1)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:var(--mono);font-weight:700;font-size:1.9rem;color:var(--text);line-height:1}
+.ring-lbl{font-family:var(--mono);font-size:.56rem;letter-spacing:.24em;color:var(--text3);margin-top:5px}
+.stats{display:flex;gap:8px}
+.stat{text-align:center;padding:7px 12px;border-radius:9px;border:1px solid var(--line-solid);background:rgba(15,21,10,.5);min-width:66px}
+.stat b{display:block;font-family:var(--mono);font-size:1.05rem;line-height:1.1}
+.stat span{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;color:var(--text3)}
+.stat.s-done b{color:var(--verde2)} .stat.s-pend b{color:var(--amarillo)} .stat.s-na b{color:var(--na)}
+.stamp-hero{
+  position:absolute;top:calc(var(--nav-h) + 30px);right:clamp(14px,3.5vw,30px);
+  transform:rotate(7deg);font-family:var(--mono);font-weight:700;font-size:.72rem;letter-spacing:.18em;
+  color:var(--rojo2);border:3px double var(--rojo2);padding:8px 13px;border-radius:6px;text-align:center;line-height:1.5;
+  opacity:.9;text-shadow:0 0 14px rgba(255,93,100,.35);animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .55s backwards;
+  pointer-events:none;
+}
+@keyframes stampIn{from{transform:rotate(7deg) scale(2.1);opacity:0}60%{opacity:.95}to{transform:rotate(7deg) scale(1);opacity:.9}}
+
+/* ============================= TOOLBAR ============================= */
+.toolbar{
+  position:sticky;top:calc(var(--nav-h) + 3px);z-index:40;
+  background:rgba(17,23,11,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-top:1px solid var(--line-solid);border-bottom:1px solid var(--line-solid);
+}
+.toolbar-in{max-width:1060px;margin:0 auto;padding:10px clamp(14px,3.5vw,30px);display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.search{position:relative;flex:1 1 210px;min-width:170px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none}
+.search input{
+  width:100%;padding:9px 32px 9px 34px;border-radius:9px;border:1px solid var(--line-solid);
+  background:#131a0c;color:var(--text);font-size:.88rem;transition:border-color .2s;
+}
+.search input::placeholder{color:var(--text3)}
+.search input:focus{border-color:var(--amarillo);outline:none}
+.search-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:6px;display:none;place-items:center;color:var(--text3)}
+.search-clear:hover{color:var(--rojo2);background:#2a1a12}
+.search-clear.show{display:grid}
+.segs{display:flex;gap:4px;background:#131a0c;border:1px solid var(--line-solid);border-radius:10px;padding:3px}
+.seg{display:flex;align-items:center;gap:6px;padding:6px 11px;border-radius:7px;font-size:.8rem;font-weight:600;color:var(--text2);transition:all .18s;white-space:nowrap}
+.seg .cnt{font-family:var(--mono);font-size:.66rem;font-weight:600;padding:1px 6px;border-radius:99px;background:#2a3519;color:var(--text3)}
+.seg:hover{color:var(--text)}
+.seg.on{background:var(--amarillo);color:#1c2410}
+.seg.on .cnt{background:rgba(28,36,16,.22);color:#1c2410}
+.sortsel{padding:8px 10px;border-radius:9px;border:1px solid var(--line-solid);background:#131a0c;color:var(--text2);font-size:.8rem;font-weight:600}
+.sortsel:hover{border-color:var(--amarillo)}
+.tb-actions{display:flex;gap:7px;margin-left:auto}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:9px;
+  border:1px solid var(--line-solid);background:rgba(33,44,22,.5);color:var(--text2);
+  font-size:.8rem;font-weight:700;letter-spacing:.02em;transition:all .18s;white-space:nowrap;
+}
+.btn:hover{color:var(--amarillo);border-color:var(--amarillo);transform:translateY(-1px)}
+.btn:active{transform:scale(.96)}
+.btn.warn:hover{color:var(--rojo2);border-color:var(--rojo2)}
+.btn.solid{background:var(--amarillo);border-color:var(--amarillo);color:#1c2410}
+.btn.solid:hover{background:#ffdd44;color:#1c2410;box-shadow:0 4px 18px rgba(252,209,22,.35)}
+
+/* ============================= LISTA ============================= */
+.main{max-width:1060px;margin:0 auto;padding:22px clamp(14px,3.5vw,30px) 60px}
+.result-line{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.result-count{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;color:var(--text3)}
+.result-hint{font-family:var(--mono);font-size:.64rem;color:var(--text3);opacity:.75;margin-left:auto}
+kbd{font-family:var(--mono);font-size:.62rem;border:1px solid var(--line-solid);border-bottom-width:2px;border-radius:4px;padding:1px 5px;background:#1a2311;color:var(--text2)}
+
+/* banner completo */
+.complete{
+  display:none;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;padding:16px 20px;border-radius:14px;
+  background:linear-gradient(110deg,rgba(63,155,79,.22),rgba(252,209,22,.14) 60%,rgba(43,89,195,.14));
+  border:1px solid rgba(125,216,127,.5);box-shadow:0 0 34px rgba(63,155,79,.18);
+  animation:popIn .45s cubic-bezier(.2,1.4,.4,1);
+}
+.complete.show{display:flex}
+@keyframes popIn{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
+.complete .big{font-family:var(--disp);font-size:1.05rem;letter-spacing:.04em;color:var(--verde2)}
+.complete p{color:var(--text2);font-size:.86rem;flex:1 1 240px}
+.complete .btn{border-color:rgba(125,216,127,.5)}
+
+/* item papel */
+.item{
+  --focus:#1e40af;
+  position:relative;display:flex;gap:13px;align-items:flex-start;
+  background:linear-gradient(175deg,var(--paper) 0%,var(--paper2) 100%);
+  color:var(--ink);border-radius:10px;padding:16px 16px 15px 0;margin-bottom:11px;
+  border:1px solid #c9c2a4;border-left:none;
+  box-shadow:0 3px 0 #b8b092,0 10px 24px rgba(4,8,2,.4);
+  transition:transform .22s cubic-bezier(.2,.9,.3,1.3),box-shadow .22s,border-color .22s;
+  cursor:pointer;overflow:hidden;
+}
+.item::after{content:"";position:absolute;top:0;right:0;width:17px;height:17px;
+  background:linear-gradient(225deg,var(--bg0) 0 49%,#cfc8aa 50%,#e6e0c8 100%);
+  border-bottom-left-radius:5px;box-shadow:-2px 2px 4px rgba(0,0,0,.12)}
+.item:hover{transform:translateY(-2px) rotate(-.15deg);box-shadow:0 5px 0 #b8b092,0 16px 34px rgba(4,8,2,.5)}
+.item.reveal{opacity:0;transform:translateY(16px)}
+.item.reveal.in{opacity:1;transform:translateY(0);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.9,.3,1.1),box-shadow .22s}
+.num{
+  flex:none;width:56px;align-self:stretch;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:1.02rem;color:var(--ink3);
+  border-right:1px dashed #b6ae8e;position:relative;
+  background:
+   radial-gradient(circle 4.5px at 14px 24%, var(--bg0) 4.5px, transparent 5.5px),
+   radial-gradient(circle 4.5px at 14px 76%, var(--bg0) 4.5px, transparent 5.5px);
+}
+.check{
+  flex:none;width:34px;height:34px;margin-top:2px;border-radius:8px;position:relative;
+  border:2.5px solid #4d5a30;background:#fbf8ec;display:grid;place-items:center;
+  transition:all .18s;
+}
+.check:hover{border-color:#b98e00;box-shadow:0 0 0 4px rgba(252,209,22,.3);transform:scale(1.06)}
+.check:active{transform:scale(.9)}
+.check svg{width:20px;height:20px}
+.check .tick{stroke:#fff;stroke-width:3.4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .28s ease .05s}
+.check .na-dash{stroke:#fff;stroke-width:3.4;stroke-linecap:round;opacity:0;transition:opacity .2s}
+.item.is-done .check{background:var(--verde);border-color:#2c7038;box-shadow:0 2px 8px rgba(63,155,79,.4)}
+.item.is-done .check .tick{stroke-dashoffset:0}
+.item.is-na .check{background:var(--acero);border-color:#46545f}
+.item.is-na .check .na-dash{opacity:1}
+.item.is-done{border-color:#8fbf94;background:linear-gradient(175deg,#f2f4e4,#e6ecda)}
+.item.is-done .num{color:#3c7a45}
+.item.is-na{background:linear-gradient(175deg,#eef0f0,#e2e6e8);border-color:#b3bfc9}
+.item.is-na .num{color:var(--acero)}
+.item-body{flex:1;min-width:0;padding-right:6px}
+.item-title{font-weight:800;font-size:1.02rem;line-height:1.3;letter-spacing:.01em;color:var(--ink);display:block;text-align:left}
+.item.is-done .item-title{color:#3f5a3a}
+.item.is-na .item-title{color:#5d6b78}
+.item-desc{margin-top:4px;font-size:.865rem;color:var(--ink2);line-height:1.5}
+.item.is-na .item-desc{color:#75828e}
+.item-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;align-items:center}
+.tag{font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.1em;padding:3px 8px;border-radius:4px;border:1px solid}
+.tag-notaria{color:#a01220;border-color:#d8a3a9;background:#fbe9ea}
+.tag-linea{color:#1e40af;border-color:#a9bce8;background:#e9eefc}
+.tag-impreso{color:#4d5a30;border-color:#b6ae8e;background:#efe9d2}
+.tag-fisico{color:#6b5410;border-color:#d3bd7a;background:#f7ecc9}
+.tag-cond{color:#9a5b00;border-color:#e2bd85;background:#fdf0da}
+.tag-digital{color:#0e6e8c;border-color:#9cc8d6;background:#e2f2f7}
+.tag-univ{color:#5b2d8e;border-color:#c3a9e2;background:#f0e8fb}
+.tag-laboral{color:#8a4a12;border-color:#d9b28c;background:#f8ecdd}
+.swatch{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.08em;color:#1e40af}
+.swatch i{width:12px;height:12px;border-radius:3px;background:#1e40af;border:1px solid #142c7a;display:inline-block}
+.cond-line{display:flex;gap:7px;align-items:flex-start;margin-top:9px;font-size:.78rem;font-weight:600;color:#8a5a00;background:#fff3c4;border:1px dashed #e0c26a;border-radius:6px;padding:6px 10px}
+.cond-line svg{flex:none;margin-top:1px}
+.item-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.link-btn{
+  display:inline-flex;align-items:center;gap:6px;font-size:.76rem;font-weight:700;
+  color:var(--azul-rey);border:1.5px solid #a9bce8;background:#e9eefc;border-radius:7px;padding:5px 10px;
+  text-decoration:none;transition:all .18s;
+}
+.link-btn:hover{background:var(--azul-rey);color:#fff;border-color:var(--azul-rey);transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,64,175,.3)}
+.note-flag{display:none;align-items:center;gap:5px;font-family:var(--mono);font-size:.6rem;font-weight:600;color:#5b2d8e;background:#f0e8fb;border:1px solid #c3a9e2;border-radius:4px;padding:3px 8px}
+.note-flag.show{display:inline-flex}
+.item-side{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:8px;padding-top:2px}
+.na-btn{
+  font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.08em;
+  border:1.5px dashed #9aa5ad;color:#66727d;border-radius:7px;padding:5px 9px;transition:all .18s;background:transparent;
+}
+.na-btn:hover{border-color:var(--acero);color:var(--acero);background:#e7ebee}
+.na-btn.on{background:var(--acero);border-style:solid;border-color:#46545f;color:#fff}
+.open-btn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink3);border:1px solid #c9c2a4;background:#fbf8ec;transition:all .18s}
+.open-btn:hover{color:var(--azul-rey);border-color:var(--azul-rey);transform:translateX(2px)}
+/* sellos */
+.stamp{
+  position:absolute;top:12px;right:34px;transform:rotate(-9deg) scale(1);
+  font-family:var(--mono);font-weight:700;font-size:.78rem;letter-spacing:.22em;
+  padding:5px 12px;border-radius:5px;pointer-events:none;mix-blend-mode:multiply;
+  display:none;align-items:center;gap:7px;
+}
+.item.is-done .stamp{display:inline-flex;color:#2c7038;border:3px double #2c7038;animation:thunk .3s cubic-bezier(.2,1.8,.4,1)}
+.item.is-na .stamp{display:inline-flex;color:#52606d;border:3px double #52606d;animation:thunk .3s cubic-bezier(.2,1.8,.4,1)}
+@keyframes thunk{from{transform:rotate(-9deg) scale(1.9);opacity:0}to{transform:rotate(-9deg) scale(1);opacity:1}}
+.item.is-done .item-body,.item.is-na .item-body{padding-right:96px}
+
+/* vacío */
+.empty{
+  text-align:center;padding:52px 20px;border:1.5px dashed var(--line-solid);border-radius:14px;
+  background:rgba(26,35,17,.4);color:var(--text2);
+}
+.empty svg{color:var(--text3);margin-bottom:14px}
+.empty h3{font-family:var(--disp);font-weight:400;font-size:1.05rem;letter-spacing:.05em;color:var(--text);margin-bottom:7px}
+.empty p{font-size:.88rem;max-width:44ch;margin:0 auto 18px}
+.empty .btn{margin:0 auto}
+
+/* ============================= DRAWER ============================= */
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(8,12,4,.62);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.show{opacity:1;pointer-events:auto}
+.drawer{
+  --focus:#1e40af;color-scheme:light;
+  position:fixed;top:0;right:0;bottom:0;z-index:71;width:min(460px,100vw);
+  background:linear-gradient(180deg,var(--paper),var(--paper2));color:var(--ink);
+  transform:translateX(103%);transition:transform .38s cubic-bezier(.25,1,.35,1);
+  box-shadow:-18px 0 50px rgba(0,0,0,.5);display:flex;flex-direction:column;
+  border-left:1px solid #c9c2a4;
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{flex:none;display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px dashed #b6ae8e;background:linear-gradient(180deg,#efe9d4,var(--paper))}
+.d-num{font-family:var(--mono);font-weight:700;font-size:1.5rem;color:var(--ink3)}
+.d-kicker{font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;color:var(--ink3)}
+.d-status{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.12em;padding:4px 10px;border-radius:99px;border:1.5px solid;margin-left:auto}
+.d-status.p{color:#9a5b00;border-color:#e2bd85;background:#fdf0da}
+.d-status.d{color:#2c7038;border-color:#8fbf94;background:#e6f2e4}
+.d-status.n{color:#52606d;border-color:#b3bfc9;background:#e7ebee}
+.drawer-close{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;border:1px solid #c9c2a4;color:var(--ink2);background:#fbf8ec;transition:all .18s}
+.drawer-close:hover{color:var(--rojo);border-color:var(--rojo);transform:rotate(90deg)}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 22px 28px}
+.d-title{font-weight:900;font-size:1.28rem;line-height:1.28;letter-spacing:.01em}
+.d-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.d-sec{margin-top:22px}
+.d-sec-t{font-family:var(--mono);font-size:.6rem;font-weight:700;letter-spacing:.24em;color:var(--ink3);margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.d-sec-t::after{content:"";flex:1;height:1px;background:#c9c2a4}
+.d-text{font-size:.92rem;line-height:1.65;color:var(--ink2);background:#fbf8ec;border:1px solid #ddd6ba;border-left:4px solid var(--amarillo);border-radius:8px;padding:13px 15px}
+.d-cond{display:flex;gap:9px;align-items:flex-start;font-size:.84rem;font-weight:600;color:#8a5a00;background:#fff3c4;border:1px dashed #e0c26a;border-radius:8px;padding:10px 13px;margin-top:14px}
+.d-keys{list-style:none}
+.d-keys li{display:flex;gap:9px;align-items:flex-start;font-size:.88rem;color:var(--ink2);padding:6px 0;border-bottom:1px dotted #d5ceb0}
+.d-keys li:last-child{border-bottom:none}
+.d-keys svg{flex:none;margin-top:3px;color:var(--verde)}
+.d-links{display:flex;flex-direction:column;gap:8px}
+.d-links .link-btn{justify-content:center;padding:9px 12px;font-size:.84rem}
+.d-seg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.d-set{padding:10px 6px;border-radius:9px;border:1.5px solid #c9c2a4;background:#fbf8ec;font-size:.78rem;font-weight:800;color:var(--ink2);transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.d-set small{font-family:var(--mono);font-size:.55rem;font-weight:600;letter-spacing:.1em;color:var(--ink3)}
+.d-set:hover{transform:translateY(-1px);border-color:var(--ink3)}
+.d-set.on-p{background:#fdf0da;border-color:#e0a93c;color:#8a5a00}
+.d-set.on-d{background:var(--verde);border-color:#2c7038;color:#fff}
+.d-set.on-d small{color:#d7eed6}
+.d-set.on-n{background:var(--acero);border-color:#46545f;color:#fff}
+.d-set.on-n small{color:#dbe2e8}
+.d-note{width:100%;min-height:96px;resize:vertical;border:1.5px solid #c9c2a4;border-radius:9px;background:#fbf8ec;color:var(--ink);padding:11px 13px;font-size:.88rem;line-height:1.55}
+.d-note:focus{outline:none;border-color:var(--azul-rey);box-shadow:0 0 0 3px rgba(30,64,175,.15)}
+.d-note-meta{display:flex;justify-content:space-between;align-items:center;margin-top:7px}
+.d-saved{font-family:var(--mono);font-size:.62rem;color:var(--verde);opacity:0;transition:opacity .3s}
+.d-saved.show{opacity:1}
+.d-updated{font-family:var(--mono);font-size:.62rem;color:var(--ink3)}
+
+/* ============================= TOASTS ============================= */
+.toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;gap:9px;align-items:center;width:min(480px,calc(100vw - 24px));pointer-events:none}
+.toast{
+  pointer-events:auto;display:flex;align-items:center;gap:12px;width:100%;
+  background:#1c2612;border:1px solid var(--line-solid);border-left:4px solid var(--amarillo);
+  color:var(--text);border-radius:11px;padding:12px 15px;font-size:.86rem;font-weight:600;
+  box-shadow:0 14px 34px rgba(0,0,0,.55);animation:toastIn .35s cubic-bezier(.2,1.3,.4,1);
+}
+.toast.out{animation:toastOut .3s ease forwards}
+.toast.ok{border-left-color:var(--verde)}
+.toast.danger{border-left-color:var(--rojo2)}
+.toast-msg{flex:1}
+.toast-undo{flex:none;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;color:#1c2410;background:var(--amarillo);border-radius:7px;padding:6px 12px;transition:all .15s}
+.toast-undo:hover{background:#ffdd44;transform:translateY(-1px)}
+.toast-x{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--text3)}
+.toast-x:hover{color:var(--rojo2);background:#2a1a12}
+@keyframes toastIn{from{transform:translateY(18px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+@keyframes toastOut{to{transform:translateY(12px);opacity:0}}
+
+/* ============================= FOOTER / FX ============================= */
+footer{border-top:1px solid var(--line-solid);background:rgba(13,18,8,.7);position:relative;z-index:1}
+.foot-in{max-width:1060px;margin:0 auto;padding:26px clamp(14px,3.5vw,30px) 34px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.foot-in p{font-size:.76rem;color:var(--text3);max-width:62ch;line-height:1.6}
+.foot-in p b{color:var(--text2)}
+.foot-flag{margin-left:auto}
+#fx{position:fixed;inset:0;z-index:90;pointer-events:none}
+.print-head{display:none}
+
+/* entrada escalonada hero */
+.rise{animation:rise .6s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+/* ============================= RESPONSIVE ============================= */
+@media (max-width:940px){
+  .hero-grid{grid-template-columns:1fr}
+  .ring-card{flex-direction:row;justify-content:flex-start;flex-wrap:wrap}
+  .stamp-hero{display:none}
+  .mini-bar{width:80px}
+}
+@media (max-width:720px){
+  .brand-t{font-size:.78rem}
+  .brand-s{display:none}
+  .mini{display:none}
+  .save-chip{display:none}
+  .toolbar-in{gap:7px}
+  .search{flex:1 1 100%}
+  .segs{overflow-x:auto;max-width:100%;scrollbar-width:none}
+  .segs::-webkit-scrollbar{display:none}
+  .tb-actions{margin-left:0;overflow-x:auto;max-width:100%;scrollbar-width:none;padding-bottom:2px}
+  .tb-actions::-webkit-scrollbar{display:none}
+  .btn .btn-txt{display:none}
+  .btn{padding:8px 10px}
+  .btn.solid .btn-txt{display:inline}
+  .result-hint{display:none}
+  .num{width:42px;font-size:.88rem;background:
+   radial-gradient(circle 3.5px at 10px 24%, var(--bg0) 3.5px, transparent 4.5px),
+   radial-gradient(circle 3.5px at 10px 76%, var(--bg0) 3.5px, transparent 4.5px)}
+  .item{gap:10px;padding-right:12px}
+  .item-title{font-size:.94rem}
+  .stamp{font-size:.62rem;right:26px;top:10px;letter-spacing:.14em}
+  .item.is-done .item-body,.item.is-na .item-body{padding-right:0;padding-top:22px}
+  .drawer{width:100vw;top:auto;height:88vh;border-radius:18px 18px 0 0;transform:translateY(105%);border-left:none;border-top:1px solid #c9c2a4}
+  .drawer.open{transform:translateY(0)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ============================= IMPRESIÓN ============================= */
+@media print{
+  :root{color-scheme:light}
+  body{background:#fff;color:#000;font-size:11.5px}
+  .bg,.bg-camo,body::after,.topbar,.top-progress,.toolbar,.toasts,#fx,.scrim,.drawer,.hero-alert svg,.stamp-hero,.complete,.result-hint,.item-side,.open-btn,.na-btn,.search,.foot-flag{display:none !important}
+  .hero{padding:0 0 8px;max-width:100%}
+  .hero-grid{display:block}
+  .ring-card{display:none}
+  .hero-meta .chip{border-color:#999;color:#333;background:#fff}
+  h1{color:#000;font-size:16px}
+  .hero-sub{color:#333}
+  .hero-alert{border-color:#999;color:#000;background:#fff3c4}
+  .print-head{display:block;margin:10px 0;font-family:var(--mono);font-size:10.5px;color:#000;border:1px solid #000;padding:8px 10px}
+  .main{padding:8px 0;max-width:100%}
+  .item{background:#fff;box-shadow:none;border:1px solid #888;border-radius:4px;margin-bottom:6px;padding:8px 10px 8px 0;break-inside:avoid;cursor:default}
+  .item::after{display:none}
+  .num{background:none;color:#000;border-right:1px solid #999;width:40px}
+  .check{border-color:#000;background:#fff;width:24px;height:24px}
+  .item.is-done .check{background:#fff;border-color:#000}
+  .item.is-done .check .tick{stroke:#000;stroke-dashoffset:0}
+  .item.is-na .check{background:#fff;border-color:#000}
+  .item.is-na .check .na-dash{stroke:#000;opacity:1}
+  .item-title,.item.is-done .item-title,.item.is-na .item-title{color:#000;font-size:12px}
+  .item-desc,.item.is-na .item-desc{color:#222}
+  .item.is-done .item-body,.item.is-na .item-body{padding-right:80px;padding-top:0}
+  .stamp{mix-blend-mode:normal;font-size:9px}
+  .item.is-done .stamp{color:#000;border-color:#000;display:inline-flex}
+  .item.is-na .stamp{color:#444;border-color:#444;display:inline-flex}
+  .tag{border-color:#999;color:#333;background:#fff}
+  .cond-line{background:#fff;border-color:#999;color:#333}
+  .link-btn{border:none;background:none;color:#000;padding:0;font-weight:600}
+  .link-btn svg{display:none}
+  .note-flag.show{display:inline-flex;border-color:#999;color:#333;background:#fff}
+  mark{background:#fff3c4}
+  footer{background:#fff;border-top:1px solid #000}
+  .foot-in p{color:#333}
+  .empty{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"></div>
+<div class="bg-camo" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- ================= NAV ================= -->
+<nav class="topbar" aria-label="Barra superior">
+  <div class="brand">
+    <svg width="32" height="36" viewBox="0 0 34 38" fill="none" aria-hidden="true">
+      <path d="M17 1.5 32 6v13c0 9-6.5 15-15 17.5C8.5 34 2 28 2 19V6L17 1.5Z" fill="#1c2612" stroke="#fcd116" stroke-width="2"/>
+      <path d="M17 8l2.3 4.9 5.2.7-3.8 3.7.9 5.3-4.6-2.6-4.6 2.6.9-5.3-3.8-3.7 5.2-.7L17 8Z" fill="#fcd116"/>
+      <path d="M8 27c2.5 2 5.5 3.2 9 3.7 3.5-.5 6.5-1.7 9-3.7" stroke="#2b59c3" stroke-width="2" stroke-linecap="round"/>
+      <path d="M10 30.5c2 1.3 4.3 2.1 7 2.5 2.7-.4 5-1.2 7-2.5" stroke="#ce1126" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div>
+      <span class="brand-t">EXPEDIENTE <em>LEY 2341</em></span>
+      <span class="brand-s">CHECKLIST DE DOCUMENTOS · COLOMBIA</span>
+    </div>
+  </div>
+  <div class="mini" aria-hidden="true">
+    <div class="mini-bar"><div class="mini-fill" id="miniFill"></div></div>
+    <span class="mini-pct" id="miniPct">0%</span>
+  </div>
+  <span class="save-chip" id="saveChip" title="Tu progreso se guarda en este dispositivo">LOCAL ✓</span>
+  <button class="icon-btn" id="soundBtn" aria-label="Silenciar sonidos" aria-pressed="true" title="Sonido activado">
+    <svg id="soundOnIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.4 9.4 0 0 1 0 13"/></svg>
+    <svg id="soundOffIcon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M11 5 6 9H2v6h4l5 4V5Z" fill="currentColor" stroke="none"/><path d="m16 9 6 6M22 9l-6 6"/></svg>
+  </button>
+  <button class="icon-btn" id="navPrintBtn" aria-label="Imprimir checklist" title="Imprimir / guardar PDF">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+  </button>
+</nav>
+<div class="top-progress" id="topProgress" aria-hidden="true"></div>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="stamp-hero" aria-hidden="true">DOCUMENTACIÓN<br>AÑO 2025</div>
+  <div class="hero-meta rise" style="animation-delay:.05s">
+    <span class="chip hot">EJÉRCITO NACIONAL</span>
+    <span class="chip blue">LEY 2341 DE 2023</span>
+    <span class="chip">15 REQUISITOS</span>
+    <span class="chip">CARPETA 4 ALETAS · BLANCA</span>
+  </div>
+  <div class="hero-grid">
+    <div>
+      <h1 class="rise" style="animation-delay:.12s">Estudiante superior al 5.º semestre <span class="y">y/o</span> graduado como profesional</h1>
+      <p class="hero-sub rise" style="animation-delay:.2s">Lista de verificación del expediente de incorporación. <b>Marca cada documento</b> a medida que lo consigas: tu progreso queda guardado en este dispositivo, documento por documento.</p>
+      <div class="tricolor rise" style="animation-delay:.28s" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="hero-alert rise" style="animation-delay:.34s">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r=".4" fill="currentColor"/></svg>
+        <span>Según el listado: <mark>toda la documentación debe ser año 2025</mark></span>
+      </div>
+    </div>
+    <div class="ring-card rise" style="animation-delay:.3s">
+      <div class="ring-wrap">
+        <svg width="148" height="148" viewBox="0 0 128 128">
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fcd116"/><stop offset="55%" stop-color="#9db83c"/><stop offset="100%" stop-color="#3f9b4f"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-bg" cx="64" cy="64" r="54"/>
+          <circle class="ring-fg" id="ringFg" cx="64" cy="64" r="54"/>
+        </svg>
+        <div class="ring-center">
+          <span class="ring-pct" id="ringPct">0%</span>
+          <span class="ring-lbl">COMPLETADO</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat s-done"><b id="statDone">0</b><span>LISTOS</span></div>
+        <div class="stat s-pend"><b id="statPend">15</b><span>PENDIENTES</span></div>
+        <div class="stat s-na"><b id="statNA">0</b><span>NO APLICA</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= TOOLBAR ================= -->
+<div class="toolbar">
+  <div class="toolbar-in">
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+      <input type="search" id="searchInput" placeholder="Buscar documento…  ( / )" aria-label="Buscar documento" autocomplete="off">
+      <button class="search-clear" id="searchClear" aria-label="Limpiar búsqueda">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="segs" role="tablist" aria-label="Filtrar por estado">
+      <button class="seg on" role="tab" aria-selected="true" data-f="all">Todos <span class="cnt">15</span></button>
+      <button class="seg" role="tab" aria-selected="false" data-f="pending">Pendientes <span class="cnt">15</span></button>
+      <button class="seg" role="tab" aria-selected="false" data-f="done">Listos <span class="cnt">0</span></button>
+      <button class="seg" role="tab" aria-selected="false" data-f="na">N/A <span class="cnt">0</span></button>
+    </div>
+    <select class="sortsel" id="sortSelect" aria-label="Ordenar lista">
+      <option value="doc">Orden del documento</option>
+      <option value="pend">Pendientes primero</option>
+    </select>
+    <div class="tb-actions">
+      <button class="btn solid" id="markAllBtn" title="Marcar los 15 como listos">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m2 13 4 4L14 9"/><path d="m10 13 4 4L22 9"/></svg>
+        <span class="btn-txt">Marcar todo</span>
+      </button>
+      <button class="btn warn" id="resetBtn" title="Reiniciar progreso (se puede deshacer)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        <span class="btn-txt">Reiniciar</span>
+      </button>
+      <button class="btn" id="exportBtn" title="Descargar checklist como .txt">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 21h16"/></svg>
+        <span class="btn-txt">Exportar .txt</span>
+      </button>
+      <button class="btn" id="printBtn" title="Imprimir o guardar en PDF">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span class="btn-txt">Imprimir</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= LISTA ================= -->
+<main class="main">
+  <div class="print-head" id="printHead"></div>
+
+  <div class="complete" id="completeBanner" role="status">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#3f9b4f"/><path d="m6.5 12.5 3.5 3.5 7.5-8" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div>
+      <div class="big">¡EXPEDIENTE COMPLETO!</div>
+      <p id="bannerMsg">Los 15 requisitos están resueltos. Imprime la lista y llévala con tu carpeta 4 aletas blanca.</p>
+    </div>
+    <button class="btn" id="bannerPrint">Imprimir resumen</button>
+    <button class="btn" id="bannerExport">Exportar .txt</button>
+  </div>
+
+  <div class="result-line">
+    <span class="result-count" id="resultCount">15 DE 15 DOCUMENTOS</span>
+    <span class="result-hint">Clic en la tarjeta = detalle y notas · <kbd>/</kbd> buscar · <kbd>Esc</kbd> cerrar</span>
+  </div>
+
+  <div id="list" aria-live="polite"></div>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <p><b>Nota:</b> esta es una lista de verificación personal basada en el listado físico entregado para el proceso (Ley 2341 de 2023). No es un documento oficial del Ejército Nacional. Confirma vigencia y requisitos actualizados con tu distrito militar. Tu progreso y tus notas se guardan únicamente en este navegador.</p>
+    <div class="tricolor foot-flag" aria-hidden="true" style="width:120px;margin:0"><i></i><i></i><i></i></div>
+  </div>
+</footer>
+
+<!-- ================= DRAWER ================= -->
+<div class="scrim" id="drawerScrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+  <div class="drawer-head">
+    <span class="d-num" id="dNum">01</span>
+    <span class="d-kicker">REQUISITO · LEY 2341</span>
+    <span class="d-status p" id="dStatusChip">PENDIENTE</span>
+    <button class="drawer-close" id="drawerClose" aria-label="Cerrar detalle">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer-body">
+    <h2 class="d-title" id="dTitle"></h2>
+    <div class="d-tags" id="dTags"></div>
+    <div class="d-cond" id="dCond" style="display:none">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v5"/><circle cx="12" cy="16.4" r=".4" fill="currentColor"/></svg>
+      <span id="dCondText"></span>
+    </div>
+    <div class="d-sec">
+      <div class="d-sec-t">TEXTO DEL LISTADO</div>
+      <div class="d-text" id="dText"></div>
+    </div>
+    <div class="d-sec">
+      <div class="d-sec-t">CLAVES DEL REQUISITO</div>
+      <ul class="d-keys" id="dKeys"></ul>
+    </div>
+    <div class="d-sec" id="dLinksWrap" style="display:none">
+      <div class="d-sec-t">ENLACES OFICIALES</div>
+      <div class="d-links" id="dLinks"></div>
+    </div>
+    <div class="d-sec">
+      <div class="d-sec-t">ESTADO</div>
+      <div class="d-seg">
+        <button class="d-set" data-set="pending">Pendiente<small>SIN CONSEGUIR</small></button>
+        <button class="d-set" data-set="done">✓ Listo<small>EN LA CARPETA</small></button>
+        <button class="d-set" data-set="na">N/A<small>NO ME APLICA</small></button>
+      </div>
+    </div>
+    <div class="d-sec">
+      <div class="d-sec-t">NOTAS PERSONALES</div>
+      <textarea class="d-note" id="dNote" placeholder="Ej.: falta la autenticación en notaría, ya pedí el certificado en la U…" aria-label="Notas personales del documento"></textarea>
+      <div class="d-note-meta">
+        <span class="d-updated" id="dUpdated"></span>
+        <span class="d-saved" id="dNoteSaved">Guardada ✓</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<noscript><div style="position:fixed;inset:0;background:#0f150a;color:#ece8d6;display:grid;place-items:center;z-index:999;padding:30px;text-align:center;font-family:sans-serif">Esta lista de verificación necesita JavaScript para guardar tu progreso. Actívalo y recarga la página.</div></noscript>
+
+<script>
+"use strict";
+/* ============================= DATOS (fieles al listado fotografiado) ============================= */
+const ITEMS = [
+ {n:1, title:"Fotocopia de la cédula de ciudadanía",
+  desc:"«AUTENTICADA al 150%» (NOTARIA).",
+  tags:["Notaría","Físico"], cond:null, links:[],
+  keys:["Ampliada exactamente al 150%","Autenticada ante notaría","Documento de ciudadanía vigente y legible"]},
+ {n:2, title:"Registro Civil de Nacimiento",
+  desc:"Fiel copia del libro en original, «AUTENTICADO RECIENTE». «NO SE ACEPTAN CERTIFICACIONES».",
+  tags:["Notaría","Físico"], cond:null, links:[],
+  keys:["Fiel copia del libro original (no certificación)","Autenticación reciente ante notaría"]},
+ {n:3, title:"Acta y diploma de bachiller",
+  desc:"Fotocopia del «acta y diploma de bachiller».",
+  tags:["Físico"], cond:null, links:[],
+  keys:["Fotocopia del acta de grado","Fotocopia del diploma de bachiller"]},
+ {n:4, title:"RUAF (EPS, Pensión, ARL)",
+  desc:"Registro Único de Afiliados: consulta de «EPS, PENSIÓN, ARL». Lo genera en Google.",
+  tags:["En línea","Impreso"], cond:null,
+  links:[{label:"Abrir RUAF (SISPRO)", url:"https://ruaf.sispro.gov.co"}],
+  keys:["Consulta en línea con tu documento","Muestra EPS, fondo de pensión y ARL","Se genera buscándolo en Google"]},
+ {n:5, title:"RUES — pantallazo",
+  desc:"Registro Único Empresarial y Social: «PANTALLAZO». Si usted tiene «CÁMARAS DE COMERCIO» debe anexarlas. Lo genera en Google.",
+  tags:["En línea","Impreso"], cond:"Si tienes registro(s) en Cámara de Comercio, debes anexarlos.",
+  links:[{label:"Abrir RUES", url:"https://www.rues.org.co"}],
+  keys:["Pantallazo de la consulta RUES","Anexar cámaras de comercio si existen","Se genera buscándolo en Google"]},
+ {n:6, title:"Certificado de la universidad",
+  desc:"«CERTIFICADO DE LA UNIVERSIDAD» donde conste que se encuentra cursando una carrera profesional y haber cursado 5.º semestre, certificando que va del «6.º SEMESTRE EN ADELANTE».",
+  tags:["Universidad","Físico"], cond:"Aplica si te presentas como estudiante.",
+  links:[],
+  keys:["Constancia de carrera profesional en curso","Certificar 5.º semestre cursado","Certificar que va del 6.º semestre en adelante"]},
+ {n:7, title:"Diploma como profesional",
+  desc:"«DIPLOMA COMO PROFESIONAL».",
+  tags:["Físico"], cond:"Aplica si te presentas como profesional graduado.",
+  links:[],
+  keys:["Diploma del título profesional"]},
+ {n:8, title:"Desprendible de nómina",
+  desc:"Desprendible de nómina de los «tres últimos meses», si es empleado.",
+  tags:["Laboral","Condicional"], cond:"Solo si eres empleado.",
+  links:[],
+  keys:["Tres últimos meses","Solo para empleados"]},
+ {n:9, title:"Planilla de pago de seguridad social",
+  desc:"Planilla de pago de seguridad social de los «últimos tres meses» si es independiente.",
+  tags:["Laboral","Condicional"], cond:"Solo si eres independiente.",
+  links:[],
+  keys:["Últimos tres meses","Solo para independientes"]},
+ {n:10, title:"Declaración extrajuicio",
+  desc:"Declaración extrajuicio ante fedatario público («NOTARIO») para personas carentes de ingresos. «SI LA PERSONA NO DEVENGA INGRESOS DEBE HACERLA».",
+  tags:["Notaría","Condicional"], cond:"Obligatoria si no devengas ingresos.",
+  links:[],
+  keys:["Ante fedatario público (notario)","Para personas carentes de ingresos","Si no devenga ingresos, es obligatoria"]},
+ {n:11, title:"Consulta SNIES",
+  desc:"«SNIES» — Sistema Nacional de Información de la Educación Superior: snies.mineducacion.gov.co",
+  tags:["En línea"], cond:null,
+  links:[{label:"Abrir SNIES (MinEducación)", url:"https://snies.mineducacion.gov.co"}],
+  keys:["Portal oficial del Ministerio de Educación","Base de la consulta del requisito 12"]},
+ {n:12, title:"Consulta SNIES de la institución — impresa",
+  desc:"Si el ciudadano estudia una «CARRERA PROFESIONAL O TECNOLÓGICA» debe traer la consulta que arroja la página web SNIES sobre la «EXISTENCIA DE LA INSTITUCIÓN» de educación superior pública o privada. «SE DEBE TRAER IMPRESA».",
+  tags:["En línea","Impreso"], cond:"Si estudias una carrera profesional o tecnológica.",
+  links:[{label:"Abrir SNIES (MinEducación)", url:"https://snies.mineducacion.gov.co"}],
+  keys:["Consulta de existencia de la institución (pública o privada)","Aplica a carrera profesional o tecnológica","Debe llevarse impresa"]},
+ {n:13, title:"Recibo de pago del semestre",
+  desc:"Copia del «RECIBO DE PAGO» del semestre con sello del banco, o sea «MATRÍCULA ACTUAL DEL SEMESTRE». Si el ciudadano está en el programa «PILO PAGA» o «MATRÍCULA CERO», debe traer el documento que soporte que está incluido en el programa.",
+  tags:["Universidad","Físico"], cond:"Si eres estudiante activo.",
+  links:[],
+  keys:["Copia con sello del banco","Matrícula del semestre actual","Pilo Paga o Matrícula Cero: soporte de inclusión en el programa"]},
+ {n:14, title:"Fotografía de saco y corbata",
+  desc:"«Fotografía de saco y corbata» fondo «azul rey», digital en un «CD» y la misma en «física 3×4».",
+  tags:["Físico","Digital"], cond:null, links:[], swatch:true,
+  keys:["Saco y corbata","Fondo azul rey","Digital grabada en un CD","Física tamaño 3×4 (la misma foto)"]},
+ {n:15, title:"Carpeta 4 aletas blanca",
+  desc:"«Carpeta 4 aletas blanca». «Toda la documentación debe ser año 2025».",
+  tags:["Físico"], cond:null, links:[],
+  keys:["Carpeta blanca de 4 aletas","Toda la documentación debe ser año 2025 (según el listado)"]}
+];
+const TAG_CLASS = {"Notaría":"tag-notaria","En línea":"tag-linea","Impreso":"tag-impreso","Físico":"tag-fisico","Condicional":"tag-cond","Digital":"tag-digital","Universidad":"tag-univ","Laboral":"tag-laboral"};
+const TOTAL = ITEMS.length;
+const LS_KEY = "expediente-ley2341-v1";
+
+/* ============================= ESTADO ============================= */
+let state = {sound:true, filter:"all", sort:"doc", q:""};
+let items = ITEMS.map(d => ({...d, status:"pending", note:"", updatedAt:null}));
+let printing = false, drawerId = null, lastFocus = null, noteTimer = null;
+const seen = new Set();
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const s = JSON.parse(raw);
+    if(typeof s.sound === "boolean") state.sound = s.sound;
+    if(["all","pending","done","na"].includes(s.filter)) state.filter = s.filter;
+    if(["doc","pend"].includes(s.sort)) state.sort = s.sort;
+    if(Array.isArray(s.items)){
+      s.items.forEach((sv,i)=>{
+        if(items[i] && ["pending","done","na"].includes(sv.status)){
+          items[i].status = sv.status;
+          items[i].note = typeof sv.note === "string" ? sv.note : "";
+          items[i].updatedAt = sv.updatedAt || null;
+        }
+      });
+    }
+  }catch(e){/* almacenamiento no disponible: la sesión sigue funcionando */}
+}
+function save(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      sound:state.sound, filter:state.filter, sort:state.sort,
+      items: items.map(i=>({status:i.status, note:i.note, updatedAt:i.updatedAt}))
+    }));
+    const chip = document.getElementById("saveChip");
+    chip.textContent = "GUARDADO ✓"; chip.classList.add("flash");
+    clearTimeout(save._t);
+    save._t = setTimeout(()=>{chip.classList.remove("flash"); chip.textContent="LOCAL ✓";}, 1300);
+  }catch(e){}
+}
+
+/* ============================= UTILES ============================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const markTxt = s => esc(s).replace(/«(.+?)»/g, "<mark>$1</mark>");
+const plain = s => s.replace(/[«»]/g, "");
+const norm = s => plain(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const pad = n => String(n).padStart(2,"0");
+const byId = id => items.find(i=>i.n===Number(id));
+const counts = () => ({
+  all:TOTAL,
+  pending:items.filter(i=>i.status==="pending").length,
+  done:items.filter(i=>i.status==="done").length,
+  na:items.filter(i=>i.status==="na").length
+});
+const fmtDate = ts => new Date(ts).toLocaleDateString("es-CO",{day:"2-digit",month:"short",year:"numeric"}) + ", " + new Date(ts).toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"});
+
+/* ============================= SONIDO ============================= */
+let AC = null;
+function ctx(){
+  if(!state.sound) return null;
+  try{
+    if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if(AC.state === "suspended") AC.resume();
+    return AC;
+  }catch(e){return null}
+}
+function tone(freq, t0, dur, type, vol){
+  const a = ctx(); if(!a) return;
+  const o = a.createOscillator(), g = a.createGain();
+  o.type = type || "sine"; o.frequency.setValueAtTime(freq, a.currentTime + t0);
+  g.gain.setValueAtTime(0.0001, a.currentTime + t0);
+  g.gain.exponentialRampToValueAtTime(vol || .09, a.currentTime + t0 + .012);
+  g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + t0 + dur);
+  o.connect(g); g.connect(a.destination);
+  o.start(a.currentTime + t0); o.stop(a.currentTime + t0 + dur + .05);
+}
+const SFX = {
+  check(){ tone(660,0,.09,"triangle",.08); tone(990,.07,.14,"triangle",.09); },
+  uncheck(){ tone(520,0,.08,"triangle",.06); tone(330,.06,.13,"triangle",.06); },
+  na(){ tone(240,0,.12,"sine",.08); },
+  tick(){ tone(880,0,.05,"square",.03); },
+  undo(){ tone(440,0,.07,"triangle",.06); tone(560,.06,.1,"triangle",.06); },
+  fanfare(){ [523,659,784,1046].forEach((f,i)=>tone(f, i*.11, .22, "triangle", .09)); tone(1318,.46,.4,"sine",.07); }
+};
+
+/* ============================= CONFETI ============================= */
+const fx = $("fx"), fctx = fx.getContext("2d");
+let parts = [], fxRaf = null;
+const FLAG = ["#fcd116","#2b59c3","#e63946","#4caf50","#f6f2e2","#9db83c"];
+function fxSize(){ fx.width = innerWidth * Math.min(devicePixelRatio||1,2); fx.height = innerHeight * Math.min(devicePixelRatio||1,2); fx.style.width = innerWidth+"px"; fx.style.height = innerHeight+"px"; fctx.setTransform(Math.min(devicePixelRatio||1,2),0,0,Math.min(devicePixelRatio||1,2),0,0); }
+fxSize(); addEventListener("resize", fxSize);
+function spawn(x,y,n,spread,up){
+  if(reduced) return;
+  for(let i=0;i<n;i++){
+    const a = up ? (-Math.PI/2 + (Math.random()-.5)*spread) : Math.random()*Math.PI*2;
+    const v = up ? (4+Math.random()*7) : (1.5+Math.random()*3.5);
+    parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:.16+Math.random()*.08,
+      w:4+Math.random()*5,h:3+Math.random()*4,r:Math.random()*Math.PI,vr:(Math.random()-.5)*.3,
+      c:FLAG[Math.floor(Math.random()*FLAG.length)],life:1,decay:.012+Math.random()*.012});
+  }
+  if(!fxRaf) fxLoop();
+}
+function fxLoop(){
+  fxRaf = requestAnimationFrame(fxLoop);
+  fctx.clearRect(0,0,innerWidth,innerHeight);
+  parts = parts.filter(p=>p.life>0 && p.y < innerHeight+30);
+  if(!parts.length){ cancelAnimationFrame(fxRaf); fxRaf=null; fctx.clearRect(0,0,innerWidth,innerHeight); return; }
+  for(const p of parts){
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= .985; p.r += p.vr; p.life -= p.decay;
+    fctx.save(); fctx.globalAlpha = Math.max(p.life,0); fctx.translate(p.x,p.y); fctx.rotate(p.r);
+    fctx.fillStyle = p.c; fctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); fctx.restore();
+  }
+}
+function bigConfetti(){
+  if(reduced) return;
+  spawn(innerWidth*.2, innerHeight*.35, 70, 1.6, true);
+  spawn(innerWidth*.8, innerHeight*.35, 70, 1.6, true);
+  setTimeout(()=>spawn(innerWidth*.5, innerHeight*.3, 80, 2.2, true), 250);
+}
+
+/* ============================= TOASTS ============================= */
+function toast(msg, opts){
+  opts = opts || {};
+  const box = $("toasts");
+  const t = document.createElement("div");
+  t.className = "toast" + (opts.kind ? " "+opts.kind : "");
+  const m = document.createElement("span"); m.className="toast-msg"; m.textContent = msg; t.appendChild(m);
+  let killed = false;
+  const kill = ()=>{ if(killed) return; killed=true; t.classList.add("out"); setTimeout(()=>t.remove(),300); };
+  if(opts.undo){
+    const u = document.createElement("button"); u.className="toast-undo"; u.textContent="DESHACER";
+    u.addEventListener("click", ()=>{ opts.undo(); SFX.undo(); kill(); });
+    t.appendChild(u);
+  }
+  const x = document.createElement("button"); x.className="toast-x"; x.setAttribute("aria-label","Cerrar aviso");
+  x.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+  x.addEventListener("click", kill); t.appendChild(x);
+  box.appendChild(t);
+  while(box.children.length > 3) box.firstChild.remove();
+  setTimeout(kill, opts.undo ? 7000 : 3800);
+}
+
+/* ============================= RENDER ============================= */
+const io = ("IntersectionObserver" in window) ? new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){ en.target.classList.add("in"); seen.add(en.target.dataset.id); io.unobserve(en.target); }
+  });
+},{threshold:.08, rootMargin:"0px 0px -4% 0px"}) : null;
+
+function tagsHTML(i){
+  let h = i.tags.map(t=>`<span class="tag ${TAG_CLASS[t]||"tag-impreso"}">${esc(t.toUpperCase())}</span>`).join("");
+  if(i.swatch) h += `<span class="swatch"><i></i>AZUL REY</span>`;
+  return h;
+}
+function itemHTML(i){
+  const cls = i.status==="done" ? " is-done" : i.status==="na" ? " is-na" : "";
+  const stamp = i.status==="done" ? `<span class="stamp">LISTO ✓</span>` : i.status==="na" ? `<span class="stamp">NO APLICA</span>` : "";
+  const cond = i.cond ? `<div class="cond-line"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v5"/><circle cx="12" cy="16.4" r=".4" fill="currentColor"/></svg><span>${esc(i.cond)}</span></div>` : "";
+  const links = i.links.length ? `<div class="item-links">${i.links.map(l=>`<a class="link-btn" data-action="link" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"/></svg>${esc(l.label)}</a>`).join("")}</div>` : "";
+  const noteFlag = `<span class="note-flag${i.note.trim() ? " show":""}"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H9l-5 4V4a1 1 0 0 1 1-1Z"/></svg>NOTA</span>`;
+  const revealed = seen.has(String(i.n)) || reduced || printing;
+  const aria = i.status==="done" ? "Desmarcar documento (está listo)" : "Marcar documento como listo";
+  return `
+  <article class="item${cls}${revealed?"":" reveal"}" data-id="${i.n}">
+    ${stamp}
+    <div class="num" aria-hidden="true">${pad(i.n)}</div>
+    <button class="check" role="checkbox" aria-checked="${i.status==="done"}" data-action="toggle" aria-label="${esc(aria)}: ${esc(i.title)}">
+      <svg viewBox="0 0 24 24"><path class="tick" d="M5 12.5 10 17.5 19 7"/><path class="na-dash" d="M6 12h12"/></svg>
+    </button>
+    <div class="item-body">
+      <button class="item-title" data-action="open">${esc(i.title)}</button>
+      <p class="item-desc">${markTxt(i.desc)}</p>
+      <div class="item-tags">${tagsHTML(i)}${noteFlag}</div>
+      ${cond}${links}
+    </div>
+    <div class="item-side">
+      <button class="na-btn${i.status==="na"?" on":""}" data-action="na" aria-pressed="${i.status==="na"}" title="Marcar como «no me aplica»">N/A</button>
+      <button class="open-btn" data-action="open" aria-label="Ver detalle y notas de: ${esc(i.title)}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg>
+      </button>
+    </div>
+  </article>`;
+}
+function emptyHTML(){
+  const folder = `<svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M3 11h18"/></svg>`;
+  if(state.q.trim()){
+    return `<div class="empty">${folder}<h3>SIN RESULTADOS</h3><p>«${esc(state.q.trim())}» no coincide con ningún documento del listado.</p><button class="btn" data-action="clear-search">Limpiar búsqueda</button></div>`;
+  }
+  const msgs = {
+    pending:["¡NADA PENDIENTE!","Todos los documentos están listos o marcados como no aplica."],
+    done:["AÚN NO HAY DOCUMENTOS LISTOS","Empieza por la notaría: cédula al 150% y registro civil."],
+    na:["NINGÚN «NO APLICA»","Marca N/A en los requisitos condicionales que no van contigo (empleado, independiente, graduado…)."]
+  };
+  const m = msgs[state.filter] || msgs.pending;
+  return `<div class="empty">${folder}<h3>${m[0]}</h3><p>${m[1]}</p><button class="btn" data-action="show-all">Ver los 15 documentos</button></div>`;
+}
+function visibleItems(){
+  if(printing) return items.slice();
+  let v = items.slice();
+  if(state.filter !== "all") v = v.filter(i=>i.status===state.filter);
+  const q = norm(state.q.trim());
+  if(q) v = v.filter(i=> norm(i.title+" "+i.desc+" "+i.tags.join(" ")+" "+(i.cond||"")).includes(q));
+  if(state.sort === "pend"){
+    const w = {pending:0, done:1, na:2};
+    v.sort((a,b)=> w[a.status]-w[b.status] || a.n-b.n);
+  }
+  return v;
+}
+function renderList(){
+  const v = visibleItems();
+  const list = $("list");
+  list.innerHTML = v.length ? v.map(itemHTML).join("") : emptyHTML();
+  if(io && !reduced){
+    io.disconnect();
+    list.querySelectorAll(".item.reveal").forEach(el=>io.observe(el));
+  }
+  const c = counts();
+  let label = `${v.length} DE ${TOTAL} DOCUMENTOS`;
+  if(!printing && state.filter!=="all") label += ` · FILTRO: ${{pending:"PENDIENTES",done:"LISTOS",na:"NO APLICA"}[state.filter]}`;
+  if(!printing && state.q.trim()) label += ` · BÚSQUEDA ACTIVA`;
+  $("resultCount").textContent = label;
+}
+function renderStats(){
+  const c = counts();
+  const resolved = c.done + c.na;
+  const pct = Math.round(resolved/TOTAL*100);
+  $("ringFg").style.strokeDashoffset = (339.292 * (1 - resolved/TOTAL)).toFixed(2);
+  $("ringPct").textContent = pct + "%";
+  $("statDone").textContent = c.done;
+  $("statPend").textContent = c.pending;
+  $("statNA").textContent = c.na;
+  $("miniFill").style.width = pct + "%";
+  $("miniPct").textContent = pct + "%";
+  $("topProgress").style.width = pct + "%";
+  document.querySelectorAll(".seg").forEach(b=>{
+    const f = b.dataset.f;
+    b.querySelector(".cnt").textContent = c[f];
+    b.classList.toggle("on", state.filter===f);
+    b.setAttribute("aria-selected", state.filter===f);
+  });
+  const banner = $("completeBanner");
+  if(resolved === TOTAL){
+    $("bannerMsg").textContent = c.na > 0
+      ? `${c.done} documento(s) en la carpeta y ${c.na} marcado(s) como «no aplica». Imprime la lista y llévala con tu carpeta 4 aletas blanca.`
+      : "Los 15 documentos están en la carpeta. Imprime la lista y llévala con tu carpeta 4 aletas blanca.";
+    banner.classList.add("show");
+  }else{
+    banner.classList.remove("show");
+  }
+}
+function renderAll(){ renderStats(); renderList(); if(drawerId) syncDrawer(byId(drawerId)); }
+
+/* ============================= MUTACIONES ============================= */
+function snapshot(){ return items.map(i=>({status:i.status, note:i.note, updatedAt:i.updatedAt})); }
+function restore(snap){ snap.forEach((s,i)=>{ items[i].status=s.status; items[i].note=s.note; items[i].updatedAt=s.updatedAt; }); save(); renderAll(); toast("Acción deshecha.", {kind:"ok"}); }
+function checkCompletion(prevResolved){
+  const c = counts();
+  if(c.done + c.na === TOTAL && prevResolved < TOTAL){
+    bigConfetti(); SFX.fanfare();
+    toast("¡Expediente completo! Listo para radicar. 🎉", {kind:"ok"});
+  }
+}
+function setStatus(i, status, srcEl){
+  const c = counts(); const prev = c.done + c.na;
+  const was = i.status;
+  i.status = status; i.updatedAt = Date.now();
+  if(status==="done" && was!=="done"){
+    SFX.check();
+    if(srcEl){ const r = srcEl.getBoundingClientRect(); spawn(r.left+r.width/2, r.top+r.height/2, 12, 2.6, true); }
+  } else if(status==="na" && was!=="na"){ SFX.na(); }
+  else { SFX.uncheck(); }
+  save(); renderAll(); checkCompletion(prev);
+}
+function toggleDone(i, srcEl){ setStatus(i, i.status==="done" ? "pending" : "done", srcEl); }
+function toggleNA(i){ setStatus(i, i.status==="na" ? "pending" : "na"); }
+
+/* ============================= DRAWER ============================= */
+function syncDrawer(i){
+  if(!i) return;
+  $("dNum").textContent = pad(i.n);
+  $("dTitle").textContent = i.title;
+  $("dTags").innerHTML = tagsHTML(i);
+  $("dText").innerHTML = markTxt(i.desc);
+  $("dCond").style.display = i.cond ? "flex" : "none";
+  $("dCondText").textContent = i.cond || "";
+  $("dKeys").innerHTML = i.keys.map(k=>`<li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5 5L20 6.5"/></svg><span>${esc(k)}</span></li>`).join("");
+  $("dLinksWrap").style.display = i.links.length ? "block" : "none";
+  $("dLinks").innerHTML = i.links.map(l=>`<a class="link-btn" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 10 14"/><path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5"/></svg>${esc(l.label)}</a>`).join("");
+  const chip = $("dStatusChip");
+  chip.className = "d-status " + (i.status==="done"?"d":i.status==="na"?"n":"p");
+  chip.textContent = i.status==="done" ? "LISTO ✓" : i.status==="na" ? "NO APLICA" : "PENDIENTE";
+  document.querySelectorAll(".d-set").forEach(b=>{
+    b.className = "d-set" + (b.dataset.set===i.status ? (i.status==="done"?" on-d":i.status==="na"?" on-n":" on-p") : "");
+    b.setAttribute("aria-pressed", b.dataset.set===i.status);
+  });
+  $("dUpdated").textContent = i.updatedAt ? "Actualizado: " + fmtDate(i.updatedAt) : "Sin cambios aún";
+}
+function openDrawer(id){
+  const i = byId(id); if(!i) return;
+  drawerId = i.n; lastFocus = document.activeElement;
+  syncDrawer(i);
+  $("dNote").value = i.note;
+  $("dNoteSaved").classList.remove("show");
+  $("drawer").classList.add("open");
+  $("drawerScrim").classList.add("show");
+  document.body.style.overflow = "hidden";
+  SFX.tick();
+  setTimeout(()=>$("drawerClose").focus(), 120);
+}
+function closeDrawer(){
+  if(!drawerId) return;
+  drawerId = null;
+  $("drawer").classList.remove("open");
+  $("drawerScrim").classList.remove("show");
+  document.body.style.overflow = "";
+  if(lastFocus && lastFocus.focus) lastFocus.focus();
+}
+
+/* ============================= EXPORTAR / IMPRIMIR ============================= */
+function exportTxt(){
+  const c = counts();
+  const SYM = {done:"[✓]", pending:"[ ]", na:"[N/A]"};
+  let out = "CHECKLIST — LEY 2341 DE 2023\r\n";
+  out += "Estudiante superior al 5.º semestre y/o graduado como profesional\r\n";
+  out += "Ejército Nacional de Colombia\r\n";
+  out += "Generado: " + new Date().toLocaleDateString("es-CO",{day:"2-digit",month:"long",year:"numeric"}) + "\r\n";
+  out += `Progreso: ${c.done+c.na}/${TOTAL}  (${c.done} listos · ${c.pending} pendientes · ${c.na} no aplica)\r\n`;
+  out += "NOTA: Toda la documentación debe ser año 2025 (según el listado).\r\n";
+  out += "----------------------------------------------------------\r\n\r\n";
+  items.forEach(i=>{
+    out += `${SYM[i.status]} ${pad(i.n)}. ${i.title}\r\n`;
+    out += `      ${plain(i.desc)}\r\n`;
+    if(i.cond) out += `      Condición: ${i.cond}\r\n`;
+    if(i.note.trim()) out += `      Nota: ${i.note.trim().replace(/\r?\n/g," / ")}\r\n`;
+    out += "\r\n";
+  });
+  out += "----------------------------------------------------------\r\nLista de verificación personal. Confirma requisitos con tu distrito militar.\r\n";
+  const blob = new Blob(["\uFEFF"+out], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "checklist-ley2341-" + new Date().toISOString().slice(0,10) + ".txt";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  SFX.tick();
+  toast("Checklist exportado como .txt", {kind:"ok"});
+}
+function buildPrintHead(){
+  const c = counts();
+  $("printHead").innerHTML =
+    `<b>CHECKLIST LEY 2341 DE 2023</b> — Progreso: ${c.done+c.na}/${TOTAL} · ${c.done} listos · ${c.pending} pendientes · ${c.na} no aplica<br>` +
+    `Impreso: ${new Date().toLocaleDateString("es-CO",{day:"2-digit",month:"long",year:"numeric"})} · Toda la documentación debe ser año 2025 (según el listado).`;
+}
+addEventListener("beforeprint", ()=>{ printing = true; buildPrintHead(); renderList(); });
+addEventListener("afterprint", ()=>{ printing = false; renderList(); });
+
+/* ============================= EVENTOS ============================= */
+$("list").addEventListener("click", e=>{
+  const act = e.target.closest("[data-action]");
+  if(act){
+    const a = act.dataset.action;
+    if(a==="link") return; // deja navegar al enlace
+    const li = act.closest(".item");
+    const i = li ? byId(li.dataset.id) : null;
+    if(a==="toggle" && i) toggleDone(i, act);
+    else if(a==="na" && i) toggleNA(i);
+    else if(a==="open" && i) openDrawer(i.n);
+    else if(a==="clear-search"){ state.q=""; $("searchInput").value=""; $("searchClear").classList.remove("show"); renderList(); }
+    else if(a==="show-all"){ state.filter="all"; state.q=""; $("searchInput").value=""; $("searchClear").classList.remove("show"); save(); renderAll(); }
+    return;
+  }
+  const li = e.target.closest(".item");
+  if(li) openDrawer(li.dataset.id);
+});
+
+$("searchInput").addEventListener("input", e=>{
+  state.q = e.target.value;
+  $("searchClear").classList.toggle("show", !!state.q);
+  renderList();
+});
+$("searchClear").addEventListener("click", ()=>{
+  state.q=""; $("searchInput").value=""; $("searchClear").classList.remove("show");
+  renderList(); $("searchInput").focus();
+});
+document.querySelectorAll(".seg").forEach(b=>{
+  b.addEventListener("click", ()=>{ state.filter=b.dataset.f; SFX.tick(); save(); renderAll(); });
+});
+$("sortSelect").addEventListener("change", e=>{ state.sort=e.target.value; SFX.tick(); save(); renderList(); });
+
+$("markAllBtn").addEventListener("click", ()=>{
+  const snap = snapshot(); const c = counts(); const prev = c.done+c.na;
+  items.forEach(i=>{ if(i.status!=="done"){ i.status="done"; i.updatedAt=Date.now(); } });
+  save(); renderAll();
+  toast("Los 15 documentos marcados como listos.", {kind:"ok", undo:()=>restore(snap)});
+  checkCompletion(prev);
+});
+$("resetBtn").addEventListener("click", ()=>{
+  const c = counts();
+  if(c.done===0 && c.na===0){ toast("El progreso ya está en cero."); return; }
+  const snap = snapshot();
+  items.forEach(i=>{ i.status="pending"; i.updatedAt=Date.now(); });
+  save(); renderAll(); SFX.uncheck();
+  toast("Progreso reiniciado (tus notas se conservan).", {kind:"danger", undo:()=>restore(snap)});
+});
+$("exportBtn").addEventListener("click", exportTxt);
+$("bannerExport").addEventListener("click", exportTxt);
+$("printBtn").addEventListener("click", ()=>window.print());
+$("navPrintBtn").addEventListener("click", ()=>window.print());
+$("bannerPrint").addEventListener("click", ()=>window.print());
+
+function updateSoundBtn(){
+  const b = $("soundBtn");
+  b.classList.toggle("muted", !state.sound);
+  b.setAttribute("aria-pressed", state.sound);
+  b.setAttribute("aria-label", state.sound ? "Silenciar sonidos" : "Activar sonidos");
+  b.title = state.sound ? "Sonido activado" : "Sonido silenciado";
+  $("soundOnIcon").style.display = state.sound ? "" : "none";
+  $("soundOffIcon").style.display = state.sound ? "none" : "";
+}
+$("soundBtn").addEventListener("click", ()=>{
+  state.sound = !state.sound; save(); updateSoundBtn();
+  if(state.sound) SFX.tick();
+  toast(state.sound ? "Sonido activado." : "Sonido silenciado.");
+});
+
+$("drawerClose").addEventListener("click", closeDrawer);
+$("drawerScrim").addEventListener("click", closeDrawer);
+document.querySelectorAll(".d-set").forEach(b=>{
+  b.addEventListener("click", ()=>{ const i = byId(drawerId); if(i && i.status!==b.dataset.set) setStatus(i, b.dataset.set, b); });
+});
+$("dNote").addEventListener("input", e=>{
+  const i = byId(drawerId); if(!i) return;
+  i.note = e.target.value; i.updatedAt = Date.now();
+  $("dNoteSaved").classList.remove("show");
+  clearTimeout(noteTimer);
+  noteTimer = setTimeout(()=>{
+    save(); renderList();
+    $("dNoteSaved").classList.add("show");
+    $("dUpdated").textContent = "Actualizado: " + fmtDate(i.updatedAt);
+    setTimeout(()=>$("dNoteSaved").classList.remove("show"), 2200);
+  }, 450);
+});
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape"){ closeDrawer(); return; }
+  if(e.key === "/" && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+    e.preventDefault(); $("searchInput").focus();
+  }
+});
+
+/* ============================= INICIO ============================= */
+load();
+$("sortSelect").value = state.sort;
+updateSoundBtn();
+renderAll();
+</script>
+</body>
+</html>
