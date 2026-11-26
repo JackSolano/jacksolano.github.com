@@ -210,7 +210,7 @@
   }
 </style>
 
-<!-- ═══ FIX ARTÍCULOS · no modifica styles.css ni otras ventanas ═══ -->
+<!-- ═══ FIX ARTÍCULOS v2 · espacios ⇄ guion bajo · no toca styles.css ═══ -->
 <script>
 (function () {
   'use strict';
@@ -219,7 +219,7 @@
   var zSub = 600;
   var abiertas = {};
 
-  /* ── 1) REPARAR EL CONTENEDOR NULL (causa del TypeError) ─────── */
+  /* ── contenedor que createWindow necesita (evita el appendChild null) ── */
   function selectorDeCreateWindow() {
     try {
       if (typeof window.createWindow !== 'function') return null;
@@ -233,14 +233,12 @@
   }
   function asegurarContenedor() {
     var sel = selectorDeCreateWindow();
-    var candidatos = sel ? [sel] : [];
-    candidatos = candidatos.concat(['#windows-container', '#windows', '#window-container', '#window-layer']);
-    for (var i = 0; i < candidatos.length; i++) {
-      var existente = document.querySelector(candidatos[i]);
-      if (existente) return existente;
+    var cand = sel ? [sel] : [];
+    cand = cand.concat(['#windows-container', '#windows', '#window-container', '#window-layer']);
+    for (var i = 0; i < cand.length; i++) {
+      var ex = document.querySelector(cand[i]);
+      if (ex) return ex;
     }
-    /* no existe ninguno: crear el que pide createWindow (capa de tamaño 0,
-       no tapa el escritorio ni cambia la estética) */
     var usar = sel || '#windows-container';
     var capa = document.createElement('div');
     if (usar.charAt(0) === '#') capa.id = usar.slice(1);
@@ -251,39 +249,73 @@
     return capa;
   }
 
-  /* ── 2) RUTA DEL ARTÍCULO ────────────────────────────────────── */
-  function nombreDeFila(fila) {
-    var n = fila.querySelector('.file-name');
-    var t = (n ? n.textContent : fila.textContent || '').trim();
-    return t.replace(/\s+/g, ' ');
+  /* ── NOMBRES: espacios ⇄ "_" (lo que pediste) ─────────────────── */
+  function basesDe(nombre) {
+    var b = String(nombre).replace(/\.(pdf|html?)$/i, '').trim();
+    var out = [], visto = {};
+    function p(s) { s = s.trim(); if (s && !visto[s]) { visto[s] = 1; out.push(s); } }
+    p(b);                                   // tal cual
+    p(b.replace(/ /g, '_'));                // espacios  → _
+    p(b.replace(/\s+/g, '_'));              // varios espacios → _
+    p(b.replace(/_/g, ' '));                // _ → espacios
+    p(b.replace(/[\s_]+/g, '_'));           // mezcla → _
+    p(b.replace(/[\s_]+/g, ' '));           // mezcla → espacios
+    p(b.toLowerCase());
+    p(b.toLowerCase().replace(/[\s_]+/g, '_'));
+    p(b.replace(/[\s_]+/g, '-'));           // por si acaso, guion
+    return out;
   }
-  function rutaDeFila(fila) {
-    var directo = fila.getAttribute('data-pdf') || fila.getAttribute('data-file') ||
-                  fila.getAttribute('data-src') || fila.getAttribute('data-href');
-    if (!directo) {
-      var a = fila.querySelector('[data-pdf]');
-      if (a) directo = a.getAttribute('data-pdf');
-    }
-    if (directo) return directo.indexOf('/') >= 0 ? directo : CARPETA + directo;
-    var enlace = fila.querySelector('a[href]');
-    if (enlace) {
-      var hr = enlace.getAttribute('href');
-      if (hr && hr !== '#') return hr.indexOf('/') >= 0 ? hr : CARPETA + hr;
-    }
-    return CARPETA + nombreDeFila(fila) + '.pdf';
-  }
-  function baseDe(url) { return url.replace(/\.(pdf|html?|PDF|HTML?)$/, ''); }
-  function archivoDe(url) { return decodeURI(url.split('/').pop() || 'articulo'); }
+  function candidatosDe(nombre, directa) {
+    var lista = [], visto = {};
+    function add(u) { if (u && !visto[u]) { visto[u] = 1; lista.push(u); } }
 
-  /* ── 3) SUBVENTANA DEL ARTÍCULO (□ agrandar · ⬇ descargar) ───── */
-  function abrirSubventana(nombre, url) {
+    var guardada = null;
+    try { guardada = localStorage.getItem('mat-ruta-' + nombre); } catch (e) {}
+    if (guardada) add(guardada);
+
+    if (directa) {
+      var d = directa.indexOf('/') >= 0 ? directa : CARPETA + directa;
+      var dir = d.slice(0, d.lastIndexOf('/') + 1);
+      var archivo = d.slice(d.lastIndexOf('/') + 1);
+      var ext = (archivo.match(/\.(pdf|html?)$/i) || ['.pdf'])[0];
+      var sinExt = archivo.slice(0, archivo.length - ext.length);
+      basesDe(sinExt).forEach(function (b) { add(dir + b + ext); });
+      add(d);
+    }
+    basesDe(nombre).forEach(function (b) { add(CARPETA + b + '.pdf'); });
+    basesDe(nombre).forEach(function (b) { add(CARPETA + b + '.html'); });
+    return lista.slice(0, 24);
+  }
+  function archivoDe(u) { return decodeURI(u.split('/').pop() || 'articulo'); }
+
+  /* ── comprobar qué variante existe (no bloquea si no hay fetch) ── */
+  function sondear(urls, alEncontrar, alTerminar) {
+    var i = 0, huboHTTP = false;
+    function paso() {
+      if (i >= urls.length) { alTerminar(huboHTTP); return; }
+      var u = urls[i++];
+      fetch(encodeURI(u), { method: 'HEAD' })
+        .then(function (r) {
+          if (r.status === 405 || r.status === 501) return fetch(encodeURI(u));
+          return r;
+        })
+        .then(function (r) {
+          huboHTTP = true;
+          if (r && r.ok) { alEncontrar(u, parseInt(r.headers.get('content-length') || '0', 10)); }
+          else paso();
+        })
+        .catch(function () { alTerminar(false); });   // file:// o sin red
+    }
+    paso();
+  }
+
+  /* ── SUBVENTANA ───────────────────────────────────────────────── */
+  function abrirSubventana(nombre, directa) {
     asegurarContenedor();
     var id = 'sub-' + nombre.replace(/[^a-z0-9]/gi, '_');
-    if (abiertas[id] && abiertas[id].isConnected) {
-      abiertas[id].style.zIndex = ++zSub;
-      return;
-    }
+    if (abiertas[id] && abiertas[id].isConnected) { abiertas[id].style.zIndex = ++zSub; return; }
 
+    var rutas = candidatosDe(nombre, directa);
     var chico = window.innerWidth < 620;
     var ancho = Math.min(window.innerWidth - 24, 1000);
     var alto  = Math.min(window.innerHeight - 70, Math.round(window.innerHeight * 0.86));
@@ -319,11 +351,17 @@
     tools.innerHTML =
       '<button class="win98-ok-btn" data-dl style="font-size:14px;padding:1px 12px;min-width:auto;margin:0">⬇ DESCARGAR</button>' +
       '<button class="win98-ok-btn" data-tab style="font-size:14px;padding:1px 12px;min-width:auto;margin:0">↗ PESTAÑA</button>' +
-      '<span class="toolbar-label">formato:</span>' +
-      '<button class="win98-btn" data-fmt="pdf" style="width:auto;padding:0 6px">PDF</button>' +
-      '<button class="win98-btn" data-fmt="html" style="width:auto;padding:0 6px">HTML</button>' +
-      '<span class="toolbar-label" data-estado style="margin-left:auto">' + archivoDe(url) + '</span>';
+      '<span class="toolbar-label">archivo:</span>' +
+      '<select class="win98-input" data-arch style="max-width:260px"></select>' +
+      '<span class="toolbar-label" data-estado style="margin-left:auto">buscando…</span>';
     win.appendChild(tools);
+
+    var sel = tools.querySelector('[data-arch]');
+    rutas.forEach(function (u) {
+      var o = document.createElement('option');
+      o.value = u; o.textContent = archivoDe(u);
+      sel.appendChild(o);
+    });
 
     var caja = document.createElement('div');
     caja.style.cssText = 'flex:1;min-height:0;background:#000;';
@@ -338,14 +376,28 @@
     pie.style.flexShrink = '0';
     win.appendChild(pie);
 
-    var urlActual = url;
-    function cargar(u) {
+    var estado = tools.querySelector('[data-estado]');
+    var urlActual = rutas[0];
+
+    function cargar(u, kb) {
       urlActual = u;
+      sel.value = u;
       frame.src = encodeURI(u) + '#view=FitH';
-      tools.querySelector('[data-estado]').textContent = archivoDe(u);
-      pie.textContent = '¿No se ve? prueba el otro formato, ↗ PESTAÑA o ⬇ DESCARGAR · ruta: ' + u;
+      estado.textContent = archivoDe(u) + (kb ? ' · ' + Math.max(1, Math.round(kb / 1024)) + ' KB' : '');
+      pie.textContent = 'Si no se ve, elige otro nombre en «archivo» (los espacios pueden ser _) · ruta: ' + u;
+      try { localStorage.setItem('mat-ruta-' + nombre, u); } catch (e) {}
     }
-    cargar(url);
+    cargar(rutas[0]);
+
+    sondear(rutas,
+      function (u, kb) { if (win.isConnected) cargar(u, kb); },
+      function (huboHTTP) {
+        if (!win.isConnected) return;
+        if (huboHTTP) { estado.textContent = archivoDe(urlActual) + ' · ⚠ no encontrado'; }
+        else { estado.textContent = archivoDe(urlActual) + ' · modo local'; }
+      });
+
+    sel.addEventListener('change', function () { cargar(sel.value); });
 
     host.appendChild(win);
     abiertas[id] = win;
@@ -372,12 +424,10 @@
     bMax.addEventListener('click', function (e) { e.stopPropagation(); alternarMax(); });
     bar.addEventListener('dblclick', function (e) { if (!e.target.closest('.win98-btn')) alternarMax(); });
 
-    /* cerrar */
     bar.querySelector('[data-cerrar]').addEventListener('click', function (e) {
       e.stopPropagation(); delete abiertas[id]; win.remove();
     });
 
-    /* descargar / pestaña / formato */
     tools.querySelector('[data-dl]').addEventListener('click', function () {
       var a = document.createElement('a');
       a.href = encodeURI(urlActual);
@@ -387,18 +437,13 @@
     tools.querySelector('[data-tab]').addEventListener('click', function () {
       window.open(encodeURI(urlActual), '_blank', 'noopener');
     });
-    tools.querySelectorAll('[data-fmt]').forEach(function (b) {
-      b.addEventListener('click', function () { cargar(baseDe(urlActual) + '.' + b.getAttribute('data-fmt')); });
-    });
 
-    /* enfocar */
     win.addEventListener('pointerdown', function () {
       win.style.zIndex = ++zSub;
       for (var k in abiertas) if (abiertas[k] !== win) abiertas[k].classList.remove('kb-active-win');
       win.classList.add('kb-active-win');
     });
 
-    /* arrastrar */
     bar.addEventListener('pointerdown', function (e) {
       if (e.target.closest('.win98-btn') || max || window.innerWidth < 620) return;
       var sx = e.clientX, sy = e.clientY, ox = win.offsetLeft, oy = win.offsetTop;
@@ -419,7 +464,7 @@
     });
   }
 
-  /* ── 4) INTERCEPTAR SOLO LOS CLICS DE LA VENTANA ARTÍCULOS ───── */
+  /* ── SOLO la ventana Artículos ────────────────────────────────── */
   function ventanaArticulos() {
     var w = document.getElementById('win-articulos');
     if (w) return w;
@@ -430,48 +475,54 @@
     }
     return null;
   }
+  function nombreDeFila(fila) {
+    var n = fila.querySelector('.file-name');
+    return ((n ? n.textContent : fila.textContent) || '').trim().replace(/\s+/g, ' ');
+  }
+  function rutaDirecta(fila) {
+    var d = fila.getAttribute('data-pdf') || fila.getAttribute('data-file') ||
+            fila.getAttribute('data-src') || fila.getAttribute('data-href');
+    if (!d) { var a = fila.querySelector('[data-pdf]'); if (a) d = a.getAttribute('data-pdf'); }
+    if (!d) {
+      var en = fila.querySelector('a[href]');
+      if (en) { var h = en.getAttribute('href'); if (h && h !== '#') d = h; }
+    }
+    return d || null;
+  }
   function filaDeArticulo(target) {
     var fila = target.closest ? target.closest('.file-item') : null;
     if (!fila) return null;
     var w = ventanaArticulos();
     if (!w || !w.contains(fila)) return null;
-    if (target.closest('.win98-btn') || target.closest('button')) return null; /* deja pasar botones */
+    if (target.closest('button') || target.closest('select')) return null;
     return fila;
   }
-  /* fase de captura: se ejecuta ANTES que el handler roto de index.html */
   document.addEventListener('click', function (e) {
     var fila = filaDeArticulo(e.target);
     if (!fila) return;
-    e.preventDefault();
-    e.stopPropagation();
-    abrirSubventana(nombreDeFila(fila), rutaDeFila(fila));
+    e.preventDefault(); e.stopPropagation();
+    abrirSubventana(nombreDeFila(fila), rutaDirecta(fila));
   }, true);
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     var fila = filaDeArticulo(e.target);
     if (!fila) return;
-    e.preventDefault();
-    e.stopPropagation();
-    abrirSubventana(nombreDeFila(fila), rutaDeFila(fila));
+    e.preventDefault(); e.stopPropagation();
+    abrirSubventana(nombreDeFila(fila), rutaDirecta(fila));
   }, true);
 
-  /* ── 5) red de seguridad para llamadas directas ──────────────── */
   var original = window.openMathPDFWindow;
   window.openMathPDFWindow = function (pdfURL, title) {
     try {
       asegurarContenedor();
-      abrirSubventana(title || archivoDe(pdfURL || 'articulo'), pdfURL || (CARPETA + 'articulo.pdf'));
-    } catch (err) {
-      if (typeof original === 'function') original(pdfURL, title);
-    }
+      abrirSubventana(title || archivoDe(pdfURL || 'articulo'), pdfURL || null);
+    } catch (err) { if (typeof original === 'function') original(pdfURL, title); }
   };
 
-  function arrancar() { asegurarContenedor(); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar);
-  else arrancar();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', asegurarContenedor);
+  else asegurarContenedor();
 })();
 </script>
-
 <body>
 
   <!-- KEYBOARD HINTS -->
