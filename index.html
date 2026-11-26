@@ -210,6 +210,267 @@
   }
 </style>
 
+<!-- ═══ FIX ARTÍCULOS · no modifica styles.css ni otras ventanas ═══ -->
+<script>
+(function () {
+  'use strict';
+
+  var CARPETA = 'matematicas/';
+  var zSub = 600;
+  var abiertas = {};
+
+  /* ── 1) REPARAR EL CONTENEDOR NULL (causa del TypeError) ─────── */
+  function selectorDeCreateWindow() {
+    try {
+      if (typeof window.createWindow !== 'function') return null;
+      var s = window.createWindow.toString();
+      var m = s.match(/getElementById\(\s*['"]([^'"]+)['"]/);
+      if (m) return '#' + m[1];
+      m = s.match(/querySelector\(\s*['"]([^'"]+)['"]/);
+      if (m) return m[1];
+    } catch (e) {}
+    return null;
+  }
+  function asegurarContenedor() {
+    var sel = selectorDeCreateWindow();
+    var candidatos = sel ? [sel] : [];
+    candidatos = candidatos.concat(['#windows-container', '#windows', '#window-container', '#window-layer']);
+    for (var i = 0; i < candidatos.length; i++) {
+      var existente = document.querySelector(candidatos[i]);
+      if (existente) return existente;
+    }
+    /* no existe ninguno: crear el que pide createWindow (capa de tamaño 0,
+       no tapa el escritorio ni cambia la estética) */
+    var usar = sel || '#windows-container';
+    var capa = document.createElement('div');
+    if (usar.charAt(0) === '#') capa.id = usar.slice(1);
+    else if (usar.charAt(0) === '.') capa.className = usar.slice(1);
+    else capa.id = 'windows-container';
+    capa.style.cssText = 'position:absolute;left:0;top:0;width:0;height:0;overflow:visible;z-index:500;';
+    (document.querySelector('.desktop') || document.body).appendChild(capa);
+    return capa;
+  }
+
+  /* ── 2) RUTA DEL ARTÍCULO ────────────────────────────────────── */
+  function nombreDeFila(fila) {
+    var n = fila.querySelector('.file-name');
+    var t = (n ? n.textContent : fila.textContent || '').trim();
+    return t.replace(/\s+/g, ' ');
+  }
+  function rutaDeFila(fila) {
+    var directo = fila.getAttribute('data-pdf') || fila.getAttribute('data-file') ||
+                  fila.getAttribute('data-src') || fila.getAttribute('data-href');
+    if (!directo) {
+      var a = fila.querySelector('[data-pdf]');
+      if (a) directo = a.getAttribute('data-pdf');
+    }
+    if (directo) return directo.indexOf('/') >= 0 ? directo : CARPETA + directo;
+    var enlace = fila.querySelector('a[href]');
+    if (enlace) {
+      var hr = enlace.getAttribute('href');
+      if (hr && hr !== '#') return hr.indexOf('/') >= 0 ? hr : CARPETA + hr;
+    }
+    return CARPETA + nombreDeFila(fila) + '.pdf';
+  }
+  function baseDe(url) { return url.replace(/\.(pdf|html?|PDF|HTML?)$/, ''); }
+  function archivoDe(url) { return decodeURI(url.split('/').pop() || 'articulo'); }
+
+  /* ── 3) SUBVENTANA DEL ARTÍCULO (□ agrandar · ⬇ descargar) ───── */
+  function abrirSubventana(nombre, url) {
+    asegurarContenedor();
+    var id = 'sub-' + nombre.replace(/[^a-z0-9]/gi, '_');
+    if (abiertas[id] && abiertas[id].isConnected) {
+      abiertas[id].style.zIndex = ++zSub;
+      return;
+    }
+
+    var chico = window.innerWidth < 620;
+    var ancho = Math.min(window.innerWidth - 24, 1000);
+    var alto  = Math.min(window.innerHeight - 70, Math.round(window.innerHeight * 0.86));
+    var host  = document.querySelector('.desktop') || document.body;
+
+    var win = document.createElement('div');
+    win.className = 'win98-window kb-active-win';
+    win.id = id;
+    win.style.display = 'flex';
+    win.style.flexDirection = 'column';
+    win.style.position = host === document.body ? 'fixed' : 'absolute';
+    win.style.left   = (chico ? 4 : Math.max(8, Math.round((window.innerWidth - ancho) / 2))) + 'px';
+    win.style.top    = (chico ? 6 : 24) + 'px';
+    win.style.width  = (chico ? window.innerWidth - 8 : ancho) + 'px';
+    win.style.height = (chico ? window.innerHeight - 56 : alto) + 'px';
+    win.style.zIndex = ++zSub;
+
+    var bar = document.createElement('div');
+    bar.className = 'win98-titlebar';
+    bar.style.touchAction = 'none';
+    bar.innerHTML =
+      '<span class="win98-title">📄 ' + nombre + '</span>' +
+      '<span class="win98-controls">' +
+        '<button class="win98-btn" data-max title="Agrandar / restaurar">□</button>' +
+        '<button class="win98-btn close" data-cerrar title="Cerrar">✕</button>' +
+      '</span>';
+    win.appendChild(bar);
+
+    var tools = document.createElement('div');
+    tools.className = 'win98-toolbar';
+    tools.style.flexWrap = 'wrap';
+    tools.style.flexShrink = '0';
+    tools.innerHTML =
+      '<button class="win98-ok-btn" data-dl style="font-size:14px;padding:1px 12px;min-width:auto;margin:0">⬇ DESCARGAR</button>' +
+      '<button class="win98-ok-btn" data-tab style="font-size:14px;padding:1px 12px;min-width:auto;margin:0">↗ PESTAÑA</button>' +
+      '<span class="toolbar-label">formato:</span>' +
+      '<button class="win98-btn" data-fmt="pdf" style="width:auto;padding:0 6px">PDF</button>' +
+      '<button class="win98-btn" data-fmt="html" style="width:auto;padding:0 6px">HTML</button>' +
+      '<span class="toolbar-label" data-estado style="margin-left:auto">' + archivoDe(url) + '</span>';
+    win.appendChild(tools);
+
+    var caja = document.createElement('div');
+    caja.style.cssText = 'flex:1;min-height:0;background:#000;';
+    var frame = document.createElement('iframe');
+    frame.title = nombre;
+    frame.style.cssText = 'width:100%;height:100%;border:none;display:block;background:#000;';
+    caja.appendChild(frame);
+    win.appendChild(caja);
+
+    var pie = document.createElement('div');
+    pie.className = 'statusbar-inner';
+    pie.style.flexShrink = '0';
+    win.appendChild(pie);
+
+    var urlActual = url;
+    function cargar(u) {
+      urlActual = u;
+      frame.src = encodeURI(u) + '#view=FitH';
+      tools.querySelector('[data-estado]').textContent = archivoDe(u);
+      pie.textContent = '¿No se ve? prueba el otro formato, ↗ PESTAÑA o ⬇ DESCARGAR · ruta: ' + u;
+    }
+    cargar(url);
+
+    host.appendChild(win);
+    abiertas[id] = win;
+
+    /* agrandar / restaurar */
+    var max = false, previo = null;
+    var bMax = bar.querySelector('[data-max]');
+    function alternarMax() {
+      max = !max;
+      if (max) {
+        previo = { left: win.style.left, top: win.style.top, width: win.style.width, height: win.style.height };
+        win.style.left = '2px'; win.style.top = '2px';
+        win.style.width = 'calc(100vw - 8px)';
+        win.style.height = 'calc(100vh - 48px)';
+        bMax.textContent = '❐';
+      } else {
+        if (previo) {
+          win.style.left = previo.left; win.style.top = previo.top;
+          win.style.width = previo.width; win.style.height = previo.height;
+        }
+        bMax.textContent = '□';
+      }
+    }
+    bMax.addEventListener('click', function (e) { e.stopPropagation(); alternarMax(); });
+    bar.addEventListener('dblclick', function (e) { if (!e.target.closest('.win98-btn')) alternarMax(); });
+
+    /* cerrar */
+    bar.querySelector('[data-cerrar]').addEventListener('click', function (e) {
+      e.stopPropagation(); delete abiertas[id]; win.remove();
+    });
+
+    /* descargar / pestaña / formato */
+    tools.querySelector('[data-dl]').addEventListener('click', function () {
+      var a = document.createElement('a');
+      a.href = encodeURI(urlActual);
+      a.download = archivoDe(urlActual);
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+    tools.querySelector('[data-tab]').addEventListener('click', function () {
+      window.open(encodeURI(urlActual), '_blank', 'noopener');
+    });
+    tools.querySelectorAll('[data-fmt]').forEach(function (b) {
+      b.addEventListener('click', function () { cargar(baseDe(urlActual) + '.' + b.getAttribute('data-fmt')); });
+    });
+
+    /* enfocar */
+    win.addEventListener('pointerdown', function () {
+      win.style.zIndex = ++zSub;
+      for (var k in abiertas) if (abiertas[k] !== win) abiertas[k].classList.remove('kb-active-win');
+      win.classList.add('kb-active-win');
+    });
+
+    /* arrastrar */
+    bar.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.win98-btn') || max || window.innerWidth < 620) return;
+      var sx = e.clientX, sy = e.clientY, ox = win.offsetLeft, oy = win.offsetTop;
+      var cont = win.parentElement || document.body;
+      try { bar.setPointerCapture(e.pointerId); } catch (err) {}
+      function mv(ev) {
+        win.style.left = Math.max(-win.offsetWidth + 90, Math.min(cont.clientWidth - 70, ox + ev.clientX - sx)) + 'px';
+        win.style.top  = Math.max(0, Math.min(cont.clientHeight - 26, oy + ev.clientY - sy)) + 'px';
+      }
+      function up() {
+        bar.removeEventListener('pointermove', mv);
+        bar.removeEventListener('pointerup', up);
+        bar.removeEventListener('pointercancel', up);
+      }
+      bar.addEventListener('pointermove', mv);
+      bar.addEventListener('pointerup', up);
+      bar.addEventListener('pointercancel', up);
+    });
+  }
+
+  /* ── 4) INTERCEPTAR SOLO LOS CLICS DE LA VENTANA ARTÍCULOS ───── */
+  function ventanaArticulos() {
+    var w = document.getElementById('win-articulos');
+    if (w) return w;
+    var todas = document.querySelectorAll('.win98-window');
+    for (var i = 0; i < todas.length; i++) {
+      var t = todas[i].querySelector('.win98-title');
+      if (t && /art[ií]culos/i.test(t.textContent)) return todas[i];
+    }
+    return null;
+  }
+  function filaDeArticulo(target) {
+    var fila = target.closest ? target.closest('.file-item') : null;
+    if (!fila) return null;
+    var w = ventanaArticulos();
+    if (!w || !w.contains(fila)) return null;
+    if (target.closest('.win98-btn') || target.closest('button')) return null; /* deja pasar botones */
+    return fila;
+  }
+  /* fase de captura: se ejecuta ANTES que el handler roto de index.html */
+  document.addEventListener('click', function (e) {
+    var fila = filaDeArticulo(e.target);
+    if (!fila) return;
+    e.preventDefault();
+    e.stopPropagation();
+    abrirSubventana(nombreDeFila(fila), rutaDeFila(fila));
+  }, true);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var fila = filaDeArticulo(e.target);
+    if (!fila) return;
+    e.preventDefault();
+    e.stopPropagation();
+    abrirSubventana(nombreDeFila(fila), rutaDeFila(fila));
+  }, true);
+
+  /* ── 5) red de seguridad para llamadas directas ──────────────── */
+  var original = window.openMathPDFWindow;
+  window.openMathPDFWindow = function (pdfURL, title) {
+    try {
+      asegurarContenedor();
+      abrirSubventana(title || archivoDe(pdfURL || 'articulo'), pdfURL || (CARPETA + 'articulo.pdf'));
+    } catch (err) {
+      if (typeof original === 'function') original(pdfURL, title);
+    }
+  };
+
+  function arrancar() { asegurarContenedor(); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arrancar);
+  else arrancar();
+})();
+</script>
 
 <body>
 
@@ -243,16 +504,6 @@
     <div class="icon-img">↗️</div>
     <span>Linear</span>
   </div>
-
-  <!-- Artículos -->
-  <div class="desktop-icon"
-       tabindex="0"
-       data-action="openMainWindow"
-       onclick="openMainWindow()">
-    <div class="icon-img">📐</div>
-    <span>Artículos</span>
-  </div>
-
       <div class="desktop-icon" tabindex="0" data-action="openMainWindow" onclick="openMainWindow()">
         <div class="icon-img">📐</div>
         <span>Artículos</span>
